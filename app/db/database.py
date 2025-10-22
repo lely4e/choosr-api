@@ -16,7 +16,7 @@ class Base(DeclarativeBase):
 sync_session_maker = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 
-# Dependency to get DB session (e.g., in FastAPI)
+# Dependency to get DB session
 def get_db():
     db = sync_session_maker()
     try:

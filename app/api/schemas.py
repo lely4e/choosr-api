@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from uuid import UUID
 
 
 class UserIn(BaseModel):
@@ -27,7 +28,7 @@ class PollRead(BaseModel):
 
 
 class PollResponse(PollRead):
-    token: str
+    token: UUID
 
     class Config:
         orm_mode = True

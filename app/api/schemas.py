@@ -1,21 +1,42 @@
 from pydantic import BaseModel
 
 
-class User(BaseModel):
+class UserIn(BaseModel):
     username: str
+    email: str
     password: str
 
+    class Config:
+        orm_mode = True
 
-class Poll(BaseModel):
+
+class UserOut(BaseModel):
+    username: str
+    email: str
+
+    class Config:
+        orm_mode = True
+
+
+class PollRead(BaseModel):
     title: str
     budget: int
 
+    class Config:
+        orm_mode = True
 
-class PollResponse(Poll):
+
+class PollResponse(PollRead):
     token: str
 
+    class Config:
+        orm_mode = True
 
-class Product(BaseModel):
+
+class ProductRead(BaseModel):
     title: str
     body: str
     price: int
+
+    class Config:
+        orm_mode = True

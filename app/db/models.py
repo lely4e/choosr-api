@@ -1,6 +1,8 @@
 from sqlalchemy import String, Integer, Float, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.database import Base
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
 
 
 class User(Base):
@@ -23,7 +25,9 @@ class Poll(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String(40), index=True)
     budget: Mapped[float] = mapped_column(Float)
-
+    token: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), unique=True, nullable=False, default=uuid.uuid4
+    )
     # One-to-many relationship
     products: Mapped[list["Product"]] = relationship("Product", back_populates="poll")
 

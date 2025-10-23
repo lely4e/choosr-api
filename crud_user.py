@@ -1,5 +1,7 @@
-from app.db.models import User
+from app.db.models import User, Poll
 from sqlalchemy.orm import Session
+from app.core.errors import UserNotFoundError, UserAlreadyExistsError
+from sqlalchemy.exc import IntegrityError
 
 
 class UserManager:
@@ -13,21 +15,31 @@ class UserManager:
             self.db.commit()
             self.db.refresh(user)
             return user
+
+        except IntegrityError:
+            self.db.rollback()
+            raise UserAlreadyExistsError("User with this email already exists")
+
         except Exception as e:
             self.db.rollback()
-            print(f"Error adding user: {e}")
-            return None
+            raise Exception(f"Error adding user: {e}")
 
     def get_users(self):
-        return self.db.query(User).all()
+        users = self.db.query(User).all()
+        if not users:
+            raise UserNotFoundError("Users not found")
+        return users
 
     def get_user(self, user_id):
-        return self.db.query(User).filter(User.id == user_id).first()
+        user = self.db.query(User).filter(User.id == user_id).first()
+        if not user:
+            raise UserNotFoundError("User not found")
+        return user
 
     def update_user(self, user_id, user_in):
         user = self.db.query(User).filter(User.id == user_id).first()
         if not user:
-            return None
+            raise UserNotFoundError("User not found")
         try:
             for k, v in user_in.dict().items():
                 setattr(user, k, v)
@@ -35,21 +47,20 @@ class UserManager:
             return user
         except Exception as e:
             self.db.rollback()
-            print(f"error: e")
-            return None
+            raise Exception(f"Error updating user: {e}")
 
     def delete_user(self, user_id: int):
         user = self.db.query(User).filter(User.id == user_id).first()
         if not user:
-            return None
+            raise UserNotFoundError("User not found")
         try:
+            self.db.query(Poll).filter(Poll.user_id == user_id).delete()
             self.db.delete(user)
             self.db.commit()
             return user
         except Exception as e:
             self.db.rollback()
-            print(f"error: e")
-            return None
+            raise Exception(f"Error deleting user: {e}")
 
     def login(self, username: str, email: str, password: str):
         try:
@@ -57,5 +68,4 @@ class UserManager:
             return self.db.query(User).filter(User.username == user.username).first()
         except Exception as e:
             self.db.rollback()
-            print(f"Error adding user: {e}")
-            return None
+            raise Exception(f"Error login user: {e}")

@@ -3,6 +3,7 @@ from typing import List
 from app.api.dependencies import get_user_manager
 from fastapi import APIRouter, Depends, HTTPException
 from crud_user import UserManager
+from app.core.errors import UserNotFoundError
 
 
 user_router = APIRouter()
@@ -12,7 +13,7 @@ user_router = APIRouter()
 @user_router.get("/users", response_model=List[UserOut])
 async def read_users(user_manager: UserManager = Depends(get_user_manager)):
     users = user_manager.get_users()
-    return users or {"error": "User not found"}
+    return users
 
 
 # add user
@@ -21,7 +22,7 @@ async def add_users(
     user_in: UserIn, user_manager: UserManager = Depends(get_user_manager)
 ):
     user = user_manager.add_user(**dict(user_in))
-    return user or {"error": "User cannot be added"}
+    return user
 
 
 # get user
@@ -30,7 +31,7 @@ async def read_user(
     user_id: int, user_manager: UserManager = Depends(get_user_manager)
 ):
     user = user_manager.get_user(user_id)
-    return user or {"error": "User not found"}
+    return user
 
 
 # update user
@@ -40,15 +41,13 @@ async def update_user(
     user_id: int,
     user_manager: UserManager = Depends(get_user_manager),
 ):
-    user = user_manager.get_user(user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="No user found")
-
     try:
         user = user_manager.update_user(user_id, user_in)
         return user
+    except UserNotFoundError:
+        raise HTTPException(status_code=404, detail="User not found")
     except Exception as e:
-        return {"error": e}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # delete user
@@ -56,15 +55,13 @@ async def update_user(
 async def delete_user(
     user_id: int, user_manager: UserManager = Depends(get_user_manager)
 ):
-    user = user_manager.get_user(user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="No user found")
-
     try:
         user = user_manager.delete_user(user_id)
-        return user
+        return user  # or {"message": "User was deleted successfully"}
+    except UserNotFoundError:
+        raise HTTPException(status_code=404, detail="User not found")
     except Exception as e:
-        return {"error": e}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # login
@@ -73,5 +70,4 @@ async def login(user_in: UserIn, user_manager: UserManager = Depends(get_user_ma
     user = user_manager.login(**dict(user_in))
     if not user or user.password != user_in.password:
         return {"message": "User or password invalid"}
-
     return {"message": "You successfully login"}

@@ -14,7 +14,9 @@ class User(Base):
     password: Mapped[str] = mapped_column(String)
 
     # One-to-many relationship: a user can have many polls, products, votes
-    polls: Mapped[list["Poll"]] = relationship("Poll", back_populates="user")
+    polls: Mapped[list["Poll"]] = relationship(
+        "Poll", back_populates="user", cascade="all, delete-orphan"
+    )
     products: Mapped[list["Product"]] = relationship("Product", back_populates="user")
     votes: Mapped[list["Vote"]] = relationship("Vote", back_populates="user")
 

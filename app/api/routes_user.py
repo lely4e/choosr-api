@@ -1,9 +1,8 @@
 from app.api.schemas import UserIn, UserOut
 from typing import List
 from app.api.dependencies import get_user_manager
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from crud_user import UserManager
-from app.core.errors import UserNotFoundError
 
 
 user_router = APIRouter()
@@ -41,13 +40,8 @@ async def update_user(
     user_id: int,
     user_manager: UserManager = Depends(get_user_manager),
 ):
-    try:
-        user = user_manager.update_user(user_id, user_in)
-        return user
-    except UserNotFoundError:
-        raise HTTPException(status_code=404, detail="User not found")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    user = user_manager.update_user(user_id, user_in)
+    return user
 
 
 # delete user
@@ -55,13 +49,8 @@ async def update_user(
 async def delete_user(
     user_id: int, user_manager: UserManager = Depends(get_user_manager)
 ):
-    try:
-        user = user_manager.delete_user(user_id)
-        return user  # or {"message": "User was deleted successfully"}
-    except UserNotFoundError:
-        raise HTTPException(status_code=404, detail="User not found")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    user = user_manager.delete_user(user_id)
+    return user  # or {"message": "User was deleted successfully"}
 
 
 # login

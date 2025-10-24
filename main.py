@@ -19,6 +19,10 @@ from app.core.errors import (
     UserAlreadyExistsError,
     user_exists_handler,
 )
+from app.core.errors import (
+    DataError,
+    data_error_handler,
+)
 
 app = FastAPI()
 
@@ -30,6 +34,7 @@ app.add_exception_handler(UserNotFoundError, user_not_found_handler)
 app.add_exception_handler(Exception, exception_handler)
 app.add_exception_handler(UserNotFoundError, poll_not_found_handler)
 app.add_exception_handler(UserAlreadyExistsError, user_exists_handler)
+app.add_exception_handler(DataError, data_error_handler)
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", reload=True)

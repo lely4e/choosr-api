@@ -1,12 +1,9 @@
 from app.api.schemas import PollRead, PollResponse
 from typing import List
 from app.api.dependencies import get_user_manager, get_poll_manager
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from crud_user import UserManager
 from crud_poll import PollManager
-from app.core.errors import UserNotFoundError
-from app.core.errors import PollNotFoundError
-from psycopg2.errors import InvalidTextRepresentation
 
 
 poll_router = APIRouter()
@@ -43,25 +40,15 @@ async def read_polls(poll_manager: PollManager = Depends(get_poll_manager)):
 async def update_poll(
     token, poll_in: PollRead, poll_manager: PollManager = Depends(get_poll_manager)
 ):
-    try:
-        poll = poll_manager.update_poll(token, poll_in)
-        return poll
-    except PollNotFoundError:
-        raise HTTPException(status_code=404, detail="Poll not found")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    poll = poll_manager.update_poll(token, poll_in)
+    return poll
 
 
 # delete poll
 @poll_router.delete("/polls/{token}", response_model=PollResponse)
 async def delete_poll(token, poll_manager: PollManager = Depends(get_poll_manager)):
-    try:
-        poll = poll_manager.delete_poll(token)
-        return poll  # or message
-    except PollNotFoundError:
-        raise HTTPException(status_code=404, detail="Poll not found")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    poll = poll_manager.delete_poll(token)
+    return poll  # or message
 
 
 # @app.get("/polls/{token}/products")

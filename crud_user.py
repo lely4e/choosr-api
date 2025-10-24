@@ -1,7 +1,7 @@
 from app.db.models import User, Poll
 from sqlalchemy.orm import Session
 from app.core.errors import UserNotFoundError, UserAlreadyExistsError
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 
 class UserManager:
@@ -45,9 +45,9 @@ class UserManager:
                 setattr(user, k, v)
             self.db.commit()
             return user
-        except Exception as e:
+        except SQLAlchemyError as e:
             self.db.rollback()
-            raise Exception(f"Error updating user: {e}")
+            raise e
 
     def delete_user(self, user_id: int):
         user = self.db.query(User).filter(User.id == user_id).first()
@@ -58,9 +58,9 @@ class UserManager:
             self.db.delete(user)
             self.db.commit()
             return user
-        except Exception as e:
+        except SQLAlchemyError as e:
             self.db.rollback()
-            raise Exception(f"Error deleting user: {e}")
+            raise e
 
     def login(self, username: str, email: str, password: str):
         try:

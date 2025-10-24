@@ -2,6 +2,7 @@ from fastapi import Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError, HTTPException
 from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
+from sqlalchemy.exc import DataError
 
 
 # Pydantic validation errors (422)
@@ -23,6 +24,16 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     )
 
 
+# Global exception handler
+async def exception_handler(request: Request, exc: Exception):
+    return JSONResponse(status_code=500, content={"error": str(exc)})
+
+
+# Data Error Handler
+async def data_error_handler(request, exc: DataError):
+    return JSONResponse(status_code=400, content={"error": "Invalid poll token format"})
+
+
 class UserNotFoundError(Exception):
     """Custom exception if user not found."""
 
@@ -33,10 +44,6 @@ class UserNotFoundError(Exception):
 
 async def user_not_found_handler(request: Request, exc: UserNotFoundError):
     return JSONResponse(status_code=404, content={"error": exc.message})
-
-
-async def exception_handler(request: Request, exc: Exception):
-    return JSONResponse(status_code=500, content={"error": str(exc)})
 
 
 class PollNotFoundError(Exception):

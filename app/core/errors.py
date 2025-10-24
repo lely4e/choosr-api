@@ -68,3 +68,15 @@ class UserAlreadyExistsError(Exception):
 
 async def user_exists_handler(request: Request, exc: UserAlreadyExistsError):
     return JSONResponse(status_code=400, content={"error": exc.message})
+
+
+class ProductNotFoundError(Exception):
+    """Custom exception if product not found."""
+
+    def __init__(self, message="Product not found"):
+        self.message = message
+        super().__init__(self.message)
+
+
+async def product_not_found_handler(request: Request, exc: ProductNotFoundError):
+    return JSONResponse(status_code=404, content={"error": exc.message})

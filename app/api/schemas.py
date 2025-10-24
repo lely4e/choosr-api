@@ -12,6 +12,7 @@ class UserIn(BaseModel):
 
 
 class UserOut(BaseModel):
+    id: int
     username: str
     email: str
 
@@ -20,6 +21,7 @@ class UserOut(BaseModel):
 
 
 class PollRead(BaseModel):
+    id: int
     title: str
     budget: int
 
@@ -34,10 +36,22 @@ class PollResponse(PollRead):
         orm_mode = True
 
 
-class ProductRead(BaseModel):
+class ProductIn(BaseModel):
     title: str
     body: str
     price: int
+    user_id: int
+
+    class Config:
+        orm_mode = True
+
+
+class ProductOut(BaseModel):
+    title: str
+    body: str
+    price: int
+    # user_id: int
+    # poll_id: int
 
     class Config:
         orm_mode = True

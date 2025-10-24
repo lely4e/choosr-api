@@ -2,7 +2,7 @@ from app.api.schemas import UserIn, UserOut
 from typing import List
 from app.api.dependencies import get_user_manager
 from fastapi import APIRouter, Depends
-from crud_user import UserManager
+from app.api.services.crud_user import UserManager
 
 
 user_router = APIRouter()

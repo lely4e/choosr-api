@@ -2,8 +2,8 @@ from app.api.schemas import PollRead, PollResponse
 from typing import List
 from app.api.dependencies import get_user_manager, get_poll_manager
 from fastapi import APIRouter, Depends
-from crud_user import UserManager
-from crud_poll import PollManager
+from app.api.services.crud_user import UserManager
+from app.api.services.crud_poll import PollManager
 
 
 poll_router = APIRouter()

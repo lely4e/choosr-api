@@ -1,5 +1,5 @@
-from crud_user import UserManager
-from crud_poll import PollManager
+from .services.crud_user import UserManager
+from .services.crud_poll import PollManager
 from app.db.database import get_db
 from sqlalchemy.orm import Session
 from fastapi import Depends

@@ -54,7 +54,7 @@ class PollNotFoundError(Exception):
         super().__init__(self.message)
 
 
-async def poll_not_found_handler(request: Request, exc: UserNotFoundError):
+async def poll_not_found_handler(request: Request, exc: PollNotFoundError):
     return JSONResponse(status_code=404, content={"error": exc.message})
 
 

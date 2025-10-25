@@ -12,8 +12,12 @@ from app.core.errors import (
     user_not_found_handler,
 )
 from app.core.errors import (
-    UserNotFoundError,
+    PollNotFoundError,
     poll_not_found_handler,
+)
+from app.core.errors import (
+    ProductNotFoundError,
+    product_not_found_handler,
 )
 from app.core.errors import (
     UserAlreadyExistsError,
@@ -32,9 +36,10 @@ app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(UserNotFoundError, user_not_found_handler)
 app.add_exception_handler(Exception, exception_handler)
-app.add_exception_handler(UserNotFoundError, poll_not_found_handler)
+app.add_exception_handler(PollNotFoundError, poll_not_found_handler)
 app.add_exception_handler(UserAlreadyExistsError, user_exists_handler)
 app.add_exception_handler(DataError, data_error_handler)
+app.add_exception_handler(ProductNotFoundError, product_not_found_handler)
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", reload=True)

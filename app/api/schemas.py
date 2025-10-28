@@ -12,12 +12,15 @@ class UserIn(BaseModel):
 
 
 class UserOut(BaseModel):
-    id: int
     username: str
     email: str
 
     class Config:
         orm_mode = True
+
+
+class UserInDB(UserIn):
+    password: str
 
 
 class PollRead(BaseModel):
@@ -55,3 +58,12 @@ class ProductOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None

@@ -19,7 +19,7 @@ class UserManager:
     def __init__(self, db: Session):
         self.db = db
 
-    def add_user(self, username: str, email: str, password: str):
+    def sign_up_user(self, username: str, email: str, password: str):
         try:
             password = get_password_hash(password)
             user = User(username=username, email=email, password=password)
@@ -30,7 +30,9 @@ class UserManager:
 
         except IntegrityError:
             self.db.rollback()
-            raise UserAlreadyExistsError("User with this email already exists")
+            raise UserAlreadyExistsError(
+                "User with this email or username already exists"
+            )
 
         except Exception as e:
             self.db.rollback()

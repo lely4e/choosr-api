@@ -19,8 +19,12 @@ class UserOut(BaseModel):
         orm_mode = True
 
 
-class UserInDB(UserIn):
+class LogIn(BaseModel):
+    username: str
     password: str
+
+    class Config:
+        orm_mode = True
 
 
 class PollRead(BaseModel):
@@ -53,8 +57,6 @@ class ProductOut(BaseModel):
     title: str
     body: str
     price: int
-    # user_id: int
-    # poll_id: int
 
     class Config:
         orm_mode = True

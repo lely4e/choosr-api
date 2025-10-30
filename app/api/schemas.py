@@ -20,7 +20,7 @@ class UserOut(BaseModel):
 
 
 class LogIn(BaseModel):
-    username: str
+    email: str
     password: str
 
     class Config:

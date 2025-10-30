@@ -40,11 +40,11 @@ async def sign_in_token(
 # sign in without OAuth2PasswordRequestForm
 @user_router.post("/login", response_model=Token)
 async def login(user_in: LogIn, user_manager: UserManager = Depends(get_user_manager)):
-    user = user_manager.authenticate_user(user_in.username, user_in.password)
+    user = user_manager.authenticate_user(user_in.email, user_in.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(data={"sub": user.username})
@@ -60,7 +60,7 @@ async def read_users_me(
     return user
 
 
-# get user
+# get user by id
 @user_router.get("/users/{user_id}", response_model=UserOut)
 async def read_user(
     user_id: int, user_manager: UserManager = Depends(get_user_manager)

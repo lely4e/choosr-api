@@ -30,9 +30,7 @@ class UserManager:
 
         except IntegrityError:
             self.db.rollback()
-            raise UserAlreadyExistsError(
-                "User with this email or username already exists"
-            )
+            raise UserAlreadyExistsError("User with this email already exists")
 
         except Exception as e:
             self.db.rollback()
@@ -56,8 +54,8 @@ class UserManager:
             raise UserNotFoundError("User not found")
         return user
 
-    def authenticate_user(self, username: str, password: str):
-        user = self.db.query(User).filter(User.username == username).first()
+    def authenticate_user(self, email: str, password: str):
+        user = self.db.query(User).filter(User.email == email).first()
         if not user:
             return False
         if not verify_password(password, user.password):

@@ -1,8 +1,9 @@
-from app.api.schemas import UserIn, UserOut
+from app.api.schemas import UserIn, UserOut, PollRead, PollResponse
 from typing import List
-from app.api.dependencies import get_user_manager
+from app.api.dependencies import get_user_manager, get_poll_manager
 from fastapi import Depends, HTTPException, status, APIRouter, Depends, Request
 from app.api.services.crud_user import UserManager
+from app.api.services.crud_poll import PollManager
 from fastapi.security import OAuth2PasswordRequestForm
 from app.api.schemas import Token, UserIn, LogIn
 from app.core.security import oauth2_scheme, create_access_token
@@ -60,6 +61,16 @@ async def read_users_me(
     return user
 
 
+@user_router.get("/me/polls", response_model=List[PollRead])
+async def read_own_items(
+    poll_manager: PollManager = Depends(get_poll_manager),
+    token: str = Depends(oauth2_scheme),
+    user_manager: UserManager = Depends(get_user_manager),
+):
+    user = user_manager.get_current_user(token=token)
+    return poll_manager.get_polls_by_user_id(user_id=user.id)
+
+
 # get user by id
 @user_router.get("/users/{user_id}", response_model=UserOut)
 async def read_user(
@@ -94,10 +105,3 @@ async def delete_user(
 ):
     user = user_manager.delete_user(user_id)
     return user  # or {"message": "User was deleted successfully"}
-
-
-# @user_router.get("/users/me/items/")
-# async def read_own_items(
-#     current_user: UserIn = Depends(get_current_active_user),
-# ):
-#     return [{"item_id": "Foo", "owner": current_user.username}]

@@ -43,18 +43,3 @@ app.add_exception_handler(ProductNotFoundError, product_not_found_handler)
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", reload=True)
-
-# create tables
-# from app.db.database import engine, Base
-
-
-# def init_db():
-#     Base.metadata.create_all(bind=engine)
-
-
-# def main():
-#     init_db()
-
-
-# if __name__ == "__main__":
-#     main()

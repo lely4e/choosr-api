@@ -28,7 +28,7 @@ class LogIn(BaseModel):
 
 
 class PollRead(BaseModel):
-    id: int
+    # id: int
     title: str
     budget: int
 

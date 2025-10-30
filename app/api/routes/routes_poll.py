@@ -29,6 +29,12 @@ async def show_poll(token, poll_manager: PollManager = Depends(get_poll_manager)
     return poll_manager.get_poll(token)
 
 
+# # get poll by user id
+# @poll_router.get("/{user_id}/polls", response_model=PollRead)
+# async def show_poll(user_id, poll_manager: PollManager = Depends(get_poll_manager)):
+#     return poll_manager.get_polls_by_user_id(user_id)
+
+
 # get all polls
 @poll_router.get("/polls", response_model=List[PollRead])
 async def read_polls(poll_manager: PollManager = Depends(get_poll_manager)):

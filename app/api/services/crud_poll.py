@@ -31,6 +31,12 @@ class PollManager:
             raise PollNotFoundError("Polls not found")
         return polls
 
+    def get_polls_by_user_id(self, user_id):
+        polls = self.db.query(Poll).filter(Poll.user_id == user_id).all()
+        if not polls:
+            raise PollNotFoundError("Polls not found")
+        return polls
+
     def get_poll(self, token):
         poll = self.db.query(Poll).filter(Poll.token == token).first()
         if not poll:

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from uuid import UUID
+from fastapi import APIRouter, Depends, Form
 
 
 class UserIn(BaseModel):
@@ -43,10 +44,18 @@ class PollResponse(PollRead):
         orm_mode = True
 
 
+# class ProductIn(BaseModel):
+#     title: str
+#     body: str
+#     price: int
+#     user_id: int
+
+#     class Config:
+#         orm_mode = True
+
+
 class ProductIn(BaseModel):
-    title: str
-    body: str
-    price: int
+    link: str  # = Form()
     user_id: int
 
     class Config:
@@ -56,7 +65,7 @@ class ProductIn(BaseModel):
 class ProductOut(BaseModel):
     title: str
     body: str
-    price: int
+    price: float
 
     class Config:
         orm_mode = True

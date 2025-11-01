@@ -1,4 +1,4 @@
-from app.api.schemas import ProductIn, ProductOut
+from app.api.schemas import ProductIn, ProductOut, ProductAddJSON
 from typing import List
 from app.api.dependencies import get_product_manager
 from fastapi import APIRouter, Depends, Form
@@ -22,7 +22,7 @@ async def show_products(
 @product_router.post("/{token}/products", response_model=ProductOut)
 async def add_product(
     token,
-    product_in: ProductIn,
+    product_in: ProductAddJSON,
     product_manager: ProductManager = Depends(get_product_manager),
 ):
     return product_manager.add_product(token, product_in)

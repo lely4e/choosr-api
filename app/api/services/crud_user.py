@@ -54,6 +54,12 @@ class UserManager:
             raise UserNotFoundError("User not found")
         return user
 
+    def get_user_by_email(self, email):
+        user = self.db.query(User).filter(User.email == email).first()
+        if not user:
+            raise UserNotFoundError("User not found")
+        return user
+
     def authenticate_user(self, email: str, password: str):
         user = self.db.query(User).filter(User.email == email).first()
         if not user:
@@ -70,14 +76,14 @@ class UserManager:
         )
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            username = payload.get("sub")
+            email = payload.get("sub")
 
-            if username is None:
+            if email is None:
                 raise credentials_exception
-            token_data = TokenData(username=username)
+            token_data = TokenData(email=email)
         except InvalidTokenError:
             raise credentials_exception
-        user = self.get_user_by_name(username=token_data.username)
+        user = self.get_user_by_email(token_data.email)
         if user is None:
             raise credentials_exception
         return user

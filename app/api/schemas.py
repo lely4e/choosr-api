@@ -44,14 +44,14 @@ class PollResponse(PollRead):
         orm_mode = True
 
 
-# class ProductIn(BaseModel):
-#     title: str
-#     body: str
-#     price: int
-#     user_id: int
+class ProductAddJSON(BaseModel):
+    title: str
+    body: str
+    price: float
+    user_id: int
 
-#     class Config:
-#         orm_mode = True
+    class Config:
+        orm_mode = True
 
 
 class ProductIn(BaseModel):
@@ -77,4 +77,4 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    username: str | None = None
+    email: str | None = None

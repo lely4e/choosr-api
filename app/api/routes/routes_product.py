@@ -1,9 +1,8 @@
 from app.api.schemas import ProductIn, ProductOut, ProductAddJSON
 from typing import List
 from app.api.dependencies import get_product_manager
-from fastapi import APIRouter, Depends, Form
+from fastapi import APIRouter, Depends
 from app.api.services.crud_product import ProductManager
-import requests
 
 
 product_router = APIRouter()

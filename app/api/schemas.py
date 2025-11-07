@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 from uuid import UUID
-from fastapi import APIRouter, Depends, Form
 
 
 class UserIn(BaseModel):
@@ -78,3 +77,8 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: str | None = None
+
+
+class Vote(BaseModel):
+    user_id: int
+    product_id: int

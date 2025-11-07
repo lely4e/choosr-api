@@ -88,14 +88,18 @@ class UserManager:
             raise credentials_exception
         return user
 
-    def update_user(self, user_id, user_in):
-        user = self.db.query(User).filter(User.id == user_id).first()
+    def update_user(self, user, user_in):
+        # user = self.db.query(User).filter(User.id == id).first()
         if not user:
             raise UserNotFoundError("User not found")
         try:
-            for k, v in user_in.dict().items():
-                setattr(user, k, v)
+            # for k, v in user.dict().items():
+            #     setattr(user, k, v)
+            # breakpoint()
+            user.username = user_in.username
+            user.email = user_in.email
             self.db.commit()
+            self.db.refresh(user)
             return user
         except SQLAlchemyError as e:
             self.db.rollback()

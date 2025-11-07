@@ -1,19 +1,20 @@
-from app.api.schemas import UserIn, UserOut, PollRead, PollResponse
+from app.api.schemas import UserIn, UserOut, PollRead, LogIn
 from typing import List
 from app.api.dependencies import get_user_manager, get_poll_manager
 from fastapi import Depends, HTTPException, status, APIRouter, Depends, Request
 from app.api.services.crud_user import UserManager
 from app.api.services.crud_poll import PollManager
 from fastapi.security import OAuth2PasswordRequestForm
-from app.api.schemas import Token, UserIn, LogIn
-from app.core.security import oauth2_scheme, create_access_token
+from app.api.schemas import Token, UserIn
+from app.core.security import create_access_token
 
 
 user_router = APIRouter()
+# user_router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 # sign up user (create new account)
-@user_router.post("/users", response_model=UserOut)
+@user_router.post("/signup", response_model=UserOut)
 async def sign_up(
     user_in: UserIn, user_manager: UserManager = Depends(get_user_manager)
 ):
@@ -52,22 +53,35 @@ async def login(user_in: LogIn, user_manager: UserManager = Depends(get_user_man
     return Token(access_token=access_token, token_type="bearer")
 
 
-@user_router.get("/me", response_model=UserOut)
+# with middleware
+@user_router.get(
+    "/me", response_model=UserOut
+)  # , dependencies=[Depends(oauth2_scheme)]
 async def read_users_me(
-    token: str = Depends(oauth2_scheme),
-    user_manager: UserManager = Depends(get_user_manager),
+    request: Request, user_manager: UserManager = Depends(get_user_manager)
 ):
-    user = user_manager.get_current_user(token=token)
-    return user
+    return user_manager.get_user_by_email(request.state.user)
 
 
-@user_router.get("/me/polls", response_model=List[PollRead])
+# before middleware
+# @user_router.get("/me", response_model=UserOut)
+# async def read_users_me(
+#     token: str = Depends(oauth2_scheme),
+#     user_manager: UserManager = Depends(get_user_manager),
+# ):
+#     user = user_manager.get_current_user(token=token)
+#     return user
+
+
+@user_router.get(
+    "/me/polls", response_model=List[PollRead]
+)  # , dependencies=[Depends(oauth2_scheme)]
 async def read_own_items(
+    request: Request,
     poll_manager: PollManager = Depends(get_poll_manager),
-    token: str = Depends(oauth2_scheme),
     user_manager: UserManager = Depends(get_user_manager),
 ):
-    user = user_manager.get_current_user(token=token)
+    user = user_manager.get_user_by_email(request.state.user)
     return poll_manager.get_polls_by_user_id(user_id=user.id)
 
 
@@ -88,14 +102,19 @@ async def read_users(user_manager: UserManager = Depends(get_user_manager)):
 
 
 # update user
-@user_router.put("/users/{user_id}", response_model=UserOut)
+@user_router.put(
+    "/me/users", response_model=UserOut
+)  # , dependencies=[Depends(oauth2_scheme)]
 async def update_user(
+    request: Request,
     user_in: UserOut,
-    user_id: int,
+    # user_id: int,
     user_manager: UserManager = Depends(get_user_manager),
 ):
-    user = user_manager.update_user(user_id, user_in)
-    return user
+
+    user = user_manager.get_user_by_email(request.state.user)
+    # breakpoint()
+    return user_manager.update_user(user, user_in)
 
 
 # delete user

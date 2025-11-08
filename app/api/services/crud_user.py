@@ -105,12 +105,12 @@ class UserManager:
             self.db.rollback()
             raise e
 
-    def delete_user(self, user_id: int):
-        user = self.db.query(User).filter(User.id == user_id).first()
+    def delete_user(self, user):
+        # user = self.db.query(User).filter(User.id == user_id).first()
         if not user:
             raise UserNotFoundError("User not found")
         try:
-            self.db.query(Poll).filter(Poll.user_id == user_id).delete()
+            # self.db.query(Poll).filter(Poll.user_id == user_id).delete()
             self.db.delete(user)
             self.db.commit()
             return user
@@ -118,10 +118,10 @@ class UserManager:
             self.db.rollback()
             raise e
 
-    def login(self, username: str, email: str, password: str):
-        try:
-            user = User(username=username, email=email, password=password)
-            return self.db.query(User).filter(User.username == user.username).first()
-        except Exception as e:
-            self.db.rollback()
-            raise Exception(f"Error login user: {e}")
+    # def login(self, username: str, email: str, password: str):
+    #     try:
+    #         user = User(username=username, email=email, password=password)
+    #         return self.db.query(User).filter(User.username == user.username).first()
+    #     except Exception as e:
+    #         self.db.rollback()
+    #         raise Exception(f"Error login user: {e}")

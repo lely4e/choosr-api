@@ -70,7 +70,6 @@ async def auth_middleware(request: Request, call_next):
     token = auth_header.split(" ")[1]
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        # attach user info to the request for later use
         request.state.user = payload.get("sub")
     except JWTError:
         return JSONResponse(
@@ -78,7 +77,6 @@ async def auth_middleware(request: Request, call_next):
             content={"detail": "Invalid token"},
         )
 
-    # proceed to the actual route
     response = await call_next(request)
     return response
 

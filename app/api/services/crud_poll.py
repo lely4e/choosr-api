@@ -10,12 +10,12 @@ class PollManager:
     def __init__(self, db: Session):
         self.db = db
 
-    def add_poll(self, user_id, poll_in):
-        user = self.db.query(User).filter(User.id == user_id).first()
+    def add_poll(self, user, poll_in):
+        # user = self.db.query(User).filter(User.id == user_id).first()
         if not user:
             raise UserNotFoundError("User not found")
         try:
-            poll = Poll(title=poll_in.title, budget=poll_in.budget, user_id=user_id)
+            poll = Poll(title=poll_in.title, budget=poll_in.budget, user_id=user.id)
             self.db.add(poll)
             self.db.commit()
             self.db.refresh(poll)
@@ -48,9 +48,12 @@ class PollManager:
         if not poll:
             raise PollNotFoundError("Poll not found")
         try:
-            for k, v in poll_in.dict().items():
-                setattr(poll, k, v)
+            # for k, v in poll_in.dict().items():
+            #     setattr(poll, k, v)
+            poll.title = poll_in.title
+            poll.budget = poll_in.budget
             self.db.commit()
+            self.db.refresh(poll)
             return poll
         except SQLAlchemyError as e:
             self.db.rollback()

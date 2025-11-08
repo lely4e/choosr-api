@@ -44,8 +44,8 @@ class Product(Base):
     __tablename__ = "products"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    title: Mapped[str] = mapped_column(String(40), index=True)
-    body: Mapped[str] = mapped_column(String)
+    title: Mapped[str] = mapped_column(String, index=True)
+    description: Mapped[str] = mapped_column(String)
     price: Mapped[float] = mapped_column(Float)
 
     # Foreign Key link to user id, poll id

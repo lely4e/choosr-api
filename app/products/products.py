@@ -1,6 +1,6 @@
 import requests
 
-# url = "https://fakestoreapi.com/products/1"
+# url = "https://fakestoreapi.com/products/2"
 
 
 def get_info(link):

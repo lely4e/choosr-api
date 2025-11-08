@@ -1,11 +1,13 @@
-from app.api.schemas import ProductIn, ProductOut, ProductAddJSON
+from app.api.schemas import ProductIn, ProductOut
 from typing import List
-from app.api.dependencies import get_product_manager
-from fastapi import APIRouter, Depends
+from app.api.dependencies import get_product_manager, get_user_manager
+from fastapi import APIRouter, Depends, Request
 from app.api.services.crud_product import ProductManager
+from app.api.services.crud_user import UserManager
+from app.core.security import oauth2_scheme
 
 
-product_router = APIRouter()
+product_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
 # get all products
@@ -17,24 +19,17 @@ async def show_products(
     return products
 
 
-# add product
+# add product link
 @product_router.post("/{token}/products", response_model=ProductOut)
 async def add_product(
-    token,
-    product_in: ProductAddJSON,
-    product_manager: ProductManager = Depends(get_product_manager),
-):
-    return product_manager.add_product(token, product_in)
-
-
-# add product link
-@product_router.post("/{token}/product", response_model=ProductOut)
-async def add_product(
+    request: Request,
     token,
     product_in: ProductIn,
     product_manager: ProductManager = Depends(get_product_manager),
+    user_manager: UserManager = Depends(get_user_manager),
 ):
-    return product_manager.add_product_link(token, product_in)
+    user = user_manager.get_user_by_email(request.state.user)
+    return product_manager.add_product_link(token, product_in, user)
 
 
 # get product

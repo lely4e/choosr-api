@@ -1,10 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from uuid import UUID
 
 
 class UserIn(BaseModel):
     username: str
-    email: str
+    email: EmailStr
     password: str
 
     class Config:
@@ -13,14 +13,14 @@ class UserIn(BaseModel):
 
 class UserOut(BaseModel):
     username: str
-    email: str
+    email: EmailStr
 
     class Config:
         orm_mode = True
 
 
 class LogIn(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
     class Config:
@@ -28,7 +28,6 @@ class LogIn(BaseModel):
 
 
 class PollRead(BaseModel):
-    # id: int
     title: str
     budget: int
 
@@ -55,7 +54,7 @@ class ProductAddJSON(BaseModel):
 
 class ProductIn(BaseModel):
     link: str  # = Form()
-    user_id: int
+    # user_id: int
 
     class Config:
         orm_mode = True
@@ -63,7 +62,7 @@ class ProductIn(BaseModel):
 
 class ProductOut(BaseModel):
     title: str
-    body: str
+    description: str
     price: float
 
     class Config:
@@ -82,3 +81,6 @@ class TokenData(BaseModel):
 class Vote(BaseModel):
     user_id: int
     product_id: int
+
+    class Config:
+        orm_mode = True

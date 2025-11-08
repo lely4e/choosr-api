@@ -3,12 +3,13 @@ from fastapi import APIRouter, Depends, Request
 from app.api.services.crud_vote import VoteManager
 from app.api.services.crud_user import UserManager
 from app.api.services.crud_product import ProductManager
+from app.core.security import oauth2_scheme
 
 
-vote_router = APIRouter()
+vote_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
-@vote_router.get("/polls/{token}/{product_id}/vote")
+@vote_router.get("/{token}/products/{product_id}/vote")
 async def get_votes(
     token,
     product_id: int,
@@ -17,15 +18,14 @@ async def get_votes(
     user_manager: UserManager = Depends(get_user_manager),
     product_manager: ProductManager = Depends(get_product_manager),
 ):
-    # user = user_manager.get_user_by_email(request.state.user)
+    user = user_manager.get_user_by_email(request.state.user)
     votes = vote_manager.get_votes_product(token, product_id)
     title = product_manager.get_product(token, product_id)
-    for line in votes:
-        return [{"product_id": line.id, "title": title.title, "votes": line.votes}]
+    return [{"product_id": votes[0][0], "title": title.title, "votes": votes[0][1]}]
 
 
 # add vote to the product
-@vote_router.post("/polls/{token}/{product_id}/vote")
+@vote_router.post("/{token}/products/{product_id}/vote")
 async def add_vote(
     token,
     product_id: int,
@@ -38,7 +38,7 @@ async def add_vote(
 
 
 # delete vote from the product
-@vote_router.delete("/polls/{token}/{product_id}/vote")
+@vote_router.delete("/{token}/products/{product_id}/vote")
 async def delete_vote(
     token,
     product_id: int,

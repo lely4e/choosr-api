@@ -1,4 +1,4 @@
-from app.db.models import Product, User, Poll, Vote
+from app.db.models import Product, Poll, Vote
 from sqlalchemy.orm import Session
 from app.core.errors import UserNotFoundError
 from sqlalchemy import func
@@ -60,31 +60,15 @@ class VoteManager:
                 .filter(Vote.user_id == user.id)
                 .first()
             )
-            # existing_vote = (
-            #     self.db.query(Vote)
-            #     .filter(Product.id == product_id)
-            #     .filter(User.id == user.id)
-            #     .first()
-            # )
 
             if existing_vote:
                 self.db.delete(existing_vote)
                 self.db.commit()
-
                 return {"message": "Vote was deleted successfully"}
 
         except Exception as e:
             self.db.rollback()
             raise Exception(f"Error adding vote: {e}")
-
-    # def get_votes_product(self, token, product_id):
-    #     votes = (
-    #         self.db.query(Product)
-    #         .filter(Product.id == product_id)
-    #         .filter(Poll.token == token)
-    #         .all()
-    #     )
-    #     return votes
 
     def get_votes_product(self, token, product_id):
         votes = (

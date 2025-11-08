@@ -11,7 +11,6 @@ class PollManager:
         self.db = db
 
     def add_poll(self, user, poll_in):
-        # user = self.db.query(User).filter(User.id == user_id).first()
         if not user:
             raise UserNotFoundError("User not found")
         try:
@@ -48,8 +47,6 @@ class PollManager:
         if not poll:
             raise PollNotFoundError("Poll not found")
         try:
-            # for k, v in poll_in.dict().items():
-            #     setattr(poll, k, v)
             poll.title = poll_in.title
             poll.budget = poll_in.budget
             self.db.commit()

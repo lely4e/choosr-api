@@ -43,6 +43,7 @@ class PollResponse(PollRead):
 
 
 class ProductAddJSON(BaseModel):
+    id: int
     title: str
     body: str
     price: float
@@ -61,6 +62,7 @@ class ProductIn(BaseModel):
 
 
 class ProductOut(BaseModel):
+    id: int
     title: str
     description: str
     price: float
@@ -75,7 +77,7 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    email: str | None = None
+    email: EmailStr | None = None
 
 
 class Vote(BaseModel):

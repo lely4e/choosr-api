@@ -55,7 +55,7 @@ class Product(Base):
     # Relationship to the user and poll
     user: Mapped["User"] = relationship("User", back_populates="products")
     poll: Mapped["Poll"] = relationship("Poll", back_populates="products")
-    votes: Mapped["Vote"] = relationship("Vote", back_populates="product")
+    votes: Mapped[list["Vote"]] = relationship("Vote", back_populates="product")
 
 
 class Vote(Base):

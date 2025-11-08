@@ -1,6 +1,6 @@
 from app.db.models import Product, Poll, Vote
 from sqlalchemy.orm import Session
-from app.core.errors import UserNotFoundError
+from app.core.errors import UserNotFoundError, ProductNotFoundError
 from sqlalchemy import func
 
 
@@ -72,11 +72,36 @@ class VoteManager:
 
     def get_votes_product(self, token, product_id):
         votes = (
-            self.db.query(Product.id, func.count(Vote.user_id).label("votes"))
-            .join(Vote, Vote.product_id == Product.id)
+            self.db.query(
+                Product.id,
+                Product.title,
+                Product.description,
+                Product.price,
+                func.count(Vote.user_id).label("votes"),
+            )
+            .outerjoin(Vote, Vote.product_id == Product.id)
             .join(Poll, Poll.id == Product.poll_id)
             .filter(Poll.token == token)
-            .filter(Product.id == product_id)
+            .where(Product.id == product_id)
+            .group_by(Product.id)
+            .first()
+        )
+        if not votes:
+            raise ProductNotFoundError("Product not found")
+        return votes
+
+    def get_products_with_votes(self, token):
+        votes = (
+            self.db.query(
+                Product.id,
+                Product.title,
+                Product.description,
+                Product.price,
+                func.count(Vote.user_id).label("votes"),
+            )
+            .outerjoin(Vote, Vote.product_id == Product.id)
+            .join(Poll, Poll.id == Product.poll_id)
+            .filter(Poll.token == token)
             .group_by(Product.id)
             .all()
         )

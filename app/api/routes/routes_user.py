@@ -10,14 +10,14 @@ from app.core.security import oauth2_scheme
 user_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
-@user_router.get("/me", response_model=UserOut)
+@user_router.get("", response_model=UserOut)
 async def read_users_me(
     request: Request, user_manager: UserManager = Depends(get_user_manager)
 ):
     return user_manager.get_user_by_email(request.state.user)
 
 
-@user_router.get("/me/polls", response_model=List[PollRead])
+@user_router.get("/polls", response_model=List[PollRead])
 async def read_own_items(
     request: Request,
     poll_manager: PollManager = Depends(get_poll_manager),
@@ -28,9 +28,7 @@ async def read_own_items(
 
 
 # update user
-@user_router.put(
-    "/me", response_model=UserOut, dependencies=[Depends(oauth2_scheme)]
-)  #
+@user_router.put("", response_model=UserOut, dependencies=[Depends(oauth2_scheme)])  #
 async def update_user(
     request: Request,
     user_in: UserOut,
@@ -41,9 +39,7 @@ async def update_user(
 
 
 # delete user
-@user_router.delete(
-    "/me", response_model=UserOut, dependencies=[Depends(oauth2_scheme)]
-)
+@user_router.delete("", response_model=UserOut, dependencies=[Depends(oauth2_scheme)])
 async def delete_user(
     request: Request,
     user_manager: UserManager = Depends(get_user_manager),

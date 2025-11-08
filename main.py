@@ -24,6 +24,10 @@ from app.core.errors import (
     product_not_found_handler,
 )
 from app.core.errors import (
+    VoteNotFoundError,
+    vote_not_found_handler,
+)
+from app.core.errors import (
     UserAlreadyExistsError,
     user_exists_handler,
 )
@@ -45,6 +49,7 @@ app.add_exception_handler(PollNotFoundError, poll_not_found_handler)
 app.add_exception_handler(UserAlreadyExistsError, user_exists_handler)
 app.add_exception_handler(DataError, data_error_handler)
 app.add_exception_handler(ProductNotFoundError, product_not_found_handler)
+app.add_exception_handler(VoteNotFoundError, vote_not_found_handler)
 
 
 @app.middleware("http")

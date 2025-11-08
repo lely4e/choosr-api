@@ -89,13 +89,9 @@ class UserManager:
         return user
 
     def update_user(self, user, user_in):
-        # user = self.db.query(User).filter(User.id == id).first()
         if not user:
             raise UserNotFoundError("User not found")
         try:
-            # for k, v in user.dict().items():
-            #     setattr(user, k, v)
-            # breakpoint()
             user.username = user_in.username
             user.email = user_in.email
             self.db.commit()
@@ -106,22 +102,12 @@ class UserManager:
             raise e
 
     def delete_user(self, user):
-        # user = self.db.query(User).filter(User.id == user_id).first()
         if not user:
             raise UserNotFoundError("User not found")
         try:
-            # self.db.query(Poll).filter(Poll.user_id == user_id).delete()
             self.db.delete(user)
             self.db.commit()
             return user
         except SQLAlchemyError as e:
             self.db.rollback()
             raise e
-
-    # def login(self, username: str, email: str, password: str):
-    #     try:
-    #         user = User(username=username, email=email, password=password)
-    #         return self.db.query(User).filter(User.username == user.username).first()
-    #     except Exception as e:
-    #         self.db.rollback()
-    #         raise Exception(f"Error login user: {e}")

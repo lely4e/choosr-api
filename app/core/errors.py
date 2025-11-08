@@ -80,3 +80,15 @@ class ProductNotFoundError(Exception):
 
 async def product_not_found_handler(request: Request, exc: ProductNotFoundError):
     return JSONResponse(status_code=404, content={"error": exc.message})
+
+
+class VoteNotFoundError(Exception):
+    """Custom exception if user not found."""
+
+    def __init__(self, message="Vote not found"):
+        self.message = message
+        super().__init__(self.message)
+
+
+async def vote_not_found_handler(request: Request, exc: UserNotFoundError):
+    return JSONResponse(status_code=404, content={"error": exc.message})

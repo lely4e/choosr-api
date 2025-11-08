@@ -1,8 +1,9 @@
 from app.api.schemas import ProductIn, ProductOut
 from typing import List
-from app.api.dependencies import get_product_manager, get_user_manager
+from app.api.dependencies import get_product_manager, get_user_manager, get_vote_manager
 from fastapi import APIRouter, Depends, Request
 from app.api.services.crud_product import ProductManager
+from app.api.services.crud_vote import VoteManager
 from app.api.services.crud_user import UserManager
 from app.core.security import oauth2_scheme
 
@@ -11,16 +12,20 @@ product_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
 # get all products
-@product_router.get("/{token}/products", response_model=List[ProductOut])
-async def show_products(
-    token, product_manager: ProductManager = Depends(get_product_manager)
+@product_router.get("/products")
+async def get_products(
+    token,
+    request: Request,
+    vote_manager: VoteManager = Depends(get_vote_manager),
+    user_manager: UserManager = Depends(get_user_manager),
 ):
-    products = product_manager.get_products(token)
-    return products
+    user = user_manager.get_user_by_email(request.state.user)
+    votes = vote_manager.get_products_with_votes(token)
+    return [dict(row._mapping) for row in votes]
 
 
 # add product link
-@product_router.post("/{token}/products", response_model=ProductOut)
+@product_router.post("/products", response_model=ProductOut)
 async def add_product(
     request: Request,
     token,
@@ -33,7 +38,7 @@ async def add_product(
 
 
 # get product
-@product_router.get("/{token}/products/{product_id}", response_model=ProductOut)
+@product_router.get("/products/{product_id}", response_model=ProductOut)
 async def read_product(
     token, product_id, product_manager: ProductManager = Depends(get_product_manager)
 ):
@@ -42,7 +47,7 @@ async def read_product(
 
 
 # delete product
-@product_router.delete("/{token}/products/{product_id}")
+@product_router.delete("/products/{product_id}")
 async def delete_product(
     token, product_id, product_manager: ProductManager = Depends(get_product_manager)
 ):

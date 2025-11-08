@@ -11,7 +11,7 @@ poll_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
 # get all polls
-@poll_router.get("/polls", response_model=List[PollRead])
+@poll_router.get("/polls", response_model=List[PollResponse])
 async def read_polls(poll_manager: PollManager = Depends(get_poll_manager)):
     return poll_manager.get_polls()
 

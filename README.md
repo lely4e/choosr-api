@@ -92,7 +92,7 @@ bcrypt==5.0.0
 argon2-cffi==25.1.0
 requests==2.32.5
 ```
-# requirements.txt #
+
 * JWT / Authentication: python-jose and bcrypt cover password hashing and token encoding/decoding.
 * FastAPI / ASGI server: fastapi + uvicorn
 * Database: SQLAlchemy + psycopg2 (PostgreSQL driver)

@@ -75,3 +75,27 @@ choosr_API_project/
 ├── README.md                 # project documentation
 └── requirements.txt          # requirements
 ```
+# 📌 Dependencies
+
+```
+fastapi==0.118.0
+uvicorn==0.37.0
+SQLAlchemy==2.0.44
+psycopg2==2.9.11
+python-dotenv==1.1.1
+python-jose==3.5.0
+pydantic-settings==2.11.0
+pydantic==2.11.10
+python-multipart==0.0.20
+email-validator==2.3.0
+bcrypt==5.0.0
+argon2-cffi==25.1.0
+requests==2.32.5
+```
+* requirements.txt *
+* JWT / Authentication: python-jose and bcrypt cover password hashing and token encoding/decoding.
+* FastAPI / ASGI server: fastapi + uvicorn
+* Database: SQLAlchemy + psycopg2 (PostgreSQL driver)
+* Environment variables: python-dotenv
+* Form / File uploads: python-multipart
+* Email validation: email-validator

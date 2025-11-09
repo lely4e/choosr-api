@@ -1,7 +1,8 @@
-from .services.crud_user import UserManager
-from .services.crud_poll import PollManager
-from .services.crud_product import ProductManager
-from .services.crud_vote import VoteManager
+from .services.user_manager import UserManager
+from .services.poll_manager import PollManager
+from .services.product_manager import ProductManager
+from .services.vote_manager import VoteManager
+from .services.comment_manager import CommentManager
 from app.db.database import get_db
 from sqlalchemy.orm import Session
 from fastapi import Depends
@@ -21,3 +22,7 @@ def get_product_manager(db: Session = Depends(get_db)) -> ProductManager:
 
 def get_vote_manager(db: Session = Depends(get_db)) -> VoteManager:
     return VoteManager(db)
+
+
+def get_comment_manager(db: Session = Depends(get_db)) -> CommentManager:
+    return CommentManager(db)

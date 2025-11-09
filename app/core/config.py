@@ -7,7 +7,7 @@ class Settings(BaseSettings):
         env_file=find_dotenv(),
         env_file_encoding="utf-8",
     )
-
+    PROJECT_NAME: str = "Choosr API"
     DB_HOST: str
     DB_PORT: str
     DB_USER: str

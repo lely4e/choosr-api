@@ -7,7 +7,7 @@ from app.core.config import settings
 # to get a string like this: openssl rand -hex 32
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 130
 
 password_hash = PasswordHash.recommended()
 

@@ -2,7 +2,7 @@ from app.db.models import Product, Poll
 from sqlalchemy.orm import Session
 from app.core.errors import UserNotFoundError, ProductNotFoundError, PollNotFoundError
 from sqlalchemy.exc import SQLAlchemyError
-from app.products.products import get_info
+from app.utils.products import get_info
 
 
 class ProductManager:

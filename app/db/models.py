@@ -19,6 +19,7 @@ class User(Base):
     )
     products: Mapped[list["Product"]] = relationship("Product", back_populates="user")
     votes: Mapped[list["Vote"]] = relationship("Vote", back_populates="user")
+    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="user")
 
 
 class Poll(Base):
@@ -56,6 +57,9 @@ class Product(Base):
     user: Mapped["User"] = relationship("User", back_populates="products")
     poll: Mapped["Poll"] = relationship("Poll", back_populates="products")
     votes: Mapped[list["Vote"]] = relationship("Vote", back_populates="product")
+    comments: Mapped[list["Comment"]] = relationship(
+        "Comment", back_populates="product"
+    )
 
 
 class Vote(Base):
@@ -70,3 +74,18 @@ class Vote(Base):
     # Relationship to the user and product
     user: Mapped["User"] = relationship("User", back_populates="votes")
     product: Mapped["Product"] = relationship("Product", back_populates="votes")
+
+
+class Comment(Base):
+    __tablename__ = "comments"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    text: Mapped[str] = mapped_column(String(200), index=True)
+
+    # Foreign Key link to user id, product id
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    product_id: Mapped[int] = mapped_column(ForeignKey("products.id"))
+
+    # Relationship to the user and product
+    user: Mapped["User"] = relationship("User", back_populates="comments")
+    product: Mapped["Product"] = relationship("Product", back_populates="comments")

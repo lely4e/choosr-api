@@ -4,6 +4,7 @@ from app.api import router
 from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.responses import JSONResponse
 from jose import JWTError, jwt
+from app.core.config import settings
 from fastapi.exceptions import RequestValidationError, HTTPException
 from app.core.security import SECRET_KEY, ALGORITHM
 from app.core.errors import (
@@ -11,32 +12,19 @@ from app.core.errors import (
     http_exception_handler,
     exception_handler,
 )
-from app.core.errors import (
-    UserNotFoundError,
-    user_not_found_handler,
-)
-from app.core.errors import (
-    PollNotFoundError,
-    poll_not_found_handler,
-)
-from app.core.errors import (
-    ProductNotFoundError,
-    product_not_found_handler,
-)
-from app.core.errors import (
-    VoteNotFoundError,
-    vote_not_found_handler,
-)
-from app.core.errors import (
-    UserAlreadyExistsError,
-    user_exists_handler,
-)
-from app.core.errors import (
-    DataError,
-    data_error_handler,
-)
+from app.core.errors import UserNotFoundError, user_not_found_handler
+from app.core.errors import PollNotFoundError, poll_not_found_handler
+from app.core.errors import ProductNotFoundError, product_not_found_handler
+from app.core.errors import VoteNotFoundError, vote_not_found_handler
+from app.core.errors import CommentsNotFoundError, comments_not_found_handler
+from app.core.errors import UserAlreadyExistsError, user_exists_handler
+from app.core.errors import DataError, data_error_handler
 
-app = FastAPI()
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    version="0.0.1",
+    contact={"name": "Olga Chirkova"},
+)
 
 
 app.include_router(router)
@@ -50,6 +38,7 @@ app.add_exception_handler(UserAlreadyExistsError, user_exists_handler)
 app.add_exception_handler(DataError, data_error_handler)
 app.add_exception_handler(ProductNotFoundError, product_not_found_handler)
 app.add_exception_handler(VoteNotFoundError, vote_not_found_handler)
+app.add_exception_handler(CommentsNotFoundError, comments_not_found_handler)
 
 
 @app.middleware("http")

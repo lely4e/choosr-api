@@ -90,5 +90,17 @@ class VoteNotFoundError(Exception):
         super().__init__(self.message)
 
 
-async def vote_not_found_handler(request: Request, exc: UserNotFoundError):
+async def vote_not_found_handler(request: Request, exc: VoteNotFoundError):
+    return JSONResponse(status_code=404, content={"error": exc.message})
+
+
+class CommentsNotFoundError(Exception):
+    """Custom exception if user not found."""
+
+    def __init__(self, message="Vote not found"):
+        self.message = message
+        super().__init__(self.message)
+
+
+async def comments_not_found_handler(request: Request, exc: CommentsNotFoundError):
     return JSONResponse(status_code=404, content={"error": exc.message})

@@ -1,7 +1,7 @@
-# 🎈 Choosr API - FastAPI Backend for Polling and Voting
+## 🎈 Choosr API - FastAPI Backend for Polling and Voting
 A FastAPI backend for creating collaborative polls and event-based voting. Users can share event links, add products, and vote on their favorites, making group decision-making simple and interactive. Features JWT authentication, PostgreSQL with SQLAlchemy ORM, clean architecture, and full CRUD support—perfect for event planning, group shopping, and collaborative voting apps.
 
-# 🔐 Authentication & Access Control
+## 🔐 Authentication & Access Control
 The app uses JWT (JSON Web Token) authentication to secure all endpoints. Only registered users can access the application, create polls, add items, or vote.
 * Users must register and log in to receive a JWT token.
 * The token must be included in the Authorization header for every request:
@@ -10,10 +10,8 @@ Authorization: Bearer <your_token_here>
 ```
 * Access to endpoints is controlled via FastAPI middleware and dependency injection, ensuring that unauthenticated users cannot interact with the app.
 
-This guarantees that all polls, votes, and product additions are protected and tied to registered accounts, making the app secure and reliable for collaborative decision-making.
 
-
-# ⭐️ Features
+## ⭐️ Features
 * User authentication using JWT tokens
 * Create, read, update, and delete polls
 * Share polls with participants via unique links
@@ -22,7 +20,7 @@ This guarantees that all polls, votes, and product additions are protected and t
 * PostgreSQL database with SQLAlchemy ORM
 * Structured with clean architecture and modular FastAPI routers
 
-# ⚙️ Requirements
+## ⚙️ Requirements
 * Python 3.11+
 * PostgreSQL 12+
 * [Poetry or pip] for dependency management (optional)
@@ -41,41 +39,41 @@ DB_NAME=DB_NAME
 ```
 ⚠️ Never commit your .env file to GitHub.
 
-# 🌳 Project Structure
+## 🌳 Project Structure
 ```
 choosr_API_project/
-│
-├── app/
-│   ├── __init__.py
-│   │            
-│   ├── api/                  # routers (endpoints)
-│   │   ├── __init__.py       # all routers
-│   │   ├── routes/           # routes 
-│   │   ├── services/         # CRUD
-│   │   ├── dependencies.py   # dependencies
-│   │   └── schemas.py        # pydantic schema
+│                                   ├── __init__.py
+├── app/                            ├── auth.py
+│   ├── __init__.py                 ├── comments.py
+│   │                               ├── poll.py
+│   ├── api/                        ├── product.py
+│   │   ├── __init__.py             ├── user.py
+│   │   ├── routes/ ─────────────────── vote.py
+│   │   ├── services/ ───────────────── __init__.py       
+│   │   ├── dependencies.py         ├── comment_manager.py
+│   │   └── schemas.py              ├── poll_manager.py
+│   │                               ├── product_manager.py
+│   ├── core/                       ├── user_manager.py
+│   │   ├── __init__.py             ├── vote_manager.py 
+│   │   ├── config.py             
+│   │   ├── errors.py         
+│   │   └── security.py       
 │   │ 
-│   ├── core/                 # core logic & configuration
+│   ├── db/                   
 │   │   ├── __init__.py
-│   │   ├── config.py         # pydantic settings
-│   │   ├── errors.py         # custom errors
-│   │   └── security.py       # authentification
+│   │   ├── database.py       
+│   │   └── models.py         
 │   │ 
-│   ├── db/                   # database-related files
-│   │   ├── __init__.py
-│   │   ├── database.py       # Base = declarative_base()
-│   │   └── models.py         # DB models
-│   │ 
-│   └── utils/                # products API
+│   └── utils/               
 │
-├── .env                      # environment variables (not in git)
-├── .gitignore                # gitignore
-├── create_tables.py          # creating tables
-├── main.py                   # main func
-├── README.md                 # project documentation
-└── requirements.txt          # requirements
+├── .env                      
+├── .gitignore               
+├── create_tables.py    
+├── main.py       
+├── README.md                 
+└── requirements.txt 
 ```
-# 📌 Dependencies
+## 📌 Dependencies
 
 ```
 fastapi==0.118.0

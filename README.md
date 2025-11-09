@@ -1,3 +1,37 @@
+# 🎈 Choosr API - FastAPI Backend for Polling and Voting
+A FastAPI backend for creating collaborative polls and event-based voting. Users can share event links, add products, and vote on their favorites, making group decision-making simple and interactive. Features JWT authentication, PostgreSQL with SQLAlchemy ORM, clean architecture, and full CRUD support—perfect for event planning, group shopping, and collaborative voting apps.
+
+
+# ⭐️ Features
+* User authentication using JWT tokens
+* Create, read, update, and delete polls
+* Share polls with participants via unique links
+* Add products to polls and vote on favorites
+* Collaborative, interactive group decision-making
+* PostgreSQL database with SQLAlchemy ORM
+* Structured with clean architecture and modular FastAPI routers
+
+# ⚙️ Requirements
+* Python 3.11+
+* PostgreSQL 12+
+* [Poetry or pip] for dependency management (optional)
+* Install the dependencies with pip:
+```
+pip install -r requirements.txt
+```
+* Create an .env file in the project root:
+```
+SECRET_KEY=SECRET_KEY
+DB_HOST=DB_HOST
+DB_PORT=DB_PORT
+DB_USER=DB_USER
+DB_PASS=DB_PASS
+DB_NAME=DB_NAME
+```
+⚠️ Never commit your .env file to GitHub.
+
+# 🌳 Project Structure
+```
 choosr_API_project/
 │
 ├── app/
@@ -8,17 +42,17 @@ choosr_API_project/
 │   │   ├── routes/           # routes 
 │   │   ├── services/         # CRUD
 │   │   ├── dependencies.py   # dependencies
-│   │   └── schemas.py        # Pydantic schema
+│   │   └── schemas.py        # pydantic schema
 │   │ 
 │   ├── core/                 # core logic & configuration
 │   │   ├── __init__.py
-│   │   ├── config.py         # Pydantic Settings
-│   │   ├── errors.py         # Custom Errors
-│   │   └── security.py       # Authentification
+│   │   ├── config.py         # pydantic settings
+│   │   ├── errors.py         # custom errors
+│   │   └── security.py       # authentification
 │   │ 
 │   ├── db/                   # database-related files
 │   │   ├── __init__.py
-│   │   ├── database.py       # Base = declarative_base(), create_engine(), SessionLocal
+│   │   ├── database.py       # Base = declarative_base()
 │   │   └── models.py         # DB models
 │   │ 
 │   └── utils/                # products API
@@ -29,4 +63,4 @@ choosr_API_project/
 ├── main.py                   # main func
 ├── README.md                 # project documentation
 └── requirements.txt          # requirements
-
+```

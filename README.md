@@ -1,5 +1,5 @@
 ## 🎈 Choosr API - FastAPI Backend for Polling and Voting
-A FastAPI backend for creating collaborative polls and event-based voting. Users can share event links, add products, and vote on their favorites, making group decision-making simple and interactive. Features JWT authentication, PostgreSQL with SQLAlchemy ORM, clean architecture, and full CRUD support—perfect for event planning, group shopping, and collaborative voting apps.
+A FastAPI backend for creating collaborative polls and event-based voting. Users can share event links, add products using search Amazon API, and vote on their favorites, making group decision-making simple and interactive. Features JWT authentication, PostgreSQL with SQLAlchemy ORM, clean architecture, and full CRUD support—perfect for event planning, group shopping, and collaborative voting apps.
 
 ## 🔐 Authentication & Access Control
 The app uses JWT (JSON Web Token) authentication to secure all endpoints. Only registered users can access the application, create polls, add items, or vote.
@@ -13,7 +13,7 @@ Authorization: Bearer <your_token_here>
 
 ## ⭐️ Features
 * User authentication using JWT tokens
-* Create, read, update, and delete polls
+* Full CRUD functionality
 * Share polls with participants via unique links
 * Add products to polls and vote on favorites
 * Collaborative, interactive group decision-making
@@ -23,7 +23,6 @@ Authorization: Bearer <your_token_here>
 ## ⚙️ Requirements
 * Python 3.11+
 * PostgreSQL 12+
-* [Poetry or pip] for dependency management (optional)
 * Install the dependencies with pip:
 ```
 pip install -r requirements.txt
@@ -95,5 +94,4 @@ requests==2.32.5
 * FastAPI / ASGI server: fastapi + uvicorn
 * Database: SQLAlchemy + psycopg2 (PostgreSQL driver)
 * Environment variables: python-dotenv
-* Form / File uploads: python-multipart
 * Email validation: email-validator

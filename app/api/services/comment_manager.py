@@ -46,7 +46,7 @@ class CommentManager:
             .join(user_alias, Comment.user_id == user_alias.id)
             .join(product_alias, Comment.product_id == product_alias.id)
             .filter(Comment.product_id == product_id)
-            .filter(Comment.user_id == user.id)
+            # .filter(Comment.user_id == user.id)
             .filter(Poll.token == token)
             .all()
         )
@@ -67,7 +67,7 @@ class CommentManager:
             .join(user_alias, Comment.user_id == user_alias.id)
             .join(product_alias, Comment.product_id == product_alias.id)
             .filter(Comment.product_id == product_id)
-            .filter(Comment.user_id == user.id)
+            # .filter(Comment.user_id == user.id)
             .filter(Poll.token == token)
             .where(Comment.id == comment_id)
             .first()
@@ -99,6 +99,9 @@ class CommentManager:
                 self.db.delete(comment)
                 self.db.commit()
                 return {"message": "Comment was deleted successfully"}
+
+            else:
+                raise CommentsNotFoundError()
 
         except Exception as e:
             self.db.rollback()

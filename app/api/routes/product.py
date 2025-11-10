@@ -1,4 +1,4 @@
-from app.api.schemas import ProductIn, ProductOut
+from app.api.schemas import ProductIn, ProductOut, ProductAddJSON, ProductProduct
 from typing import List
 from app.api.dependencies import get_product_manager, get_user_manager, get_vote_manager
 from fastapi import APIRouter, Depends, Request
@@ -6,6 +6,7 @@ from app.api.services.product_manager import ProductManager
 from app.api.services.vote_manager import VoteManager
 from app.api.services.user_manager import UserManager
 from app.core.security import oauth2_scheme
+from app.utils.products import get_items, get_items_test
 
 
 product_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
@@ -24,21 +25,48 @@ async def get_products(
     return [dict(row._mapping) for row in votes]
 
 
-# add product link
-@product_router.post("/products", response_model=ProductOut)
+# get products from Amazon API by searching
+@product_router.get("/products/search")
+async def read_products_query(search: str):
+    products = get_items_test(search)
+    return products
+
+
+# add product as JSON
+@product_router.post("/products/search", response_model=ProductProduct)
 async def add_product(
-    request: Request,
     token,
-    product_in: ProductIn,
+    request: Request,
+    product_in: ProductAddJSON,
     product_manager: ProductManager = Depends(get_product_manager),
     user_manager: UserManager = Depends(get_user_manager),
 ):
     user = user_manager.get_user_by_email(request.state.user)
-    return product_manager.add_product_link(token, product_in, user)
+    return product_manager.add_product(token, product_in, user)
+
+
+# # add product as a link
+# @product_router.post("/products", response_model=ProductOut)
+# async def add_product(
+#     request: Request,
+#     token,
+#     product_in: ProductIn,
+#     product_manager: ProductManager = Depends(get_product_manager),
+#     user_manager: UserManager = Depends(get_user_manager),
+# ):
+#     user = user_manager.get_user_by_email(request.state.user)
+#     return product_manager.add_product_link(token, product_in, user)
+
+
+# # get products from Amazon API
+# @product_router.get("/products/search")
+# async def read_products():
+#     products = get_items()
+#     return products
 
 
 # get product
-@product_router.get("/products/{product_id}", response_model=ProductOut)
+@product_router.get("/products/{product_id}", response_model=ProductProduct)
 async def read_product(
     token, product_id, product_manager: ProductManager = Depends(get_product_manager)
 ):
@@ -49,7 +77,12 @@ async def read_product(
 # delete product
 @product_router.delete("/products/{product_id}")
 async def delete_product(
-    token, product_id, product_manager: ProductManager = Depends(get_product_manager)
+    request: Request,
+    token,
+    product_id,
+    product_manager: ProductManager = Depends(get_product_manager),
+    user_manager: UserManager = Depends(get_user_manager),
 ):
-    product_manager.delete_product(token, product_id)
+    user = user_manager.get_user_by_email(request.state.user)
+    product_manager.delete_product(token, product_id, user)
     return {"message": "Product was deleted successfully"}

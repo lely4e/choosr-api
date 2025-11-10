@@ -95,7 +95,9 @@ class VoteManager:
             self.db.query(
                 Product.id,
                 Product.title,
-                Product.description,
+                Product.link,
+                Product.image,
+                Product.rating,
                 Product.price,
                 func.count(Vote.user_id).label("votes"),
             )

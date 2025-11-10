@@ -15,8 +15,8 @@ class User(Base):
 
     # One-to-many relationship: a user can have many polls, products, votes
     polls: Mapped[list["Poll"]] = relationship(
-        "Poll", back_populates="user", cascade="all, delete-orphan"
-    )
+        "Poll", back_populates="user"
+    )  # , cascade="all, delete-orphan"
     products: Mapped[list["Product"]] = relationship("Product", back_populates="user")
     votes: Mapped[list["Vote"]] = relationship("Vote", back_populates="user")
     comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="user")
@@ -46,7 +46,9 @@ class Product(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String, index=True)
-    description: Mapped[str] = mapped_column(String)
+    link: Mapped[str] = mapped_column(String)
+    image: Mapped[str] = mapped_column(String)
+    rating: Mapped[str] = mapped_column(Float)
     price: Mapped[float] = mapped_column(Float)
 
     # Foreign Key link to user id, poll id
@@ -56,9 +58,11 @@ class Product(Base):
     # Relationship to the user and poll
     user: Mapped["User"] = relationship("User", back_populates="products")
     poll: Mapped["Poll"] = relationship("Poll", back_populates="products")
-    votes: Mapped[list["Vote"]] = relationship("Vote", back_populates="product")
+    votes: Mapped[list["Vote"]] = relationship(
+        "Vote", back_populates="product", cascade="all, delete-orphan"
+    )
     comments: Mapped[list["Comment"]] = relationship(
-        "Comment", back_populates="product"
+        "Comment", back_populates="product", cascade="all, delete-orphan"
     )
 
 

@@ -43,11 +43,13 @@ class PollResponse(PollRead):
 
 
 class ProductAddJSON(BaseModel):
-    id: int
+    # id: int
     title: str
-    body: str
+    link: str
+    image: str
+    rating: float
     price: float
-    user_id: int
+    # user_id: int
 
     class Config:
         orm_mode = True
@@ -65,6 +67,18 @@ class ProductOut(BaseModel):
     id: int
     title: str
     description: str
+    price: float
+
+    class Config:
+        orm_mode = True
+
+
+class ProductProduct(BaseModel):
+    id: int
+    title: str
+    link: str
+    image: str
+    rating: float
     price: float
 
     class Config:

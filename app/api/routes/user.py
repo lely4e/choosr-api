@@ -1,4 +1,4 @@
-from app.api.schemas import UserOut, PollRead
+from app.api.schemas import UserOut, PollRead, PollResponse
 from typing import List
 from app.api.dependencies import get_user_manager, get_poll_manager
 from fastapi import Depends, APIRouter, Depends, Request
@@ -17,7 +17,7 @@ async def read_users_me(
     return user_manager.get_user_by_email(request.state.user)
 
 
-@user_router.get("/polls", response_model=List[PollRead])
+@user_router.get("/polls", response_model=List[PollResponse])
 async def read_own_items(
     request: Request,
     poll_manager: PollManager = Depends(get_poll_manager),

@@ -3,6 +3,8 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError, HTTPException
 from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 from sqlalchemy.exc import DataError
+import psycopg2
+from sqlalchemy.exc import IntegrityError
 
 
 # Pydantic validation errors (422)
@@ -32,6 +34,18 @@ async def exception_handler(request: Request, exc: Exception):
 # Data Error Handler
 async def data_error_handler(request, exc: DataError):
     return JSONResponse(status_code=400, content={"error": "Invalid poll token format"})
+
+
+async def integrity_error_handler(request: Request, exc: IntegrityError):
+    if isinstance(exc.orig, psycopg2.errors.NotNullViolation):
+        return JSONResponse(
+            status_code=400,
+            content={"detail": "Missing required field (NOT NULL violation)"},
+        )
+    return JSONResponse(
+        status_code=400,
+        content={"detail": "Database integrity error"},
+    )
 
 
 class UserNotFoundError(Exception):
@@ -97,7 +111,7 @@ async def vote_not_found_handler(request: Request, exc: VoteNotFoundError):
 class CommentsNotFoundError(Exception):
     """Custom exception if user not found."""
 
-    def __init__(self, message="Vote not found"):
+    def __init__(self, message="Comment not found"):
         self.message = message
         super().__init__(self.message)
 

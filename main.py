@@ -20,6 +20,7 @@ from app.core.errors import CommentsNotFoundError, comments_not_found_handler
 from app.core.errors import UserAlreadyExistsError, user_exists_handler
 from app.core.errors import DataError, data_error_handler
 from app.core.errors import IntegrityError, integrity_error_handler
+from app.db.database import engine, Base
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -74,6 +75,8 @@ async def auth_middleware(request: Request, call_next):
     response = await call_next(request)
     return response
 
+
+Base.metadata.create_all(bind=engine)
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", reload=True)

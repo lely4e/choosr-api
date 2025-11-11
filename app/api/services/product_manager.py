@@ -4,19 +4,14 @@ from app.core.errors import (
     UserNotFoundError,
     ProductNotFoundError,
     PollNotFoundError,
-    DataError,
-    IntegrityError,
-    HTTPException,
 )
 from sqlalchemy.exc import SQLAlchemyError
-from app.utils.products import get_info
 
 
 class ProductManager:
     def __init__(self, db: Session):
         self.db = db
 
-    # title, description, price
     def add_product(self, token, product_in, user):
         poll = self.db.query(Poll).filter(Poll.token == token).first()
         if not user or not poll:
@@ -39,50 +34,6 @@ class ProductManager:
         except Exception as e:
             self.db.rollback()
             raise Exception(f"Error adding product: {e}")
-
-    # # title, description, price
-    # def add_product(self, token, product_in, user):
-    #     poll = self.db.query(Poll).filter(Poll.token == token).first()
-    #     if not user or not poll:
-    #         raise UserNotFoundError("User or poll not found")
-    #     try:
-    #         product = Product(
-    #             title=product_in.title,
-    #             description=product_in.description,
-    #             price=product_in.price,
-    #             user_id=user.id,
-    #             poll_id=poll.id,
-    #         )
-    #         self.db.add(product)
-    #         self.db.commit()
-    #         self.db.refresh(product)
-    #         return product
-
-    #     except Exception as e:
-    #         self.db.rollback()
-    #         raise Exception(f"Error adding product: {e}")
-
-    # def add_product_link(self, token, product_in, user):
-    #     poll = self.db.query(Poll).filter(Poll.token == token).first()
-    #     if not poll:
-    #         raise UserNotFoundError("User or poll not found")
-    #     try:
-    #         title, description, price = get_info(product_in.link)
-    #         product = Product(
-    #             title=title,
-    #             description=description,
-    #             price=price,
-    #             user_id=user.id,
-    #             poll_id=poll.id,
-    #         )
-    #         self.db.add(product)
-    #         self.db.commit()
-    #         self.db.refresh(product)
-    #         return product
-
-    #     except Exception as e:
-    #         self.db.rollback()
-    #         raise Exception(f"Error adding product: {e}")
 
     def get_products(self, token):
         poll = self.db.query(Poll).filter(Poll.token == token).first()

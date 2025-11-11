@@ -97,7 +97,7 @@ async def product_not_found_handler(request: Request, exc: ProductNotFoundError)
 
 
 class VoteNotFoundError(Exception):
-    """Custom exception if user not found."""
+    """Custom exception if vote not found."""
 
     def __init__(self, message="Vote not found"):
         self.message = message
@@ -109,7 +109,7 @@ async def vote_not_found_handler(request: Request, exc: VoteNotFoundError):
 
 
 class CommentsNotFoundError(Exception):
-    """Custom exception if user not found."""
+    """Custom exception if comment not found."""
 
     def __init__(self, message="Comment not found"):
         self.message = message

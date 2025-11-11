@@ -1,4 +1,4 @@
-from app.db.models import User, Poll
+from app.db.models import User
 from sqlalchemy.orm import Session
 from app.core.errors import UserNotFoundError, UserAlreadyExistsError
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError

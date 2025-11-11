@@ -1,6 +1,6 @@
 from app.db.models import Product, Poll, Vote, Comment
 from sqlalchemy.orm import Session
-from app.core.errors import UserNotFoundError, ProductNotFoundError
+from app.core.errors import UserNotFoundError, ProductNotFoundError, VoteNotFoundError
 from sqlalchemy import func
 
 
@@ -10,9 +10,20 @@ class VoteManager:
 
     def add_vote(self, token, product_id, user):
         product = (
-            self.db.query(Product)
-            .filter(Product.id == product_id)
+            self.db.query(
+                Product.id,
+                Product.title,
+                Product.link,
+                Product.image,
+                Product.rating,
+                Product.price,
+                func.count(Vote.user_id).label("votes"),
+            )
+            .outerjoin(Vote, Vote.product_id == Product.id)
+            .join(Poll, Poll.id == Product.poll_id)
             .filter(Poll.token == token)
+            .where(Product.id == product_id)
+            .group_by(Product.id)
             .first()
         )
 
@@ -50,12 +61,15 @@ class VoteManager:
             .filter(Poll.token == token)
             .first()
         )
+        if not product:
+            raise ProductNotFoundError("Product not found")
 
-        if not user or not product:
-            raise UserNotFoundError("User or product not found")
         try:
             existing_vote = (
                 self.db.query(Vote)
+                .join(Product, Product.id == Vote.product_id)
+                .join(Poll, Poll.id == Product.poll_id)
+                .filter(Poll.token == token)
                 .filter(Vote.product_id == product_id)
                 .filter(Vote.user_id == user.id)
                 .first()
@@ -65,30 +79,35 @@ class VoteManager:
                 self.db.delete(existing_vote)
                 self.db.commit()
                 return {"message": "Vote was deleted successfully"}
+            else:
+                raise VoteNotFoundError("There are no votes to delete")
 
         except Exception as e:
             self.db.rollback()
-            raise Exception(f"Error adding vote: {e}")
+            raise Exception(f"Error deleting vote: {e}")
 
-    def get_votes_product(self, token, product_id):
-        votes = (
-            self.db.query(
-                Product.id,
-                Product.title,
-                Product.description,
-                Product.price,
-                func.count(Vote.user_id).label("votes"),
-            )
-            .outerjoin(Vote, Vote.product_id == Product.id)
-            .join(Poll, Poll.id == Product.poll_id)
+    def get_vote_from_current_user(self, token, product_id, user):
+        product = (
+            self.db.query(Product)
+            .filter(Product.id == product_id)
             .filter(Poll.token == token)
-            .where(Product.id == product_id)
-            .group_by(Product.id)
             .first()
         )
-        if not votes:
+        if not product:
             raise ProductNotFoundError("Product not found")
-        return votes
+
+        vote = (
+            self.db.query(Vote)
+            .join(Product, Product.id == Vote.product_id)
+            .join(Poll, Poll.id == Product.poll_id)
+            .filter(Poll.token == token)
+            .filter(Vote.product_id == product_id)
+            .filter(Vote.user_id == user.id)
+            .first()
+        )
+        if not vote:
+            raise VoteNotFoundError
+        return vote
 
     def get_products_with_votes(self, token):
         votes = (

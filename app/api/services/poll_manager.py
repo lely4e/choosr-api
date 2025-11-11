@@ -1,8 +1,7 @@
 from app.db.models import Poll
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 from app.db.models import User
-from app.core.errors import UserNotFoundError
-from app.core.errors import PollNotFoundError
+from app.core.errors import UserNotFoundError, PollNotFoundError
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -25,7 +24,17 @@ class PollManager:
             raise Exception(f"Error adding poll: {e}")
 
     def get_polls(self):
-        polls = self.db.query(Poll).all()
+        user_alias = aliased(User)
+        polls = (
+            self.db.query(
+                Poll.title,
+                Poll.budget,
+                Poll.token,
+                user_alias.username.label("created_by"),
+            )
+            .join(user_alias, Poll.user_id == user_alias.id)
+            .all()
+        )
         if not polls:
             raise PollNotFoundError("Polls not found")
         return polls
@@ -42,8 +51,13 @@ class PollManager:
             raise PollNotFoundError("Poll not found")
         return poll
 
-    def update_poll(self, token, poll_in):
-        poll = self.db.query(Poll).filter(Poll.token == token).first()
+    def update_poll(self, token, poll_in, user):
+        poll = (
+            self.db.query(Poll)
+            .filter(Poll.token == token)
+            .where(Poll.user_id == user.id)
+            .first()
+        )
         if not poll:
             raise PollNotFoundError("Poll not found")
         try:

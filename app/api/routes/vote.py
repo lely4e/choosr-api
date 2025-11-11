@@ -3,13 +3,14 @@ from fastapi import APIRouter, Depends, Request
 from app.api.services.vote_manager import VoteManager
 from app.api.services.user_manager import UserManager
 from app.core.security import oauth2_scheme
+from app.api.schemas import VoteOut
 
 
 vote_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
-# get votes from specific product
-@vote_router.get("/{product_id}/vote")
+# get vote from current user
+@vote_router.get("/{product_id}/vote", response_model=VoteOut)
 async def get_votes(
     token,
     product_id: int,
@@ -18,8 +19,7 @@ async def get_votes(
     user_manager: UserManager = Depends(get_user_manager),
 ):
     user = user_manager.get_user_by_email(request.state.user)
-    votes = vote_manager.get_votes_product(token, product_id)
-    return dict(votes._mapping)
+    return vote_manager.get_vote_from_current_user(token, product_id, user)
 
 
 # add vote to the product

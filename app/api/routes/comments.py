@@ -1,6 +1,5 @@
-from app.api.dependencies import get_vote_manager, get_user_manager, get_comment_manager
+from app.api.dependencies import get_user_manager, get_comment_manager
 from fastapi import APIRouter, Depends, Request
-from app.api.services.vote_manager import VoteManager
 from app.api.services.user_manager import UserManager
 from app.api.services.comment_manager import CommentManager
 from app.core.security import oauth2_scheme
@@ -10,7 +9,7 @@ from app.api.schemas import CommentIn, CommentOut
 comment_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
-# get comments to the product
+# get comments of the product
 @comment_router.get("/{product_id}/comments")
 async def get_comments(
     token,

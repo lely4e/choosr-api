@@ -15,11 +15,17 @@ class User(Base):
 
     # One-to-many relationship: a user can have many polls, products, votes
     polls: Mapped[list["Poll"]] = relationship(
-        "Poll", back_populates="user"
+        "Poll", back_populates="user", cascade="all, delete-orphan"
     )  # , cascade="all, delete-orphan"
-    products: Mapped[list["Product"]] = relationship("Product", back_populates="user")
-    votes: Mapped[list["Vote"]] = relationship("Vote", back_populates="user")
-    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="user")
+    products: Mapped[list["Product"]] = relationship(
+        "Product", back_populates="user", cascade="all, delete-orphan"
+    )
+    votes: Mapped[list["Vote"]] = relationship(
+        "Vote", back_populates="user", cascade="all, delete-orphan"
+    )
+    comments: Mapped[list["Comment"]] = relationship(
+        "Comment", back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class Poll(Base):

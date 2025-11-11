@@ -11,16 +11,16 @@ poll_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
 # get all polls
-@poll_router.get("/polls", response_model=List[PollResponse])
+@poll_router.get("/polls")
 async def read_polls(poll_manager: PollManager = Depends(get_poll_manager)):
-    return poll_manager.get_polls()
+    polls = poll_manager.get_polls()
+    return [dict(row._mapping) for row in polls]
 
 
 # add poll
 @poll_router.post("/me/polls", response_model=PollResponse)
 async def create_poll(
     request: Request,
-    # user_id,
     poll_in: PollRead,
     poll_manager: PollManager = Depends(get_poll_manager),
     user_manager: UserManager = Depends(get_user_manager),
@@ -40,7 +40,12 @@ async def show_poll(token, poll_manager: PollManager = Depends(get_poll_manager)
 # update poll
 @poll_router.put("/{token}", response_model=PollResponse)
 async def update_poll(
-    token, poll_in: PollRead, poll_manager: PollManager = Depends(get_poll_manager)
+    request: Request,
+    token,
+    poll_in: PollRead,
+    poll_manager: PollManager = Depends(get_poll_manager),
+    user_manager: UserManager = Depends(get_user_manager),
 ):
-    poll = poll_manager.update_poll(token, poll_in)
+    user = user_manager.get_user_by_email(request.state.user)
+    poll = poll_manager.update_poll(token, poll_in, user)
     return poll

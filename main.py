@@ -1,7 +1,6 @@
 import uvicorn
-from fastapi import FastAPI
-from app.api import router
 from fastapi import FastAPI, Request, HTTPException, status
+from app.api import router
 from fastapi.responses import JSONResponse
 from jose import JWTError, jwt
 from app.core.config import settings
@@ -24,7 +23,6 @@ from app.core.errors import IntegrityError, integrity_error_handler
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version="0.0.1",
-    contact={"name": "Olga Chirkova"},
 )
 
 
@@ -47,7 +45,6 @@ app.add_exception_handler(IntegrityError, integrity_error_handler)
 async def auth_middleware(request: Request, call_next):
     # Skip public routes
     if (
-        # request.url.path.startswith("/users")
         request.url.path.startswith("/docs")
         or request.url.path.startswith("/openapi")
         or request.url.path.startswith("/auth")

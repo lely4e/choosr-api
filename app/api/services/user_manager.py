@@ -4,7 +4,7 @@ from app.core.errors import UserNotFoundError, UserAlreadyExistsError
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 import jwt
 from fastapi import Depends, HTTPException, status
-from jwt.exceptions import InvalidTokenError
+from jwt import InvalidTokenError
 from app.api.schemas import TokenData
 from app.core.security import (
     oauth2_scheme,

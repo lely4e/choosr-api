@@ -2,7 +2,8 @@ import uvicorn
 from fastapi import FastAPI, Request, HTTPException, status
 from app.api import router
 from fastapi.responses import JSONResponse
-from jose import JWTError, jwt
+import jwt
+from jwt import InvalidTokenError
 from app.core.config import settings
 from fastapi.exceptions import RequestValidationError, HTTPException
 from app.core.security import SECRET_KEY, ALGORITHM
@@ -64,7 +65,7 @@ async def auth_middleware(request: Request, call_next):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         request.state.user = payload.get("sub")
-    except JWTError:
+    except InvalidTokenError:
         return JSONResponse(
             status_code=status.HTTP_401_UNAUTHORIZED,
             content={"detail": "Invalid token"},

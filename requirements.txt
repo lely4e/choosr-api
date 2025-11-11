@@ -17,8 +17,6 @@ fastapi==0.118.0
 greenlet==3.2.4
 h11==0.16.0
 idna==3.10
-jose==1.0.0
-jwt==1.4.0
 marshmallow==4.0.1
 psycopg2==2.9.11
 pwdlib==0.3.0

@@ -12,17 +12,17 @@ Authorization: Bearer <your_token_here>
 
 
 ## ⭐️ Features
-* FastAPI framework with async endpoints
-* User authentication using JWT tokens
-* Full CRUD functionality 
-* Share polls with participants via unique links
-* Searching products via Search API
-* Add products to polls and vote on favorites
-* Collaborative, interactive group decision-making
-* PostgreSQL database with SQLAlchemy ORM
-* Structured with clean architecture and modular FastAPI routers
-* Dockerized setup for easy production deployment
-* Deployed on Render (FastAPI app + PostgreSQL database)
+* ⚡ FastAPI framework with async endpoints
+* 🔐 User authentication using JWT tokens
+* 🗳️ Full CRUD functionality 
+* 🔗 Share polls with participants via unique links
+* 🔍 Searching products via Search API
+* ➕ Add products to polls and vote on favorites
+* 🧩 Collaborative, interactive group decision-making
+* 🐘 PostgreSQL database with SQLAlchemy ORM
+* ⚙️ Structured with clean architecture and modular FastAPI routers
+* 🐳 Dockerized setup for easy production deployment
+* ☁️ Deployed on Render (FastAPI app + PostgreSQL database)
 
 ## ☁️ Deployment
 The project is deployed and running on Render.com using:
@@ -34,7 +34,7 @@ Render handles automatic builds and deployments on each push to the main branch.
 ## ⚙️ Requirements
 * Python 3.11+
 * PostgreSQL 12+
-* Docker (optional)
+* Docker 
 * Install the dependencies with pip:
 ```
 pip install -r requirements.txt
@@ -76,10 +76,11 @@ choosr_API_project/
 ├── README.md                 
 └── requirements.txt 
 ```
+
 ## 🔖 Notes
-* Keep sensitive data in .env (never commit it).
-* Use .gitignore and .dockerignore to avoid uploading unnecessary or secret files.
-* You can run the app via uvicorn app.main:app --reload locally or use Docker for production.
+* 🔑 Keep sensitive data in .env (never commit it).
+* 🚫 Use .gitignore and 🐋 .dockerignore to avoid uploading unnecessary or secret files.
+* 🚀 You can run the app via uvicorn app.main:app --reload locally or use Docker for production.
 
 ## 📌 Dependencies
 

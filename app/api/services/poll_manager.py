@@ -35,8 +35,8 @@ class PollManager:
             .join(user_alias, Poll.user_id == user_alias.id)
             .all()
         )
-        if not polls:
-            raise PollNotFoundError("Polls not found")
+        # if not polls:
+        #     raise PollNotFoundError("Polls not found")
         return polls
 
     def get_polls_by_user_id(self, user_id):

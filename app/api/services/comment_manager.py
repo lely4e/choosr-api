@@ -50,8 +50,8 @@ class CommentManager:
             .filter(Poll.token == token)
             .all()
         )
-        if not comments:
-            raise CommentsNotFoundError("Comments not found")
+        # if not comments:
+        #     raise CommentsNotFoundError("Comments not found")
         return comments
 
     def get_comment(self, token, product_id, user, comment_id):

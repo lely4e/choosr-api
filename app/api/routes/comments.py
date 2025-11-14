@@ -6,7 +6,7 @@ from app.core.security import oauth2_scheme
 from app.api.schemas import CommentIn, CommentOut
 
 
-comment_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
+comment_router = APIRouter(tags=["Comments"], dependencies=[Depends(oauth2_scheme)])
 
 
 # get comments of the product

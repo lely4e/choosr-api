@@ -7,7 +7,7 @@ from app.api.services.poll_manager import PollManager
 from app.core.security import oauth2_scheme
 
 
-user_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
+user_router = APIRouter(tags=["User"], dependencies=[Depends(oauth2_scheme)])
 
 
 @user_router.get("", response_model=UserOut)

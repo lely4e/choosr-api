@@ -7,7 +7,7 @@ from app.api.services.poll_manager import PollManager
 from app.core.security import oauth2_scheme
 
 
-poll_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
+poll_router = APIRouter(tags=["Polls"], dependencies=[Depends(oauth2_scheme)])
 
 
 # get all polls

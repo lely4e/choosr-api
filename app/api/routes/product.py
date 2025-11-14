@@ -8,7 +8,7 @@ from app.core.security import oauth2_scheme
 from app.utils.products import get_items_test
 
 
-product_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
+product_router = APIRouter(tags=["Products"], dependencies=[Depends(oauth2_scheme)])
 
 
 # get all products

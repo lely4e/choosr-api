@@ -6,7 +6,7 @@ from app.core.security import oauth2_scheme
 from app.api.schemas import VoteOut
 
 
-vote_router = APIRouter(tags=["Votes"], dependencies=[Depends(oauth2_scheme)])
+vote_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
 # get vote from current user

@@ -7,7 +7,7 @@ from app.api.services.poll_manager import PollManager
 from app.core.security import oauth2_scheme
 
 
-poll_router = APIRouter(tags=["Polls"], dependencies=[Depends(oauth2_scheme)])
+poll_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
 # get all polls
@@ -15,6 +15,16 @@ poll_router = APIRouter(tags=["Polls"], dependencies=[Depends(oauth2_scheme)])
 async def read_polls(poll_manager: PollManager = Depends(get_poll_manager)):
     polls = poll_manager.get_polls()
     return [dict(row._mapping) for row in polls]
+
+
+@poll_router.get("/me/polls", response_model=List[PollResponse])
+async def read_own_items(
+    request: Request,
+    poll_manager: PollManager = Depends(get_poll_manager),
+    user_manager: UserManager = Depends(get_user_manager),
+):
+    user = user_manager.get_user_by_email(request.state.user)
+    return poll_manager.get_polls_by_user_id(user_id=user.id)
 
 
 # add poll

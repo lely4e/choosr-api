@@ -7,7 +7,7 @@ from app.api.schemas import Token, UserIn
 from app.core.security import create_access_token
 
 
-auth_router = APIRouter(tags=["Authentication"])
+auth_router = APIRouter()
 
 
 # sign up user (create new account)

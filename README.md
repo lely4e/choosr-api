@@ -134,6 +134,7 @@ flowchart TD
 
     subgraph API["FastAPI Application"]
         RT[API Router]
+
         AUTH[Auth Routes]
         USER[User Routes]
         POLL[Poll Routes]
@@ -141,14 +142,14 @@ flowchart TD
         VOTE[Vote Routes]
         COMM[Comments Routes]
 
-        SVC[Service Layer<br/>(Managers)]
+        SVC[Service Layer]
         SCH[Schemas]
         SEC[Security / JWT]
         ERR[Error Handlers]
     end
 
     subgraph DB["Database Layer"]
-        SQLA[SQLAlchemy ORM Models]
+        SQLA[SQLAlchemy Models]
         PG[(PostgreSQL)]
     end
 

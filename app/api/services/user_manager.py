@@ -101,7 +101,6 @@ class UserManager:
             raise UserNotFoundError("User not found")
         try:
             user.username = user_in.username
-            user.email = user_in.email
             self.db.commit()
             self.db.refresh(user)
             return user

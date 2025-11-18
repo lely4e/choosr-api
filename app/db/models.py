@@ -1,8 +1,9 @@
-from sqlalchemy import String, Integer, Float, ForeignKey
+from sqlalchemy import String, Integer, Float, ForeignKey, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.database import Base
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
+from datetime import datetime
 
 
 class User(Base):
@@ -12,6 +13,9 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(30))
     email: Mapped[str] = mapped_column(String, index=True, unique=True)
     password: Mapped[str] = mapped_column(String)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
 
     # One-to-many relationship: a user can have many polls, products, votes
     polls: Mapped[list["Poll"]] = relationship(
@@ -41,6 +45,9 @@ class Poll(Base):
     products: Mapped[list["Product"]] = relationship(
         "Product", back_populates="poll", cascade="all, delete-orphan"
     )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
 
     # Foreign Key link to user id
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
@@ -58,6 +65,9 @@ class Product(Base):
     image: Mapped[str] = mapped_column(String)
     rating: Mapped[str] = mapped_column(Float)
     price: Mapped[float] = mapped_column(Float)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
 
     # Foreign Key link to user id, poll id
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
@@ -93,6 +103,9 @@ class Comment(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     text: Mapped[str] = mapped_column(String(200), index=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
 
     # Foreign Key link to user id, product id
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))

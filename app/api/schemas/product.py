@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from uuid import UUID
+from datetime import datetime
 
 
 class ProductAddJSON(BaseModel):
@@ -25,6 +26,7 @@ class ProductOut(BaseModel):
     title: str
     description: str
     price: float
+    created_at: datetime
 
     class Config:
         orm_mode = True
@@ -37,6 +39,7 @@ class ProductFull(BaseModel):
     image: str
     rating: float
     price: float
+    created_at: datetime
 
     class Config:
         orm_mode = True

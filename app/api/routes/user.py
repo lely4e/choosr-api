@@ -1,4 +1,4 @@
-from app.api.schemas.user import UserOut
+from app.api.schemas.user import UserOut, UserChange
 from app.api.dependencies import get_user_manager
 from fastapi import Depends, APIRouter, Depends, Request
 from app.api.services.user_manager import UserManager
@@ -16,10 +16,10 @@ async def read_users_me(
     return user_manager.get_user_by_email(request.state.user)
 
 
-@user_router.put("", response_model=UserOut)
+@user_router.put("", response_model=UserChange)
 async def update_user(
     request: Request,
-    user_in: UserOut,
+    user_in: UserChange,
     user_manager: UserManager = Depends(get_user_manager),
 ) -> UserOut:
     """Update user's information"""

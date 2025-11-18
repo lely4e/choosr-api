@@ -5,6 +5,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-12+-336791.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 ![CI/CD](https://img.shields.io/badge/CI%2FCD-Render%20Auto--Deploy-8A2BE2.svg)
+![Docs](https://img.shields.io/badge/docs-Swagger-blue)
 
 A FastAPI backend for creating collaborative polls and event-based voting. Users can share event links, add products using search Amazon API, and vote on their favorites, making group decision-making simple and interactive. Features JWT authentication, PostgreSQL with SQLAlchemy ORM, clean architecture, and full CRUD support—perfect for event planning, group shopping, and collaborative voting apps.
 
@@ -44,6 +45,11 @@ The project is deployed and running on Render.com using:
 * Render PostgreSQL database
 * Continuous deployment from GitHub
 Render handles automatic builds and deployments on each push to the main branch.
+
+## API Documentation Link
+**Deployed version:**  
+[https://choosr-api.onrender.com/docs](https://choosr-api.onrender.com/docs)
+
 
 ## ⚙️ Requirements
 * Python 3.11+

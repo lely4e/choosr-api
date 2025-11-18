@@ -15,6 +15,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth")
 
 
 def create_access_token(data: dict):
+    """Generate a new access token"""
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
@@ -23,8 +24,10 @@ def create_access_token(data: dict):
 
 
 def verify_password(plain_password, hashed_password):
+    """Verify that a plain-text password matches a hashed password"""
     return password_hash.verify(plain_password, hashed_password)
 
 
 def get_password_hash(password):
+    """Hash a plain-text password"""
     return password_hash.hash(password)

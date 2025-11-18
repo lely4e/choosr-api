@@ -16,7 +16,7 @@ class User(Base):
     # One-to-many relationship: a user can have many polls, products, votes
     polls: Mapped[list["Poll"]] = relationship(
         "Poll", back_populates="user", cascade="all, delete-orphan"
-    )  # , cascade="all, delete-orphan"
+    )
     products: Mapped[list["Product"]] = relationship(
         "Product", back_populates="user", cascade="all, delete-orphan"
     )
@@ -38,7 +38,9 @@ class Poll(Base):
         UUID(as_uuid=True), unique=True, nullable=False, default=uuid.uuid4
     )
     # One-to-many relationship
-    products: Mapped[list["Product"]] = relationship("Product", back_populates="poll")
+    products: Mapped[list["Product"]] = relationship(
+        "Product", back_populates="poll", cascade="all, delete-orphan"
+    )
 
     # Foreign Key link to user id
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))

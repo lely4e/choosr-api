@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 import jwt
 from fastapi import Depends, HTTPException, status
 from jwt import InvalidTokenError
-from app.api.schemas import TokenData
+from app.api.schemas.auth import TokenData
 from app.core.security import (
     oauth2_scheme,
     SECRET_KEY,
@@ -20,6 +20,7 @@ class UserManager:
         self.db = db
 
     def sign_up_user(self, username: str, email: str, password: str):
+        """Register a new user"""
         try:
             password = get_password_hash(password)
             user = User(username=username, email=email, password=password)
@@ -37,30 +38,35 @@ class UserManager:
             raise Exception(f"Error adding user: {e}")
 
     def get_users(self):
+        """Retrieve all users"""
         users = self.db.query(User).all()
         if not users:
             raise UserNotFoundError("Users not found")
         return users
 
     def get_user(self, user_id):
+        """Retrieve user by user id"""
         user = self.db.query(User).filter(User.id == user_id).first()
         if not user:
             raise UserNotFoundError("User not found")
         return user
 
     def get_user_by_name(self, username):
+        """Retrieve user by user username"""
         user = self.db.query(User).filter(User.username == username).first()
         if not user:
             raise UserNotFoundError("User not found")
         return user
 
     def get_user_by_email(self, email):
+        """Retrieve user by user email"""
         user = self.db.query(User).filter(User.email == email).first()
         if not user:
             raise UserNotFoundError("User not found")
         return user
 
     def authenticate_user(self, email: str, password: str):
+        """Authenticate user"""
         user = self.db.query(User).filter(User.email == email).first()
         if not user:
             return False
@@ -69,6 +75,7 @@ class UserManager:
         return user
 
     def get_current_user(self, token: str = Depends(oauth2_scheme)):
+        """Retrieve current user"""
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials",
@@ -89,6 +96,7 @@ class UserManager:
         return user
 
     def update_user(self, user, user_in):
+        """Update current user"""
         if not user:
             raise UserNotFoundError("User not found")
         try:
@@ -102,6 +110,7 @@ class UserManager:
             raise e
 
     def delete_user(self, user):
+        """Delete current user"""
         if not user:
             raise UserNotFoundError("User not found")
         try:

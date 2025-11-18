@@ -24,7 +24,7 @@ from app.db.database import engine, Base
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    version="0.0.1",
+    version="0.1.0",
 )
 
 
@@ -45,7 +45,7 @@ app.add_exception_handler(IntegrityError, integrity_error_handler)
 
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
-    # Skip public routes
+
     if (
         request.url.path.startswith("/docs")
         or request.url.path.startswith("/openapi")

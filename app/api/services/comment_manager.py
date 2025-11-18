@@ -8,6 +8,7 @@ class CommentManager:
         self.db = db
 
     def add_comment(self, token, product_id, user, comment_in):
+        """Add comment to the selected product"""
         product = (
             self.db.query(Product)
             .filter(Product.id == product_id)
@@ -34,6 +35,7 @@ class CommentManager:
             raise Exception(f"Error adding comment: {e}")
 
     def get_comments(self, token, product_id, user):
+        """Retrieve comments for the selected product"""
         user_alias = aliased(User)
         product_alias = aliased(Product)
         comments = (
@@ -50,11 +52,10 @@ class CommentManager:
             .filter(Poll.token == token)
             .all()
         )
-        # if not comments:
-        #     raise CommentsNotFoundError("Comments not found")
         return comments
 
     def get_comment(self, token, product_id, user, comment_id):
+        """Retrieve a comment for the selected product"""
         user_alias = aliased(User)
         product_alias = aliased(Product)
         comment = (
@@ -77,6 +78,7 @@ class CommentManager:
         return comment
 
     def delete_comment(self, token, product_id, user, comment_id):
+        """Delete a comment from the selected product"""
         product = (
             self.db.query(Product)
             .filter(Product.id == product_id)

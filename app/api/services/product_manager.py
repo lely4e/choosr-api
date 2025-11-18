@@ -13,6 +13,7 @@ class ProductManager:
         self.db = db
 
     def add_product(self, token, product_in, user):
+        """Add a product to the selected poll"""
         poll = self.db.query(Poll).filter(Poll.token == token).first()
         if not user or not poll:
             raise UserNotFoundError("User or poll not found")
@@ -36,12 +37,14 @@ class ProductManager:
             raise Exception(f"Error adding product: {e}")
 
     def get_products(self, token):
+        """Retrieve all products from the selected poll"""
         poll = self.db.query(Poll).filter(Poll.token == token).first()
         if not poll:
             raise PollNotFoundError("Poll not found")
         return poll.products
 
     def get_product(self, token, product_id):
+        """Retrieve specific product from the selected poll"""
         product = (
             self.db.query(Product)
             .filter(Product.id == product_id)
@@ -53,6 +56,7 @@ class ProductManager:
         return product
 
     def delete_product(self, token, product_id, user):
+        """Delete specific product from the selected poll"""
         product = (
             self.db.query(Product)
             .filter(Product.id == product_id)

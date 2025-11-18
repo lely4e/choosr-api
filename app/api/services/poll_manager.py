@@ -10,6 +10,7 @@ class PollManager:
         self.db = db
 
     def add_poll(self, user, poll_in):
+        """Add a poll"""
         if not user:
             raise UserNotFoundError("User not found")
         try:
@@ -24,6 +25,7 @@ class PollManager:
             raise Exception(f"Error adding poll: {e}")
 
     def get_polls(self):
+        """Retrieve all polls"""
         user_alias = aliased(User)
         polls = (
             self.db.query(
@@ -35,20 +37,21 @@ class PollManager:
             .join(user_alias, Poll.user_id == user_alias.id)
             .all()
         )
-        # if not polls:
-        #     raise PollNotFoundError("Polls not found")
         return polls
 
     def get_polls_by_user_id(self, user_id):
+        """Retrieve polls created by current user"""
         return self.db.query(Poll).filter(Poll.user_id == user_id).all()
 
     def get_poll(self, token):
+        """Retrieve a poll by it's unique token link"""
         poll = self.db.query(Poll).filter(Poll.token == token).first()
         if not poll:
             raise PollNotFoundError("Poll not found")
         return poll
 
     def update_poll(self, token, poll_in, user):
+        """Update a poll by it's unique token link"""
         poll = (
             self.db.query(Poll)
             .filter(Poll.token == token)
@@ -56,7 +59,9 @@ class PollManager:
             .first()
         )
         if not poll:
-            raise PollNotFoundError("Poll not found")
+            raise PollNotFoundError(
+                "You are not allowed to edit a poll owned by another user"
+            )
         try:
             poll.title = poll_in.title
             poll.budget = poll_in.budget
@@ -67,10 +72,18 @@ class PollManager:
             self.db.rollback()
             raise e
 
-    def delete_poll(self, token):
-        poll = self.db.query(Poll).filter(Poll.token == token).first()
+    def delete_poll(self, token, user):
+        """Delete a poll by it's unique token link"""
+        poll = (
+            self.db.query(Poll)
+            .filter(Poll.token == token)
+            .where(Poll.user_id == user.id)
+            .first()
+        )
         if not poll:
-            raise PollNotFoundError("Poll not found")
+            raise PollNotFoundError(
+                "You are not allowed to delete a poll owned by another user"
+            )
         try:
             self.db.delete(poll)
             self.db.commit()

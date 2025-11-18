@@ -1,4 +1,4 @@
-from app.db.models import Product, Poll, Vote, Comment
+from app.db.models import Product, Poll, Vote
 from sqlalchemy.orm import Session
 from app.core.errors import UserNotFoundError, ProductNotFoundError, VoteNotFoundError
 from sqlalchemy import func
@@ -9,6 +9,7 @@ class VoteManager:
         self.db = db
 
     def add_vote(self, token, product_id, user):
+        """Add vote to a specific product"""
         product = (
             self.db.query(
                 Product.id,
@@ -55,6 +56,7 @@ class VoteManager:
             raise Exception(f"Error adding vote: {e}")
 
     def delete_vote(self, token, product_id, user):
+        """Delete vote from the specific product"""
         product = (
             self.db.query(Product)
             .filter(Product.id == product_id)
@@ -87,6 +89,7 @@ class VoteManager:
             raise Exception(f"Error deleting vote: {e}")
 
     def get_vote_from_current_user(self, token, product_id, user):
+        """Retrieve vote from current user"""
         product = (
             self.db.query(Product)
             .filter(Product.id == product_id)
@@ -110,6 +113,7 @@ class VoteManager:
         return vote
 
     def get_products_with_votes(self, token):
+        """Retrieve all products with votes"""
         votes = (
             self.db.query(
                 Product.id,

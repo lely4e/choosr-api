@@ -170,7 +170,7 @@ flowchart TD
 
     SVC --> SQLA
     SQLA --> PG
-
+```
 
 ## 🔖 Notes
 * 🔑 Keep sensitive data in .env (never commit it).

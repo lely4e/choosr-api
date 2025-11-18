@@ -123,55 +123,6 @@ choosr_API_project/
 ├── README.md
 └── requirements.txt
 ```
-## 🧱 Architecture Diagram
-
-```mermaid
-flowchart TD
-
-    subgraph Client["Frontend / Client"]
-        UI[User Interface]
-    end
-
-    subgraph API["FastAPI Application"]
-        RT[API Router]
-
-        AUTH[Auth Routes]
-        USER[User Routes]
-        POLL[Poll Routes]
-        PROD[Product Routes]
-        VOTE[Vote Routes]
-        COMM[Comments Routes]
-
-        SVC[Service Layer]
-        SCH[Schemas]
-        SEC[Security / JWT]
-        ERR[Error Handlers]
-    end
-
-    subgraph DB["Database Layer"]
-        SQLA[SQLAlchemy Models]
-        PG[(PostgreSQL)]
-    end
-
-    UI -->|HTTP Requests| RT
-
-    RT --> AUTH
-    RT --> USER
-    RT --> POLL
-    RT --> PROD
-    RT --> VOTE
-    RT --> COMM
-
-    AUTH --> SVC
-    USER --> SVC
-    POLL --> SVC
-    PROD --> SVC
-    VOTE --> SVC
-    COMM --> SVC
-
-    SVC --> SQLA
-    SQLA --> PG
-```
 
 ## 🔖 Notes
 * 🔑 Keep sensitive data in .env (never commit it).

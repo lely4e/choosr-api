@@ -1,4 +1,4 @@
-from app.utils.products import get_items_test
+from app.services.products import get_items_test
 from fastapi import APIRouter, Depends, Request
 from app.core.security import oauth2_scheme
 

@@ -1,7 +1,7 @@
 from app.api.dependencies import get_user_manager, get_comment_manager
 from fastapi import APIRouter, Depends, Request
-from app.api.services.user_manager import UserManager
-from app.api.services.comment_manager import CommentManager
+from app.api.repository.user_manager import UserManager
+from app.api.repository.comment_manager import CommentManager
 from app.core.security import oauth2_scheme
 from app.api.schemas.comments import CommentIn, CommentOut
 

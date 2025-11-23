@@ -1,7 +1,7 @@
 from app.api.schemas.user import UserIn, UserOut
 from app.api.dependencies import get_user_manager
 from fastapi import Depends, HTTPException, status, APIRouter, Depends
-from app.api.services.user_manager import UserManager
+from app.api.repository.user_manager import UserManager
 from fastapi.security import OAuth2PasswordRequestForm
 from app.api.schemas.auth import Token
 from app.core.security import create_access_token

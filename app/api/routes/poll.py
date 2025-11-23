@@ -2,8 +2,8 @@ from app.api.schemas.poll import PollRead, PollResponse
 from typing import List
 from app.api.dependencies import get_user_manager, get_poll_manager
 from fastapi import APIRouter, Depends, Request
-from app.api.services.user_manager import UserManager
-from app.api.services.poll_manager import PollManager
+from app.api.repository.user_manager import UserManager
+from app.api.repository.poll_manager import PollManager
 from app.core.security import oauth2_scheme
 
 

@@ -1,9 +1,9 @@
 from app.api.schemas.product import ProductAddJSON, ProductFull
 from app.api.dependencies import get_product_manager, get_user_manager, get_vote_manager
 from fastapi import APIRouter, Depends, Request
-from app.api.services.product_manager import ProductManager
-from app.api.services.vote_manager import VoteManager
-from app.api.services.user_manager import UserManager
+from app.api.repository.product_manager import ProductManager
+from app.api.repository.vote_manager import VoteManager
+from app.api.repository.user_manager import UserManager
 from app.core.security import oauth2_scheme
 
 

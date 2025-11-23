@@ -1,7 +1,7 @@
 from app.api.dependencies import get_vote_manager, get_user_manager
 from fastapi import APIRouter, Depends, Request
-from app.api.services.vote_manager import VoteManager
-from app.api.services.user_manager import UserManager
+from app.api.repository.vote_manager import VoteManager
+from app.api.repository.user_manager import UserManager
 from app.core.security import oauth2_scheme
 from app.api.schemas.vote import VoteOut
 

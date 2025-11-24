@@ -22,24 +22,25 @@ Authorization: Bearer <your_token_here>
 ## ⭐️ Features
 Core Features
 
-* ⚡ FastAPI with fully async endpoints
-* 🔐 JWT-based authentication
-* 🧩 Pydantic models for data validation
-* 👤 User registration & login
-* 🛡️ User authentication via middleware
-* 🗳️ Poll creation, sharing, and real-time voting
-* ➕ Add products to polls
-* 🔍 Product search via external API (Amazon Search API)
-* 💬 Commenting system
-* 🔗 Sharable poll links for participants
+⚡ FastAPI with fully async endpoints
+🔐 JWT-based authentication
+🔑 Users can only delete their own polls, comments, and votes.
+🧩 Pydantic models for data validation
+👤 User registration & login
+🛡️ Authentication handled through middleware
+🔧 Dependencies injected into routes for accessing users, the database, and services.
+🗳️ Poll creation, sharing
+🛍️ Add products to polls, commenting and voting
+🔍 Product search via external API (Amazon Search API)
+
 
 Technical Features
 
-* 🐘 PostgreSQL database (SQLAlchemy ORM)
-* 📦 Clean, modular architecture (routes → schemas → services → managers)
-* 🐳 Dockerized for production
-* 📡 Deployed on Render (app + PostgreSQL)
-* 🔁 CI/CD via GitHub → Render automatic deploy
+🐘 PostgreSQL database (SQLAlchemy ORM)
+📦 Clean, modular architecture (routes → schemas → services → managers)
+🐳 Dockerized for production
+📡 Deployed on Render (app + PostgreSQL)
+🔁 CI/CD via GitHub → Render automatic deploy
 
 ## ☁️ Deployment
 The project is deployed and running on Render.com using:

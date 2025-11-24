@@ -24,7 +24,9 @@ Core Features
 
 * ⚡ FastAPI with fully async endpoints
 * 🔐 JWT-based authentication
+* 🧩 Pydantic models for data validation
 * 👤 User registration & login
+* 🛡️ User authentication via middleware
 * 🗳️ Poll creation, sharing, and real-time voting
 * ➕ Add products to polls
 * 🔍 Product search via external API (Amazon Search API)
@@ -96,7 +98,7 @@ choosr_API_project/
 │   │   │   ├── user.py
 │   │   │   └── vote.py
 │   │
-│   │   ├── services/
+│   │   ├── repository/
 │   │   │   ├── __init__.py
 │   │   │   ├── comment_manager.py
 │   │   │   ├── poll_manager.py
@@ -117,7 +119,7 @@ choosr_API_project/
 │   │   ├── database.py
 │   │   └── models.py
 │
-│   └── utils/
+│   └── services/
 │       └── __init__.py
 │       └── products.py
 │

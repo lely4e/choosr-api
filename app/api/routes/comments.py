@@ -11,7 +11,7 @@ comment_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 @comment_router.get("/{product_id}/comments")
 async def get_comments(
-    token,
+    uuid,
     product_id: int,
     request: Request,
     comment_manager: CommentManager = Depends(get_comment_manager),
@@ -19,14 +19,14 @@ async def get_comments(
 ):
     """Retrieve comments for the selected product"""
     user = user_manager.get_user_by_email(request.state.user)
-    comments = comment_manager.get_comments(token, product_id, user)
+    comments = comment_manager.get_comments(uuid, product_id, user)
     return [dict(row._mapping) for row in comments]
 
 
 @comment_router.post("/{product_id}/comments", response_model=CommentOut)
 async def add_comments(
     request: Request,
-    token,
+    uuid,
     product_id: int,
     comment_in: CommentIn,
     comment_manager: CommentManager = Depends(get_comment_manager),
@@ -34,13 +34,13 @@ async def add_comments(
 ):
     """Add a comment to the selected product"""
     user = user_manager.get_user_by_email(request.state.user)
-    comment = comment_manager.add_comment(token, product_id, user, comment_in)
+    comment = comment_manager.add_comment(uuid, product_id, user, comment_in)
     return comment
 
 
 @comment_router.get("/{product_id}/comments/{comment_id}")
 async def get_comment(
-    token,
+    uuid,
     product_id: int,
     comment_id: int,
     request: Request,
@@ -49,13 +49,13 @@ async def get_comment(
 ):
     """Retrieve a specific comment for the selected product"""
     user = user_manager.get_user_by_email(request.state.user)
-    comments = comment_manager.get_comment(token, product_id, user, comment_id)
+    comments = comment_manager.get_comment(uuid, product_id, user, comment_id)
     return dict(comments._mapping)
 
 
 @comment_router.delete("/{product_id}/comments/{comment_id}")
 async def delete_comment(
-    token,
+    uuid,
     product_id: int,
     comment_id: int,
     request: Request,
@@ -64,4 +64,4 @@ async def delete_comment(
 ):
     """Delete a specific comment for the selected product"""
     user = user_manager.get_user_by_email(request.state.user)
-    return comment_manager.delete_comment(token, product_id, user, comment_id)
+    return comment_manager.delete_comment(uuid, product_id, user, comment_id)

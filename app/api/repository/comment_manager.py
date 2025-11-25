@@ -7,12 +7,12 @@ class CommentManager:
     def __init__(self, db: Session):
         self.db = db
 
-    def add_comment(self, token, product_id, user, comment_in):
+    def add_comment(self, uuid, product_id, user, comment_in):
         """Add comment to the selected product"""
         product = (
             self.db.query(Product)
             .filter(Product.id == product_id)
-            .filter(Poll.token == token)
+            .filter(Poll.uuid == uuid)
             .first()
         )
 
@@ -34,7 +34,7 @@ class CommentManager:
             self.db.rollback()
             raise Exception(f"Error adding comment: {e}")
 
-    def get_comments(self, token, product_id, user):
+    def get_comments(self, uuid, product_id, user):
         """Retrieve comments for the selected product"""
         user_alias = aliased(User)
         product_alias = aliased(Product)
@@ -49,12 +49,12 @@ class CommentManager:
             .join(product_alias, Comment.product_id == product_alias.id)
             .filter(Comment.product_id == product_id)
             # .filter(Comment.user_id == user.id)
-            .filter(Poll.token == token)
+            .filter(Poll.uuid == uuid)
             .all()
         )
         return comments
 
-    def get_comment(self, token, product_id, user, comment_id):
+    def get_comment(self, uuid, product_id, user, comment_id):
         """Retrieve a comment for the selected product"""
         user_alias = aliased(User)
         product_alias = aliased(Product)
@@ -69,7 +69,7 @@ class CommentManager:
             .join(product_alias, Comment.product_id == product_alias.id)
             .filter(Comment.product_id == product_id)
             # .filter(Comment.user_id == user.id)
-            .filter(Poll.token == token)
+            .filter(Poll.uuid == uuid)
             .where(Comment.id == comment_id)
             .first()
         )
@@ -77,12 +77,12 @@ class CommentManager:
             raise CommentsNotFoundError("Comments not found")
         return comment
 
-    def delete_comment(self, token, product_id, user, comment_id):
+    def delete_comment(self, uuid, product_id, user, comment_id):
         """Delete a comment from the selected product"""
         product = (
             self.db.query(Product)
             .filter(Product.id == product_id)
-            .filter(Poll.token == token)
+            .filter(Poll.uuid == uuid)
             .first()
         )
 

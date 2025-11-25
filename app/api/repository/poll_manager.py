@@ -31,7 +31,7 @@ class PollManager:
             self.db.query(
                 Poll.title,
                 Poll.budget,
-                Poll.token,
+                Poll.uuid,
                 user_alias.username.label("created_by"),
             )
             .join(user_alias, Poll.user_id == user_alias.id)
@@ -43,18 +43,18 @@ class PollManager:
         """Retrieve polls created by current user"""
         return self.db.query(Poll).filter(Poll.user_id == user_id).all()
 
-    def get_poll(self, token):
-        """Retrieve a poll by it's unique token link"""
-        poll = self.db.query(Poll).filter(Poll.token == token).first()
+    def get_poll(self, uuid):
+        """Retrieve a poll by it's unique link"""
+        poll = self.db.query(Poll).filter(Poll.uuid == uuid).first()
         if not poll:
             raise PollNotFoundError("Poll not found")
         return poll
 
-    def update_poll(self, token, poll_in, user):
-        """Update a poll by it's unique token link"""
+    def update_poll(self, uuid, poll_in, user):
+        """Update a poll by it's unique link"""
         poll = (
             self.db.query(Poll)
-            .filter(Poll.token == token)
+            .filter(Poll.uuid == uuid)
             .where(Poll.user_id == user.id)
             .first()
         )
@@ -72,11 +72,11 @@ class PollManager:
             self.db.rollback()
             raise e
 
-    def delete_poll(self, token, user):
-        """Delete a poll by it's unique token link"""
+    def delete_poll(self, uuid, user):
+        """Delete a poll by it's unique link"""
         poll = (
             self.db.query(Poll)
-            .filter(Poll.token == token)
+            .filter(Poll.uuid == uuid)
             .where(Poll.user_id == user.id)
             .first()
         )

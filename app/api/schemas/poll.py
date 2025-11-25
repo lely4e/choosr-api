@@ -12,7 +12,7 @@ class PollRead(BaseModel):
 
 
 class PollResponse(PollRead):
-    token: UUID
+    uuid: UUID
     created_at: datetime
 
     class Config:

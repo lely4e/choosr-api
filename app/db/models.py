@@ -1,7 +1,7 @@
 from sqlalchemy import String, Integer, Float, ForeignKey, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.database import Base
-import uuid
+import uuid as uuid_module
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
 
@@ -38,8 +38,8 @@ class Poll(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String(40), index=True)
     budget: Mapped[float] = mapped_column(Float)
-    token: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), unique=True, nullable=False, default=uuid.uuid4
+    uuid: Mapped[uuid_module.UUID] = mapped_column(
+        UUID(as_uuid=True), unique=True, nullable=False, default=uuid_module.uuid4
     )
     # One-to-many relationship
     products: Mapped[list["Product"]] = relationship(

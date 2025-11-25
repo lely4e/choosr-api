@@ -42,34 +42,34 @@ async def create_poll(
         return poll
 
 
-@poll_router.get("/{token}", response_model=PollResponse)
-async def show_poll(token, poll_manager: PollManager = Depends(get_poll_manager)):
-    """Retrieve a poll by it's unique token link"""
-    return poll_manager.get_poll(token)
+@poll_router.get("/{uuid}", response_model=PollResponse)
+async def show_poll(uuid, poll_manager: PollManager = Depends(get_poll_manager)):
+    """Retrieve a poll by it's unique link"""
+    return poll_manager.get_poll(uuid)
 
 
-@poll_router.put("/{token}", response_model=PollResponse)
+@poll_router.put("/{uuid}", response_model=PollResponse)
 async def update_poll(
     request: Request,
-    token,
+    uuid,
     poll_in: PollRead,
     poll_manager: PollManager = Depends(get_poll_manager),
     user_manager: UserManager = Depends(get_user_manager),
 ):
-    """Allow the creator to update a poll using it's unique token link"""
+    """Allow the creator to update a poll using it's unique link"""
     user = user_manager.get_user_by_email(request.state.user)
-    poll = poll_manager.update_poll(token, poll_in, user)
+    poll = poll_manager.update_poll(uuid, poll_in, user)
     return poll
 
 
-@poll_router.delete("/{token}", response_model=PollResponse)
+@poll_router.delete("/{uuid}", response_model=PollResponse)
 async def delete_poll(
     request: Request,
-    token,
+    uuid,
     poll_manager: PollManager = Depends(get_poll_manager),
     user_manager: UserManager = Depends(get_user_manager),
 ):
-    """Allow the creator to delete a poll using it's unique token link"""
+    """Allow the creator to delete a poll using it's unique link"""
     user = user_manager.get_user_by_email(request.state.user)
-    poll = poll_manager.delete_poll(token, user)
+    poll = poll_manager.delete_poll(uuid, user)
     return poll

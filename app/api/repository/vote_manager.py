@@ -8,7 +8,7 @@ class VoteManager:
     def __init__(self, db: Session):
         self.db = db
 
-    def add_vote(self, token, product_id, user):
+    def add_vote(self, uuid, product_id, user):
         """Add vote to a specific product"""
         product = (
             self.db.query(
@@ -22,7 +22,7 @@ class VoteManager:
             )
             .outerjoin(Vote, Vote.product_id == Product.id)
             .join(Poll, Poll.id == Product.poll_id)
-            .filter(Poll.token == token)
+            .filter(Poll.uuid == uuid)
             .where(Product.id == product_id)
             .group_by(Product.id)
             .first()
@@ -55,12 +55,12 @@ class VoteManager:
             self.db.rollback()
             raise Exception(f"Error adding vote: {e}")
 
-    def delete_vote(self, token, product_id, user):
+    def delete_vote(self, uuid, product_id, user):
         """Delete vote from the specific product"""
         product = (
             self.db.query(Product)
             .filter(Product.id == product_id)
-            .filter(Poll.token == token)
+            .filter(Poll.uuid == uuid)
             .first()
         )
         if not product:
@@ -71,7 +71,7 @@ class VoteManager:
                 self.db.query(Vote)
                 .join(Product, Product.id == Vote.product_id)
                 .join(Poll, Poll.id == Product.poll_id)
-                .filter(Poll.token == token)
+                .filter(Poll.uuid == uuid)
                 .filter(Vote.product_id == product_id)
                 .filter(Vote.user_id == user.id)
                 .first()
@@ -88,12 +88,12 @@ class VoteManager:
             self.db.rollback()
             raise Exception(f"Error deleting vote: {e}")
 
-    def get_vote_from_current_user(self, token, product_id, user):
+    def get_vote_from_current_user(self, uuid, product_id, user):
         """Retrieve vote from current user"""
         product = (
             self.db.query(Product)
             .filter(Product.id == product_id)
-            .filter(Poll.token == token)
+            .filter(Poll.uuid == uuid)
             .first()
         )
         if not product:
@@ -103,7 +103,7 @@ class VoteManager:
             self.db.query(Vote)
             .join(Product, Product.id == Vote.product_id)
             .join(Poll, Poll.id == Product.poll_id)
-            .filter(Poll.token == token)
+            .filter(Poll.uuid == uuid)
             .filter(Vote.product_id == product_id)
             .filter(Vote.user_id == user.id)
             .first()
@@ -112,7 +112,7 @@ class VoteManager:
             raise VoteNotFoundError
         return vote
 
-    def get_products_with_votes(self, token):
+    def get_products_with_votes(self, uuid):
         """Retrieve all products with votes"""
         votes = (
             self.db.query(
@@ -126,7 +126,7 @@ class VoteManager:
             )
             .outerjoin(Vote, Vote.product_id == Product.id)
             .join(Poll, Poll.id == Product.poll_id)
-            .where(Poll.token == token)
+            .where(Poll.uuid == uuid)
             .group_by(Product.id)
             .all()
         )

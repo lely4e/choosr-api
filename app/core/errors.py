@@ -1,7 +1,7 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError, HTTPException
-from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
+from starlette.status import HTTP_422_UNPROCESSABLE_CONTENT
 from sqlalchemy.exc import DataError
 import psycopg2
 from sqlalchemy.exc import IntegrityError
@@ -10,7 +10,7 @@ from sqlalchemy.exc import IntegrityError
 # Pydantic validation errors (422)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
-        status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=HTTP_422_UNPROCESSABLE_CONTENT,
         content={
             "error": "Validation failed",
             "details": exc.errors(),

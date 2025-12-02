@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from datetime import datetime
 
 
@@ -7,15 +7,9 @@ class UserIn(BaseModel):
     email: EmailStr
     password: str
 
-    class Config:
-        orm_mode = True
-
 
 class UserChange(BaseModel):
     username: str
-
-    class Config:
-        orm_mode = True
 
 
 class UserOut(BaseModel):
@@ -23,5 +17,4 @@ class UserOut(BaseModel):
     email: EmailStr
     created_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

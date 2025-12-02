@@ -1,12 +1,9 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 
 
 class LogIn(BaseModel):
     email: EmailStr
     password: str
-
-    class Config:
-        orm_mode = True
 
 
 class Token(BaseModel):

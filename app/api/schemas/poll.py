@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from uuid import UUID
 from datetime import datetime
 
@@ -7,13 +7,9 @@ class PollRead(BaseModel):
     title: str
     budget: int
 
-    class Config:
-        orm_mode = True
-
 
 class PollResponse(PollRead):
     uuid: UUID
     created_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

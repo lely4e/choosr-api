@@ -1,12 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 
 class CommentIn(BaseModel):
     text: str
-
-    class Config:
-        orm_mode = True
 
 
 class CommentOut(BaseModel):
@@ -16,5 +13,4 @@ class CommentOut(BaseModel):
     product_id: int
     created_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

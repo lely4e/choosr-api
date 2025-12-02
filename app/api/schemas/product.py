@@ -1,5 +1,4 @@
-from pydantic import BaseModel, EmailStr
-from uuid import UUID
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 
@@ -10,15 +9,9 @@ class ProductAddJSON(BaseModel):
     rating: float
     price: float
 
-    class Config:
-        orm_mode = True
-
 
 class ProductIn(BaseModel):
     link: str
-
-    class Config:
-        orm_mode = True
 
 
 class ProductOut(BaseModel):
@@ -28,8 +21,7 @@ class ProductOut(BaseModel):
     price: float
     created_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProductFull(BaseModel):
@@ -41,5 +33,4 @@ class ProductFull(BaseModel):
     price: float
     created_at: datetime
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

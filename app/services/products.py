@@ -1,5 +1,6 @@
 import requests
-import pprint
+
+# import httpx
 import os
 from dotenv import load_dotenv
 
@@ -40,7 +41,13 @@ def get_items_from_API(text):
     }
 
     response = requests.get(url, params=params)
-    print(response.text)
+
+    if response.status_code != 200:
+        return {"error": "Search API failed", "details": response.text}
+
+    # async with httpx.AsyncClient() as client:
+    #     response = await client.get(url, params=params)
+
     data = response.json()
     items = []
     for item in data.get("organic_results", []):

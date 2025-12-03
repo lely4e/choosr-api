@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session, aliased
 from app.db.models import User
 from app.core.errors import UserNotFoundError, PollNotFoundError
 from sqlalchemy.exc import SQLAlchemyError
+from fastapi.exceptions import HTTPException
+from fastapi import status
 
 
 class PollManager:
@@ -65,6 +67,11 @@ class PollManager:
         try:
             poll.title = poll_in.title
             poll.budget = poll_in.budget
+            if not poll.title or not poll.budget:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                    detail="Field title or poll cannot be empty",
+                )
             self.db.commit()
             self.db.refresh(poll)
             return poll

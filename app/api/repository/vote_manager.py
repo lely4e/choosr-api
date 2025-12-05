@@ -59,6 +59,7 @@ class VoteManager:
         """Delete vote from the specific product"""
         product = (
             self.db.query(Product)
+            .join(Poll, Product.poll_id == Poll.id)
             .filter(Product.id == product_id)
             .filter(Poll.uuid == uuid)
             .first()
@@ -92,6 +93,7 @@ class VoteManager:
         """Retrieve vote from current user"""
         product = (
             self.db.query(Product)
+            .join(Poll, Product.poll_id == Poll.id)
             .filter(Product.id == product_id)
             .filter(Poll.uuid == uuid)
             .first()

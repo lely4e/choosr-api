@@ -58,12 +58,24 @@ async def test_update_current_user_username_failed(client, registered_user):
     payload = {}
 
     response = await client.put("/me", headers=headers, json=payload)
+    data = response.json()
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
+    assert data == {
+        "error": "Validation failed",
+        "details": [
+            {
+                "type": "missing",
+                "loc": ["body", "username"],
+                "msg": "Field required",
+                "input": {},
+            }
+        ],
+    }
 
 
 @pytest.mark.asyncio
-async def test_delete_current_user_username_success(client, registered_user):
+async def test_delete_current_user_success(client, registered_user):
     user, headers = registered_user
     response = await client.delete("/me", headers=headers)
 
@@ -73,3 +85,14 @@ async def test_delete_current_user_username_success(client, registered_user):
     user_deleted = db.query(User).filter_by(email=user.email).first()
     assert user_deleted is None
     db.close()
+
+
+@pytest.mark.asyncio
+async def test_delete_current_user_failed_user_not_found(client):
+
+    response = await client.delete("/me")
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    data = response.json()
+
+    assert response.json() == {"detail": "Missing token"}

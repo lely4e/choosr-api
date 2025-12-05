@@ -33,9 +33,9 @@ class UserManager:
             self.db.rollback()
             raise UserAlreadyExistsError("User with this email already exists")
 
-        except Exception as e:
+        except HTTPException as e:
             self.db.rollback()
-            raise Exception(f"Error adding user: {e}")
+            raise e
 
     def get_users(self):
         """Retrieve all users"""

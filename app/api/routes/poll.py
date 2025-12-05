@@ -1,4 +1,4 @@
-from app.api.schemas.poll import PollRead, PollResponse
+from app.api.schemas.poll import PollIn, PollOut
 from typing import List
 from app.api.dependencies import get_user_manager, get_poll_manager
 from fastapi import APIRouter, Depends, Request
@@ -17,7 +17,7 @@ poll_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 #     return [dict(row._mapping) for row in polls]
 
 
-@poll_router.get("/polls", response_model=List[PollResponse])  #
+@poll_router.get("/polls", response_model=List[PollOut])  #
 async def read_own_items(
     request: Request,
     poll_manager: PollManager = Depends(get_poll_manager),
@@ -28,10 +28,10 @@ async def read_own_items(
     return poll_manager.get_polls_by_user_id(user_id=user.id)
 
 
-@poll_router.post("/polls", response_model=PollResponse)
+@poll_router.post("/polls", response_model=PollOut)
 async def create_poll(
     request: Request,
-    poll_in: PollRead,
+    poll_in: PollIn,
     poll_manager: PollManager = Depends(get_poll_manager),
     user_manager: UserManager = Depends(get_user_manager),
 ):
@@ -42,17 +42,17 @@ async def create_poll(
         return poll
 
 
-@poll_router.get("/{uuid}", response_model=PollResponse)
+@poll_router.get("/{uuid}", response_model=PollOut)
 async def show_poll(uuid, poll_manager: PollManager = Depends(get_poll_manager)):
     """Retrieve a poll by it's unique link"""
     return poll_manager.get_poll(uuid)
 
 
-@poll_router.put("/{uuid}", response_model=PollResponse)
+@poll_router.put("/{uuid}", response_model=PollOut)
 async def update_poll(
     request: Request,
     uuid,
-    poll_in: PollRead,
+    poll_in: PollIn,
     poll_manager: PollManager = Depends(get_poll_manager),
     user_manager: UserManager = Depends(get_user_manager),
 ):
@@ -62,7 +62,7 @@ async def update_poll(
     return poll
 
 
-@poll_router.delete("/{uuid}", response_model=PollResponse)
+@poll_router.delete("/{uuid}", response_model=PollOut)
 async def delete_poll(
     request: Request,
     uuid,

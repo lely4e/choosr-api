@@ -5,3 +5,6 @@ __pycache__/
 .idea
 pytest_cache/
 .env.test
+.coverage
+coverage.xml
+htmlcov/

@@ -6,6 +6,7 @@ from app.core.errors import (
     PollNotFoundError,
 )
 from sqlalchemy.exc import SQLAlchemyError
+from fastapi import HTTPException, status
 
 
 class ProductManager:
@@ -34,7 +35,7 @@ class ProductManager:
 
         except Exception as e:
             self.db.rollback()
-            raise Exception(f"Error adding product: {e}")
+            raise e
 
     def get_products(self, uuid):
         """Retrieve all products from the selected poll"""
@@ -47,6 +48,7 @@ class ProductManager:
         """Retrieve specific product from the selected poll"""
         product = (
             self.db.query(Product)
+            .join(Poll, Product.poll_id == Poll.id)
             .filter(Product.id == product_id)
             .filter(Poll.uuid == uuid)
             .first()
@@ -59,9 +61,10 @@ class ProductManager:
         """Delete specific product from the selected poll"""
         product = (
             self.db.query(Product)
+            .join(Poll, Product.poll_id == Poll.id)
             .filter(Product.id == product_id)
             .filter(Poll.uuid == uuid)
-            .where(Product.user_id == user.id)
+            .filter(Product.user_id == user.id)
             .first()
         )
         if not product:

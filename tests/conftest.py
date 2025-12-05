@@ -8,7 +8,7 @@ from httpx import AsyncClient, ASGITransport
 from main import app
 from app.db.database import Base, get_db
 import pytest_asyncio
-from app.db.models import User, Poll
+from app.db.models import User, Poll, Product, Comment, Vote
 from app.core.security import create_access_token
 from faker import Faker
 import random
@@ -92,7 +92,6 @@ async def create_poll_and_user():
     db.commit()
     db.refresh(user)
     db.close()
-
     access_token = create_access_token({"sub": user.email})
     headers = {"Authorization": f"Bearer {access_token}"}
 
@@ -108,3 +107,49 @@ async def create_poll_and_user():
     db.close()
 
     return user, headers, poll
+
+
+# Register user, create poll and add product
+@pytest_asyncio.fixture
+async def add_user_poll_and_product(create_poll_and_user):
+    fake = Faker()
+
+    user, headers, poll = create_poll_and_user
+
+    db = TestSessionLocal()
+    product = Product(
+        title=fake.sentence(nb_words=4),
+        link=fake.url(),
+        image=fake.image_url(),
+        rating=round(random.uniform(0, 5), 1),
+        price=round(random.uniform(10, 500), 2),
+        user_id=user.id,
+        poll_id=poll.id,
+    )
+    db.add(product)
+    db.commit()
+    db.refresh(product)
+    db.close()
+
+    return user, product, headers, poll
+
+
+# Register user, create poll, add product and comment
+@pytest_asyncio.fixture
+async def add_user_poll_product_and_comment(add_user_poll_and_product):
+    fake = Faker()
+
+    user, headers, poll, product = add_user_poll_and_product
+
+    db = TestSessionLocal()
+    comment = Comment(
+        text=fake.sentence(nb_words=4),
+        user_id=user.id,
+        product_id=product.id,
+    )
+    db.add(comment)
+    db.commit()
+    db.refresh(comment)
+    db.close()
+
+    return headers, poll, product, comment

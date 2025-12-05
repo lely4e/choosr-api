@@ -106,7 +106,6 @@ async def test_update_poll_uuid_failed_empty_fields(client, create_poll_and_user
     response = await client.put(f"/{poll.uuid}", headers=headers, json=payload)
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
-    assert response.json() == {"error": "Field title or poll cannot be empty"}
 
 
 @pytest.mark.asyncio

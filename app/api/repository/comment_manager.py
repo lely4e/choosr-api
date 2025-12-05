@@ -1,6 +1,10 @@
 from app.db.models import Product, Poll, Comment, User
 from sqlalchemy.orm import Session, aliased
-from app.core.errors import UserNotFoundError, CommentsNotFoundError
+from app.core.errors import (
+    UserNotFoundError,
+    CommentsNotFoundError,
+    ProductNotFoundError,
+)
 
 
 class CommentManager:
@@ -13,6 +17,7 @@ class CommentManager:
             self.db.query(Product)
             .filter(Product.id == product_id)
             .filter(Poll.uuid == uuid)
+            .join(Poll, Product.poll_id == Poll.id)
             .first()
         )
 
@@ -36,43 +41,51 @@ class CommentManager:
 
     def get_comments(self, uuid, product_id, user):
         """Retrieve comments for the selected product"""
+        product = (
+            self.db.query(Product)
+            .join(Poll, Poll.id == Product.poll_id)
+            .filter(Poll.uuid == uuid)
+            .filter(Product.id == product_id)
+            .first()
+        )
+
+        if not product:
+            raise ProductNotFoundError
+
         user_alias = aliased(User)
-        product_alias = aliased(Product)
         comments = (
             self.db.query(
-                Comment.id,
-                Comment.text,
-                user_alias.username.label("created_by"),
-                product_alias.title.label("title"),
+                Comment.id, Comment.text, user_alias.username.label("created_by")
             )
             .join(user_alias, Comment.user_id == user_alias.id)
-            .join(product_alias, Comment.product_id == product_alias.id)
-            .filter(Comment.product_id == product_id)
-            # .filter(Comment.user_id == user.id)
-            .filter(Poll.uuid == uuid)
+            .filter(Comment.product_id == product.id)
             .all()
         )
         return comments
 
     def get_comment(self, uuid, product_id, user, comment_id):
         """Retrieve a comment for the selected product"""
-        user_alias = aliased(User)
-        product_alias = aliased(Product)
-        comment = (
-            self.db.query(
-                Comment.id,
-                Comment.text,
-                user_alias.username.label("created_by"),
-                product_alias.title.label("title"),
-            )
-            .join(user_alias, Comment.user_id == user_alias.id)
-            .join(product_alias, Comment.product_id == product_alias.id)
-            .filter(Comment.product_id == product_id)
-            # .filter(Comment.user_id == user.id)
+        product = (
+            self.db.query(Product)
+            .join(Poll, Poll.id == Product.poll_id)
             .filter(Poll.uuid == uuid)
-            .where(Comment.id == comment_id)
+            .filter(Product.id == product_id)
             .first()
         )
+
+        if not product:
+            raise ProductNotFoundError
+
+        user_alias = aliased(User)
+        comment = (
+            self.db.query(
+                Comment.id, Comment.text, user_alias.username.label("created_by")
+            )
+            .join(user_alias, Comment.user_id == user_alias.id)
+            .filter(Comment.product_id == product.id)
+            .first()
+        )
+
         if not comment:
             raise CommentsNotFoundError("Comments not found")
         return comment
@@ -81,8 +94,9 @@ class CommentManager:
         """Delete a comment from the selected product"""
         product = (
             self.db.query(Product)
-            .filter(Product.id == product_id)
+            .join(Poll, Poll.id == Product.poll_id)
             .filter(Poll.uuid == uuid)
+            .filter(Product.id == product_id)
             .first()
         )
 

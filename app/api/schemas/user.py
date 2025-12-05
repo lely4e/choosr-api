@@ -1,11 +1,11 @@
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict, Field
 from datetime import datetime
 
 
 class UserIn(BaseModel):
-    username: str
-    email: EmailStr
-    password: str
+    username: str = Field(..., min_length=3, max_length=20)
+    email: EmailStr = Field(..., min_length=3, max_length=50)
+    password: str = Field(..., min_length=8)
 
 
 class UserChange(BaseModel):

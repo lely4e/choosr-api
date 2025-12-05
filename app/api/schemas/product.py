@@ -1,13 +1,14 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
+from typing import Optional
 
 
 class ProductAddJSON(BaseModel):
-    title: str
-    link: str
-    image: str
-    rating: float
-    price: float
+    title: str = Field(..., min_length=3, max_length=100)
+    link: str = Field(..., min_length=3)
+    image: str = Field(..., min_length=3)
+    rating: float = Field(..., ge=0, le=5)
+    price: float = Field(..., gt=0)
 
 
 class ProductIn(BaseModel):

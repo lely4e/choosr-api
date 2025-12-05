@@ -1,9 +1,9 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
 
 
 class CommentIn(BaseModel):
-    text: str
+    text: str = Field(..., min_length=3, max_length=255)
 
 
 class CommentOut(BaseModel):

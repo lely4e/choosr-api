@@ -14,10 +14,10 @@ from faker import Faker
 import random
 
 load_dotenv(".env.test")
-TEST_DATABASE_URL = os.getenv("TEST_DATABASE_URL")
+DATABASE_URL = f"postgresql://{os.getenv("DB_USER")}:{os.getenv("DB_PASS")}@{os.getenv("DB_HOST")}:{os.getenv("DB_PORT")}/{os.getenv("DB_NAME")}"
 
 # NuLLPool to avoid connections being reused between tests
-test_engine = create_engine(TEST_DATABASE_URL, poolclass=NullPool)
+test_engine = create_engine(DATABASE_URL, poolclass=NullPool)
 
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
@@ -73,7 +73,7 @@ async def registered_user():
 
 # Register user and create poll
 @pytest_asyncio.fixture
-async def create_poll_and_user():
+async def create_poll_and_user(registered_user):
     fake = Faker()
     events = [
         "Mike Birthday",
@@ -84,16 +84,7 @@ async def create_poll_and_user():
         "Daniel & Grace’s Anniversary",
     ]
 
-    db = TestSessionLocal()
-    user = User(
-        username=fake.user_name(), email=fake.email(), password=fake.password(length=12)
-    )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-    db.close()
-    access_token = create_access_token({"sub": user.email})
-    headers = {"Authorization": f"Bearer {access_token}"}
+    user, headers = registered_user
 
     db = TestSessionLocal()
     poll = Poll(

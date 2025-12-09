@@ -21,8 +21,8 @@ class CommentManager:
             .first()
         )
 
-        if not user or not product:
-            raise UserNotFoundError("User or product not found")
+        if not product:
+            raise ProductNotFoundError("Product not found")
         try:
             comment = Comment(
                 text=comment_in.text,
@@ -37,7 +37,7 @@ class CommentManager:
 
         except Exception as e:
             self.db.rollback()
-            raise Exception(f"Error adding comment: {e}")
+            raise e
 
     def get_comments(self, uuid, product_id, user):
         """Retrieve comments for the selected product"""
@@ -50,7 +50,7 @@ class CommentManager:
         )
 
         if not product:
-            raise ProductNotFoundError
+            raise ProductNotFoundError("Product not found")
 
         user_alias = aliased(User)
         comments = (
@@ -74,7 +74,7 @@ class CommentManager:
         )
 
         if not product:
-            raise ProductNotFoundError
+            raise ProductNotFoundError("Product not found")
 
         user_alias = aliased(User)
         comment = (
@@ -100,8 +100,8 @@ class CommentManager:
             .first()
         )
 
-        if not user or not product:
-            raise UserNotFoundError("User or product not found")
+        if not product:
+            raise ProductNotFoundError("Product not found")
         try:
             comment = (
                 self.db.query(Comment)
@@ -117,8 +117,8 @@ class CommentManager:
                 return {"message": "Comment was deleted successfully"}
 
             else:
-                raise CommentsNotFoundError()
+                raise CommentsNotFoundError("Comment not found")
 
         except Exception as e:
             self.db.rollback()
-            raise Exception(f"Error deleting comment: {e}")
+            raise e

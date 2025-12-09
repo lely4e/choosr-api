@@ -37,6 +37,16 @@ async def test_add_vote_failed_vote_only_once(client, add_user_poll_and_product)
 
 
 @pytest.mark.asyncio
+async def test_add_vote_failed_missing_token(client, add_user_poll_and_product):
+    _, product, _, poll = add_user_poll_and_product
+
+    response = await client.post(f"/{poll.uuid}/products/{product.id}/vote")
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    assert response.json() == {"detail": "Missing token"}
+
+
+@pytest.mark.asyncio
 async def test_get_vote_success(client, add_user_poll_and_product):
     user, product, headers, poll = add_user_poll_and_product
 
@@ -81,3 +91,17 @@ async def test_delete_vote_success(client, add_user_poll_and_product):
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert data == {"message": "Vote was deleted successfully"}
+
+
+@pytest.mark.asyncio
+async def test_delete_vote_failed(client, add_user_poll_and_product):
+    user, product, headers, poll = add_user_poll_and_product
+    product.id += 1
+
+    response = await client.delete(
+        f"/{poll.uuid}/products/{product.id}/vote", headers=headers
+    )
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    data = response.json()
+    assert data == {"error": "Product not found"}

@@ -95,4 +95,4 @@ async def test_delete_current_user_failed_user_not_found(client):
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     data = response.json()
 
-    assert response.json() == {"detail": "Missing token"}
+    assert data == {"detail": "Missing token"}

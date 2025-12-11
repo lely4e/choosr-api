@@ -6,7 +6,7 @@ from app.core.security import oauth2_scheme
 search_router = APIRouter()  # dependencies=[Depends(oauth2_scheme)]
 
 
-@search_router.get("/search/products")
+@search_router.get("/products/search")
 async def read_products_query(search: str = Query(..., min_length=2)):
     """Searching product using Amazon Search API"""
     products = get_items_from_API(search)

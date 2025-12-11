@@ -6,6 +6,7 @@ from app.api.routes.product import product_router
 from app.api.routes.vote import vote_router
 from app.api.routes.comments import comment_router
 from app.api.routes.search import search_router
+from app.api.routes.suggestion import suggestion_router
 
 router = APIRouter()
 router.include_router(auth_router, tags=["Authentication"])
@@ -15,3 +16,4 @@ router.include_router(poll_router, tags=["Polls"])
 router.include_router(vote_router, prefix="/{uuid}/products", tags=["Votes"])
 router.include_router(comment_router, prefix="/{uuid}/products", tags=["Comments"])
 router.include_router(product_router, prefix="/{uuid}", tags=["Products"])
+router.include_router(suggestion_router, tags=["Suggestions"])

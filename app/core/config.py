@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     api_key: str
+    GEMINI_API_KEY: str
 
     @property
     def SYNC_DATABASE_URL(self):

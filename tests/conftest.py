@@ -1,6 +1,9 @@
+from dotenv import load_dotenv
+
+load_dotenv(".env.test")
+
 import pytest
 import os
-from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
@@ -13,11 +16,9 @@ from app.core.security import create_access_token
 from faker import Faker
 import random
 
-load_dotenv(".env.test")
-DATABASE_URL = f"postgresql://{os.getenv("DB_USER")}:{os.getenv("DB_PASS")}@{os.getenv("DB_HOST")}:{os.getenv("DB_PORT")}/{os.getenv("DB_NAME")}"
-
+TEST_DATABASE_URL = f"postgresql://{os.getenv("DB_USER")}:{os.getenv("DB_PASS")}@{os.getenv("DB_HOST")}:{os.getenv("DB_PORT")}/{os.getenv("DB_NAME")}"
 # NuLLPool to avoid connections being reused between tests
-test_engine = create_engine(DATABASE_URL, poolclass=NullPool)
+test_engine = create_engine(TEST_DATABASE_URL, poolclass=NullPool)
 
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 

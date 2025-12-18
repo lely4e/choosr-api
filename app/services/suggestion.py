@@ -21,6 +21,7 @@ def ai_prompt(
     gift_type,
     budget_range,
 ):
+    """Generate gift suggestions using Gemini AI."""
 
     prompt_text = f"""
 I need help finding the perfect gift.

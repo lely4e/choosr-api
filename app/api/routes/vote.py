@@ -4,6 +4,7 @@ from app.api.repository.vote_manager import VoteManager
 from app.api.repository.user_manager import UserManager
 from app.core.security import oauth2_scheme
 from app.api.schemas.vote import VoteOut
+from uuid import UUID
 
 
 vote_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
@@ -11,7 +12,7 @@ vote_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 @vote_router.get("/{product_id}/vote", response_model=VoteOut)
 async def get_votes(
-    uuid,
+    uuid: UUID,
     product_id: int,
     request: Request,
     vote_manager: VoteManager = Depends(get_vote_manager),
@@ -24,7 +25,7 @@ async def get_votes(
 
 @vote_router.post("/{product_id}/vote")
 async def add_vote(
-    uuid,
+    uuid: UUID,
     product_id: int,
     request: Request,
     vote_manager: VoteManager = Depends(get_vote_manager),
@@ -37,7 +38,7 @@ async def add_vote(
 
 @vote_router.delete("/{product_id}/vote")
 async def delete_vote(
-    uuid,
+    uuid: UUID,
     product_id: int,
     request: Request,
     vote_manager: VoteManager = Depends(get_vote_manager),

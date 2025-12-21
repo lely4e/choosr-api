@@ -4,6 +4,7 @@ from app.api.repository.user_manager import UserManager
 from app.api.repository.comment_manager import CommentManager
 from app.core.security import oauth2_scheme
 from app.api.schemas.comments import CommentIn, CommentOut
+from uuid import UUID
 
 
 comment_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
@@ -11,7 +12,7 @@ comment_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 @comment_router.get("/{product_id}/comments")
 async def get_comments(
-    uuid,
+    uuid: UUID,
     product_id: int,
     request: Request,
     comment_manager: CommentManager = Depends(get_comment_manager),
@@ -26,7 +27,7 @@ async def get_comments(
 @comment_router.post("/{product_id}/comments", response_model=CommentOut)
 async def add_comments(
     request: Request,
-    uuid,
+    uuid: UUID,
     product_id: int,
     comment_in: CommentIn,
     comment_manager: CommentManager = Depends(get_comment_manager),
@@ -40,7 +41,7 @@ async def add_comments(
 
 @comment_router.get("/{product_id}/comments/{comment_id}")
 async def get_comment(
-    uuid,
+    uuid: UUID,
     product_id: int,
     comment_id: int,
     request: Request,
@@ -55,7 +56,7 @@ async def get_comment(
 
 @comment_router.delete("/{product_id}/comments/{comment_id}")
 async def delete_comment(
-    uuid,
+    uuid: UUID,
     product_id: int,
     comment_id: int,
     request: Request,

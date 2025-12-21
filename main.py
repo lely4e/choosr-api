@@ -52,7 +52,6 @@ async def auth_middleware(request: Request, call_next):
         or request.url.path.startswith("/auth")
         or request.url.path.startswith("/login")
         or request.url.path.startswith("/signup")
-        or request.url.path.startswith("/search")
     ):
         return await call_next(request)
 

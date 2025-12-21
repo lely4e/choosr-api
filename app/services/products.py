@@ -40,7 +40,7 @@ def get_items_from_API(text):
         "api_key": API_KEY,
     }
 
-    response = requests.get(url, params=params)
+    response = requests.get(url, params=params, timeout=10)
 
     if response.status_code != 200:
         return {"error": "Search API failed", "details": response.text}

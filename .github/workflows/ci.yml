@@ -34,7 +34,7 @@ jobs:
       DB_NAME: test_me
       ALGORITHM: "HS256"
       ACCESS_TOKEN_EXPIRE_MINUTES: "30"
-      api_key: "testapikey"
+      API_KEY: "testapikey"
       GEMINI_API_KEY: "testapikey"
 
     steps:

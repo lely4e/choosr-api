@@ -82,6 +82,7 @@ class CommentManager:
                 Comment.id, Comment.text, user_alias.username.label("created_by")
             )
             .join(user_alias, Comment.user_id == user_alias.id)
+            .filter(Comment.id == comment_id)
             .filter(Comment.product_id == product.id)
             .first()
         )

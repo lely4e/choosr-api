@@ -16,7 +16,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
-    api_key: str
+    API_KEY: str
     GEMINI_API_KEY: str
 
     @property

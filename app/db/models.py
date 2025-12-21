@@ -63,7 +63,7 @@ class Product(Base):
     title: Mapped[str] = mapped_column(String, index=True)
     link: Mapped[str] = mapped_column(String)
     image: Mapped[str] = mapped_column(String)
-    rating: Mapped[str] = mapped_column(Float)
+    rating: Mapped[float] = mapped_column(Float)
     price: Mapped[float] = mapped_column(Float)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()

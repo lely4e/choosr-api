@@ -74,27 +74,6 @@ class UserManager:
             return False
         return user
 
-    def get_current_user(self, token: str = Depends(oauth2_scheme)):
-        """Retrieve current user"""
-        credentials_exception = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-        try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            email = payload.get("sub")
-
-            if email is None:
-                raise credentials_exception
-            token_data = TokenData(email=email)
-        except InvalidTokenError:
-            raise credentials_exception
-        user = self.get_user_by_email(token_data.email)
-        if user is None:
-            raise credentials_exception
-        return user
-
     def update_user(self, user, user_in):
         """Update current user"""
         if not user:

@@ -17,7 +17,7 @@ async def get_votes(
     request: Request,
     vote_manager: VoteManager = Depends(get_vote_manager),
     user_manager: UserManager = Depends(get_user_manager),
-):
+) -> VoteOut:
     """Return the current user's vote"""
     user = user_manager.get_user_by_email(request.state.user)
     return vote_manager.get_vote_from_current_user(uuid, product_id, user)

@@ -14,3 +14,11 @@ class CommentOut(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class CommentListOut(BaseModel):
+    id: int
+    text: str
+    created_by: str
+
+    model_config = ConfigDict(from_attributes=True)

@@ -18,20 +18,22 @@ class ProductIn(BaseModel):
 class ProductOut(BaseModel):
     id: int
     title: str
-    description: str
+    link: str
+    image: str
+    rating: float
     price: float
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class ProductFull(BaseModel):
+class ProductListOut(BaseModel):
     id: int
     title: str
     link: str
     image: str
     rating: float
     price: float
-    created_at: datetime
+    votes: Optional[int]
 
     model_config = ConfigDict(from_attributes=True)

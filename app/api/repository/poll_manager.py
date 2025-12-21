@@ -70,7 +70,7 @@ class PollManager:
             if not poll.title or not poll.budget:
                 raise HTTPException(
                     status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
-                    detail="Field title or poll cannot be empty",
+                    detail="Field title or budget cannot be empty",
                 )
             self.db.commit()
             self.db.refresh(poll)

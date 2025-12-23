@@ -19,7 +19,6 @@ import random
 TEST_DATABASE_URL = f"postgresql://{os.getenv("DB_USER")}:{os.getenv("DB_PASS")}@{os.getenv("DB_HOST")}:{os.getenv("DB_PORT")}/{os.getenv("DB_NAME")}"
 # NuLLPool to avoid connections being reused between tests
 test_engine = create_engine(TEST_DATABASE_URL, poolclass=NullPool)
-
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
 
 

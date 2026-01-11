@@ -1,11 +1,7 @@
 import requests
 
 # import httpx
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-API_KEY = os.getenv("API_KEY")
+from app.core.config import settings
 
 
 def get_items_test(text):
@@ -37,7 +33,7 @@ def get_items_from_API(text):
     params = {
         "engine": "amazon_search",
         "q": text,
-        "api_key": API_KEY,
+        "api_key": settings.API_KEY,
     }
 
     response = requests.get(url, params=params, timeout=10)

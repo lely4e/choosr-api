@@ -13,24 +13,19 @@ A FastAPI backend for creating collaborative polls and event-based voting. Users
 The app uses JWT (JSON Web Token) authentication to secure all endpoints. Only registered users can access the application, create polls, add items, or vote.
 * Users must register and log in to receive a JWT token.
 * The token must be included in the Authorization header for every request:
-```
-Authorization: Bearer <your_token_here>
-```
 * Access to endpoints is controlled via FastAPI middleware and dependency injection, ensuring that unauthenticated users cannot interact with the app.
 
 
 ## ⭐️ Features
 Core Features
 
-* ⚡ FastAPI with fully async endpoints
+* ⚡ FastAPI with async endpoints
 * 🔐 JWT-based authentication
-* 🔑 Users can only delete their own polls, comments, and votes.
+* 🔑 Users can only manage their own polls, comments, and votes
 * 🧩 Pydantic models for data validation
-* 👤 User registration & login
-* 🛡️ Authentication handled through middleware
-* 🔧 Dependencies injected into routes for accessing users, the database, and services.
-* 🗳️ Poll creation, sharing
-* 🛍️ Add products to polls, commenting and voting
+* 🛡️ Authentication enforced via middleware
+* 🔧 Dependency injection for users, database access, and services
+* 🛍️ Product management in polls, including commenting and voting
 * 🔍 Product search via external API (Amazon Search API)
 
 
@@ -83,65 +78,12 @@ docker run -p 8000:8000 choosr-api
 ```
 
 ## 🌳 Project Structure
-```
-choosr_API_project/
-├── app/
-│   ├── __init__.py
-│   ├── api/
-│   │   ├── __init__.py
-│   │
-│   │   ├── routes/
-│   │   │   ├── __init__.py
-│   │   │   ├── auth.py
-│   │   │   ├── comments.py
-│   │   │   ├── poll.py
-│   │   │   ├── product.py
-│   │   │   ├── search.py
-│   │   │   ├── user.py
-│   │   │   └── vote.py
-│   │
-│   │   ├── schemas/
-│   │   │   ├── __init__.py
-│   │   │   ├── auth.py
-│   │   │   ├── comments.py
-│   │   │   ├── poll.py
-│   │   │   ├── product.py
-│   │   │   ├── user.py
-│   │   │   └── vote.py
-│   │
-│   │   ├── repository/
-│   │   │   ├── __init__.py
-│   │   │   ├── comment_manager.py
-│   │   │   ├── poll_manager.py
-│   │   │   ├── product_manager.py
-│   │   │   ├── user_manager.py
-│   │   │   └── vote_manager.py
-│   │
-│   │   └── dependencies.py
-│   │
-│   ├── core/
-│   │   ├── __init__.py
-│   │   ├── config.py
-│   │   ├── errors.py
-│   │   └── security.py
-│
-│   ├── db/
-│   │   ├── __init__.py
-│   │   ├── database.py
-│   │   └── models.py
-│
-│   └── services/
-│       └── __init__.py
-│       └── products.py
-│
-├── .dockerignore
-├── .env
-├── .gitignore
-├── Dockerfile
-├── main.py
-├── README.md
-└── requirements.txt
-```
+
+- `api/routes` – API endpoints
+- `api/schemas` – Pydantic models
+- `api/repositories` – Database access layer
+- `services` – Business logic
+- `core` – Security, config, and error handling
 
 ## 🔖 Notes
 * 🔑 Keep sensitive data in .env (never commit it).

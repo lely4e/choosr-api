@@ -4,7 +4,7 @@ from typing import Optional
 
 
 class ProductAddJSON(BaseModel):
-    title: str = Field(..., min_length=3, max_length=100)
+    title: str = Field(..., min_length=3, max_length=500)
     link: str = Field(..., min_length=3)
     image: str = Field(..., min_length=3)
     rating: float = Field(..., ge=0, le=5)
@@ -23,6 +23,16 @@ class ProductOut(BaseModel):
     rating: float
     price: float
     created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ProductSearchOut(BaseModel):
+    title: str
+    link: str
+    image: str
+    rating: Optional[float] = None
+    price: Optional[float] = None
 
     model_config = ConfigDict(from_attributes=True)
 

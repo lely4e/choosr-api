@@ -1,0 +1,224 @@
+/* @import "tailwindcss"; */ 
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+}
+
+a {
+  font-weight: 500;
+  color: #d233ea;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #ed53f2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  /* place-items: center; */
+  min-width: 320px;
+  min-height: 100vh;
+  justify-content: center;
+
+}
+
+h1 {
+  font-size: 2.2em;
+  line-height: 1.1;
+}
+
+button.polls-buttons {
+  border-radius: 8px;
+  border: 1px solid rgb(104, 27, 175);
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #f4f4f4e5;
+  color: #875bd3;
+  cursor: pointer;
+  transition: border-color 0.25s;
+
+}
+
+div.actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: rgb(104, 27, 175);
+  cursor: pointer;
+  transition: border-color 0.25s;
+
+}
+
+div.login-signup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+button.login,
+button.signup,
+button.add-poll {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  align-items: center;
+  margin: auto;
+}
+
+div.button-login,
+div.button-signup {
+  padding: 20px;
+}
+
+.login-form,
+.signup-form,
+.add-poll-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding-bottom: 40px;
+
+}
+
+.account-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+p {
+  font-size: small;
+  color: #8955b4;
+}
+
+h2 {
+  color: #035297;
+}
+
+.username-form,
+.password-form,
+.email-form,
+.budget-form,
+.title-form {
+  /* border-radius: 20px; */
+  display: flex;
+  width: 200px;
+  height: 30px;
+  background-color: #d6bfff;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+.username-form::placeholder,
+.email-form::placeholder,
+.password-form::placeholder,
+.title-form::placeholder,
+.budget-form::placeholder {
+  color: #8955b4;
+  font-style: italic;
+  font-weight: 400;
+  opacity: 1;
+  text-align: center;
+}
+
+
+.username-color,
+.email-color,
+.password-color,
+.title-color,
+.budget-color {
+  color: #1a1a1a;
+  padding-top: 20px;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+div.poll-description {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.product-text {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  text-align: left;
+  flex: 1;
+}
+
+.product-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.vote {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+
+}
+
+.products-link-comments {
+  display: flex;
+  gap: 30px;
+}
+
+header {
+  display: block;
+}

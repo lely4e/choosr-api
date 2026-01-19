@@ -59,36 +59,55 @@ const Polls: React.FC = () => {
 
   return (
     <>
-      <h1>My Polls</h1>
-      <button
-        onClick={() => navigate("/add-poll")}
-        className="add-poll"
-      >
-      Create Poll
-      </button>
+      <div className="wrap-title-poll">
+        <div className="title-poll">
+          <h1>My Events</h1>
+          <span>View, manage, and collaborate on your polls.</span>
+        </div>
 
-      <ul style={{ listStyle: "none", padding: 0 }}>
-        {polls.map(poll => (
-          <li key={poll.uuid} style={{ marginBottom: "16px" }}>
-            <div className="card">
+        <button
+          onClick={() => navigate("/add-poll")}
+          className="add-poll"
+        >
+          Create New Event
+        </button>
+      </div>
+
+      <div className="wrap-poll">
+        <div className="poll-grid">
+          {polls.map(poll => (
+            <div key={poll.uuid} className="card" onClick={() => navigate(`/${poll.uuid}`)}>
               <div className="poll-text">
-                {poll.title} - Budget: {poll.budget}$
+                <h3>{poll.title}</h3>
+                <button className="active-button">Active</button>
               </div>
+              <p className="poll-text">
+                Budget: {poll.budget}$
+              </p>
+              <p className="deadline">6 options  |  2 days left</p>
+
               <div className="actions">
-                <button className="polls-buttons" onClick={() => navigate(`/${poll.uuid}`)}>
-                  Show
-                </button>
                 <button className="polls-buttons" onClick={() => handleDelete(poll.uuid)}>Delete</button>
-                <button className="polls-buttons" onClick={() => navigate(`/update_poll/${poll.uuid}`)}>
-                  Update
-                </button>
-                <button className="polls-buttons">Active</button>
+                <button className="polls-buttons" onClick={() => navigate(`/update_poll/${poll.uuid}`)}>Update</button>
                 <button className="polls-buttons">Share</button>
+                <button className="polls-buttons" onClick={() => navigate(`/ideas`)}>Ideas</button>
+
               </div>
-            </div>           
-          </li>
-        ))}
-      </ul>
+
+            </div>
+          ))}
+         
+          <div className="card create-card" onClick={() => navigate("/add-poll")}>
+            <div className="create-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+              </svg>
+            </div>
+            <p className="create-title">Create New Event</p>
+          </div>
+        </div>
+      </div>
+      
     </>
   );
 };

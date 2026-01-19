@@ -94,6 +94,7 @@ export default function PollPage() {
 
     return (
         <>
+            <a href="/my-polls">Back to polls</a>
             <h1>{poll.title}</h1>
             <div className="poll-description">
                 <p>Budget: ${poll.budget}</p>

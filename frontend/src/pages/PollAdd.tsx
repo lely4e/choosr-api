@@ -41,6 +41,7 @@ export default function addPoll() {
     
       return (
         <section>
+          <a href="/my-polls">Back to polls</a>
           <h1>Create Poll</h1>
           <form
             onSubmit={handleSubmit}

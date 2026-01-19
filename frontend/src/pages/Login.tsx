@@ -45,8 +45,12 @@ export default function Login() {
   }
 
   return (
+    <div className="wrap-poll">
     <section>
-      <h1>Login</h1>
+      {/* <h1>Login</h1> */}
+      <div className="card-form">
+        <h1 className="login-h1">Welcome back</h1>
+        <p className="account-prompt">Please sign in to continue</p>
       <form
         onSubmit={handleSubmit}
         className="login-form"
@@ -83,18 +87,20 @@ export default function Login() {
             type="submit"
             className="login"
           >
-            Login
+            Sign In
           </button>
           <p className="account-prompt">
             Already have an account?{" "}
             <Link to="/signup" className="login-link">
-              Signup
+              Sign up
             </Link>
           </p>
         </div>
+        
       </form>
 
-
+</div>
     </section>
+    </div>
   )
 }

@@ -43,8 +43,11 @@ export default function Signup() {
   };
 
   return (
+    <div className="wrap-poll">
     <section>
-      <h1>Signup</h1>
+      <div className="card-form">
+             <h1 className="login-h1">Sign up</h1>
+        <p className="account-prompt">Please sign up to continue</p>
       <form
         onSubmit={handleSubmit}
         className="signup-form"
@@ -99,13 +102,14 @@ export default function Signup() {
           <p className="account-prompt">
             Don’t have an account?{" "}
             <Link to="/login" className="login-link">
-              Login
+              Log in
             </Link>
           </p>
         </div>
       </form>
 
-
+</div>
     </section>
+    </div>
   )
 }

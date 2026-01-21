@@ -39,7 +39,8 @@ def get_items_from_API(text):
     response = requests.get(url, params=params, timeout=10)
 
     if response.status_code != 200:
-        return {"error": "Search API failed", "details": response.text}
+        return []
+        # return {"error": "Search API failed", "details": response.text}
 
     # async with httpx.AsyncClient() as client:
     #     response = await client.get(url, params=params)

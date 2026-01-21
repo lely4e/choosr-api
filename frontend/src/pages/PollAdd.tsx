@@ -41,13 +41,13 @@ export default function addPoll() {
     
       return (
         <section>
-          <a href="/my-polls">Back to polls</a>
-          <h1>Create Poll</h1>
+          
           <form
             onSubmit={handleSubmit}
             className="add-poll-form"
           >
-    
+    <a href="/my-polls">Back to polls</a>
+          <h1>Create Poll</h1>
             <label htmlFor="title" className="title-color">Title</label>
             <input
               id="title"
@@ -74,7 +74,11 @@ export default function addPoll() {
             />
     
     
-    
+    <div className="buttons-gift-deadline">
+      <button>Set Deadline</button>
+      
+    </div>
+
             <div className="button-signup">
               <button
                 id="submitButton"

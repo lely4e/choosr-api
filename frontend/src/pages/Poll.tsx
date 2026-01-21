@@ -95,40 +95,106 @@ export default function PollPage() {
     return (
         <>
             <a href="/my-polls">Back to polls</a>
-            <h1>{poll.title}</h1>
+
+            <div className="wrap-poll-title">
+                <div className="poll-grid-container">
+
+                    <div key={poll.uuid} className="card" onClick={() => navigate(`/${poll.uuid}`)}>
+                        <div className="poll-text">
+                            <h3>{poll.title}</h3>
+                            <div className="alarm-text">
+                                <p className="alarm">✏️</p>
+                                <p className="alarm">🗑️</p>
+                                <p className="alarm">🔗</p>
+                                <p className="alarm">🔔</p>
+                                <button className="active-button">Active</button>
+                            </div>
+                        </div>
+                        <p className="poll-text">
+                            Budget: {poll.budget}$
+                        </p>
+                        <p className="deadline">🛍️ 6 options  | ⏳ 2 days left</p>
+
+                        {/* <div className="actions">
+                             <button className="polls-buttons"onClick={() => handleDelete(poll.uuid)} >Delete</button>  
+                            <button className="polls-buttons" onClick={() => navigate(`/update_poll/${poll.uuid}`)}>Update</button>
+                            <button className="polls-buttons">Share</button>
+                            <button className="polls-buttons" onClick={() => navigate(`/ideas`)}>Ideas</button>
+                        </div> */}
+
+                    </div>
+
+
+                    <div className="card create-card" onClick={() => navigate("/add-poll")}>
+                        <div className="create-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </div>
+                        <p className="create-title">Create New Event</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* <h1>{poll.title}</h1> */}
             <div className="poll-description">
-                <p>Budget: ${poll.budget}</p>
-                <h2>Products</h2>
-                <div>
+                {/* <p>Budget: ${poll.budget}</p> */}
+                <h1>Products</h1>
+                <div className="buttons-gift-deadline">
                     <button
                         onClick={() => navigate("/search")}
                         className="add-product"
                     >
                         Add Product
                     </button>
+                    <button
+                        onClick={() => navigate("/ideas")}>Get Gift Ideas</button>
                 </div>
 
             </div>
-            <ul style={{ listStyle: "none", padding: 0 }}>
-                {products.map(product => (
-                    <li key={product.id} style={{ marginBottom: "16px" }}>
-                        <div className="card-product">
-                            <img src={product.image} alt={product.title} className="product-image" />
-                            <div className="product-text">
-                                <div className="product-title">{truncate(product.title, 60)}</div>
-                                <div className="product-price">${product.price}</div>
-                                <div className="product-rating">⭐ {product.rating}</div>
-                                <div className="products-link-comments">
-                                    <a href={product.link}>Details</a>
-                                    <a href="">Comments</a>
-                                    <button onClick={() => handleDeleteProduct(String(product.id))}>Delete</button>
+            <div className="wrap-product">
+                <div className="product-container">
+                    {/* <ul style={{ listStyle: "none", padding: 0 }}> */}
+                    {products.map(product => (
+                        <div key={product.id} style={{ marginBottom: "16px" }}>
+                            <div className="card-product">
+
+                                <div className="product-image-container">
+                                    <img src={product.image} alt={product.title} className="product-image" />
                                 </div>
+
+                                <div className="product-text">
+                                    <div className="product-title-price">
+                                    <div className="product-title">{truncate(product.title, 60)}</div>
+                                    <div className="product-price">${product.price}</div>
+                                </div>
+
+                                    <div className="product-rating"><div style={{color: '#FF6A00'}}>★★★★★ </div> <strong>{product.rating}</strong> (2,345 reviews)</div>
+                                    
+                                    <div className="progress">
+                                        <div className="progress-bar" style={{ width: "40%" }}></div>
+                                    </div>
+                                    <div>
+                                        <button className="vote">Vote!</button>
+                                    </div>
+                                    <div className="products-link-comments">
+                                        {/* <a href={product.link}>Details</a>
+                                        <a href="">Comments</a> */}
+                                        {/* <a onClick={() => handleDeleteProduct(String(product.id))}>Delete</a> */}
+                                        <button onClick={() => navigate(product.link)} className="details-button">Details</button>
+                                        <button className="details-button">Comments (0)</button>
+                                        <button onClick={() => handleDeleteProduct(String(product.id))} className="details-button">Delete</button>
+
+                                    </div>
+                                </div>
+
                             </div>
-                            <button className="vote">Vote!</button>
+
                         </div>
-                    </li>
-                ))}
-            </ul>
+                    ))}
+                    {/* </ul> */}
+                </div>
+            </div>
         </>
     );
 };

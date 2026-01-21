@@ -3,16 +3,20 @@ import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 
 export default function Login() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: ""
+  })
+
   const navigate = useNavigate()
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     const body = new URLSearchParams({
-      username: email,
-      password: password
+      username: loginData.email,
+      password: loginData.password
     })
 
     try {
@@ -46,61 +50,61 @@ export default function Login() {
 
   return (
     <div className="wrap-poll">
-    <section>
-      {/* <h1>Login</h1> */}
-      <div className="card-form">
-        <h1 className="login-h1">Welcome back</h1>
-        <p className="account-prompt">Please sign in to continue</p>
-      <form
-        onSubmit={handleSubmit}
-        className="login-form"
-      >
-
-        <label htmlFor="email" className="email-color">Email</label>
-        <input
-          id="email"
-          type="email"
-          name="email"
-          placeholder="email@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)} // e - event (React.ChangeEvent), e.target - input element itself(type="email"), e.taget.value = current text inside the input
-          className="email-form"
-          required
-        />
-
-
-        <label htmlFor="password" className="password-color">Password</label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          placeholder="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="password-form"
-          required
-        />
-
-        <div className="button-login">
-          <button
-            id="submitButton"
-            type="submit"
-            className="login"
+      <section>
+        {/* <h1>Login</h1> */}
+        <div className="card-form">
+          <h1 className="login-h1">Welcome back</h1>
+          <p className="account-prompt">Please sign in to continue</p>
+          <form
+            onSubmit={handleSubmit}
+            className="login-form"
           >
-            Sign In
-          </button>
-          <p className="account-prompt">
-            Already have an account?{" "}
-            <Link to="/signup" className="login-link">
-              Sign up
-            </Link>
-          </p>
-        </div>
-        
-      </form>
 
-</div>
-    </section>
+            <label htmlFor="email" className="email-color">Email</label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              placeholder="email@example.com"
+              value={loginData.email}
+              onChange={(e) => setLoginData({ ...loginData, email: e.target.value })} // e - event (React.ChangeEvent), e.target - input element itself(type="email"), e.taget.value = current text inside the input
+              className="email-form"
+              required
+            />
+
+
+            <label htmlFor="password" className="password-color">Password</label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              placeholder="password"
+              value={loginData.password}
+              onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+              className="password-form"
+              required
+            />
+
+            <div className="button-login">
+              <button
+                id="submitButton"
+                type="submit"
+                className="login"
+              >
+                Sign In
+              </button>
+              <p className="account-prompt">
+                Already have an account?{" "}
+                <Link to="/signup" className="login-link">
+                  Sign up
+                </Link>
+              </p>
+            </div>
+
+          </form>
+
+        </div>
+      </section>
     </div>
   )
 }

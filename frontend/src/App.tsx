@@ -9,6 +9,7 @@ import PollPage from "./pages/Poll"
 import PollAdd from "./pages/PollAdd"
 import Profile from "./pages/Profile"
 import Search from "./pages/Search"
+import Ideas from "./pages/Ideas"
 
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/add-poll" element={<PollAdd />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/ideas" element={<Ideas />} />
       </Routes>
     </Router>
   )

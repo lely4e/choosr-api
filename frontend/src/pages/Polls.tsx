@@ -79,20 +79,25 @@ const Polls: React.FC = () => {
             <div key={poll.uuid} className="card" onClick={() => navigate(`/${poll.uuid}`)}>
               <div className="poll-text">
                 <h3>{poll.title}</h3>
+                <div className="alarm-text">
+                 <p className="alarm">✏️</p>
+                                <p className="alarm" onClick={() => handleDelete(poll.uuid)}>🗑️</p>
+                                <p className="alarm">🔗</p>
+                                <p className="alarm">🔔</p>
                 <button className="active-button">Active</button>
+               </div>
               </div>
               <p className="poll-text">
                 Budget: {poll.budget}$
               </p>
-              <p className="deadline">6 options  |  2 days left</p>
+              <p className="deadline">🛍️ 6 options  | ⏳ 2 days left</p>
 
-              <div className="actions">
+              {/* <div className="actions">
                 <button className="polls-buttons" onClick={() => handleDelete(poll.uuid)}>Delete</button>
                 <button className="polls-buttons" onClick={() => navigate(`/update_poll/${poll.uuid}`)}>Update</button>
                 <button className="polls-buttons">Share</button>
                 <button className="polls-buttons" onClick={() => navigate(`/ideas`)}>Ideas</button>
-
-              </div>
+              </div> */}
 
             </div>
           ))}

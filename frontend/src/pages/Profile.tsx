@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import type { User } from "../utils/types";
 import { authFetch } from "../utils/auth";
 import { Link } from "react-router-dom";
+import { updateUsername } from "../utils/updateUser";
 
 
 export default function Profile() {
     const [user, setUser] = useState<User | null>(null);
+    const [newUsername, setNewUsername] = useState<string>("");
 
     // fetch user on mount
     useEffect(() => {
@@ -23,9 +25,9 @@ export default function Profile() {
                 }
 
                 setUser(data);
-                console.log("User fetched:", data);
+                setNewUsername(data.username);
+                console.log("User updated:", data);
             } catch (error) {
-                // alert("Server is unreachable");
                 console.error(error);
             }
         };
@@ -35,19 +37,49 @@ export default function Profile() {
 
     if (!user) {
         return (
-        <div>
-            <p>You need to be logged in.</p>
-            <Link to="/login">log in</Link>
-        </div>)
-    };
+            <div>
+                <p>You need to be logged in.</p>
+                <Link to="/login">log in</Link>
+            </div>
+        );
+    }
+
+    const handleUpdateUser = async () => {
+        try {
+            await updateUsername(newUsername);
+            setUser({ ...user, username: newUsername });
+        } catch (error) {
+            console.error("Failed to update username:", error);
+        }
+
+    }
 
     return (
-        <div>
-            <h1>Profile</h1>
-            <p>Username: {user.username}</p>
-            <p>Email: {user.email}</p>
-            <button>Update</button>
-            <button>Delete</button>
+        <div className="wrap-product">
+            <div className="product-container">
+                <div className="card">
+                    <h1>Profile Information</h1>
+                    <div className="profile-text">Username: {user.username}</div>
+                    <div className="profile-text">Email: {user.email}</div>
+
+<div className="username-input">
+                    <label htmlFor="username">
+                        New Username
+                        <input
+                            type="text"
+                            id="username"
+                            value={newUsername}
+                            onChange={(e) => setNewUsername(e.target.value)}
+
+                        />
+                        <button onClick={handleUpdateUser}>Update</button>
+                    </label>
+</div>
+                    <button>Delete</button>
+                </div>
+            </div>
+            <div>saved products</div>
+            <div>saved ideas</div>
         </div>
     )
 };

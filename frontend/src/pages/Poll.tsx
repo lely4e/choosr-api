@@ -1,7 +1,6 @@
 
 import { useEffect, useState } from "react";
-import type { Poll } from "../utils/types";
-import type { Product } from "../utils/types";
+import type { Poll, Product, Comment } from "../utils/types";
 import { authFetch } from "../utils/auth";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -11,12 +10,16 @@ import { updatePoll } from "../utils/updatePoll";
 
 export default function PollPage() {
     const { uuid } = useParams<{ uuid: string }>();
+
     const [poll, setPoll] = useState<Poll | null>(null);
     const [products, setProducts] = useState<Product[]>([]);
 
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [editedTitle, setEditedTitle] = useState<string>("");
     const [editedBudget, setEditedBudget] = useState<number>(0);
+
+    const [comments, setComments] = useState<Record<number, Comment[]>>([]);
+    const [openCommentsProductId, setOpenCommentsProductId] = useState<number | null>(null);
 
     const navigate = useNavigate();
 
@@ -146,6 +149,35 @@ export default function PollPage() {
         }
     };
 
+    // fetch comments
+    const showComments = async (productId: number) => {
+        // toggle off
+        if (openCommentsProductId === productId) {
+            setOpenCommentsProductId(null);
+            return;
+        }
+
+        try {
+            const response = await authFetch(
+                `http://127.0.0.1:8000/${uuid}/products/${productId}/comments`
+            );
+
+            const data = await response.json();
+
+            setComments((prev: Record<number, Comment[]>) => ({
+                ...prev,
+                [productId]: data,
+            }));
+
+            setOpenCommentsProductId(productId);
+            
+            console.log("Counts:", data.length)
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
     return (
         <>
             <a href="/my-polls">Back to polls</a>
@@ -156,18 +188,18 @@ export default function PollPage() {
                     <div key={poll.uuid} className="card">
                         <div className="poll-text">
                             <div className="poll-title-container">
-                            <h3>
-                                {!isEditing ? (
-                                    poll.title
-                                ) : (
-                                    <input
-                                        type="text"
-                                        value={editedTitle}
-                                        onChange={(e) => setEditedTitle(e.target.value)}
-                                        className="edit-input"
-                                    />
-                                )}
-                            </h3>
+                                <h3>
+                                    {!isEditing ? (
+                                        poll.title
+                                    ) : (
+                                        <input
+                                            type="text"
+                                            value={editedTitle}
+                                            onChange={(e) => setEditedTitle(e.target.value)}
+                                            className="title-form"
+                                        />
+                                    )}
+                                </h3>
                             </div>
                             <div className="alarm-text">
                                 {!isEditing ? (
@@ -188,19 +220,19 @@ export default function PollPage() {
 
                         </div>
                         <div className="poll-budget-container">
-                        <p className="poll-text">
-                            Budget:&nbsp;
-                            {!isEditing ? (
-                                `${poll.budget}$`
-                            ) : (
-                                <input
-                                    type="number"
-                                    value={editedBudget}
-                                    onChange={(e) => setEditedBudget(Number(e.target.value))}
-                                    className="edit-input"
-                                />
-                            )}
-                        </p>
+                            <p className="poll-text">
+                                Budget:&nbsp;
+                                {!isEditing ? (
+                                    `${poll.budget}$`
+                                ) : (
+                                    <input
+                                        type="number"
+                                        value={editedBudget}
+                                        onChange={(e) => setEditedBudget(Number(e.target.value))}
+                                        className="title-form"
+                                    />
+                                )}
+                            </p>
                         </div>
                         <p className="deadline">🛍️ 6 options  | ⏳ 2 days left</p>
 
@@ -208,9 +240,9 @@ export default function PollPage() {
                 </div>
             </div>
 
-            
+
             <div className="poll-description">
-                
+
                 <h1>Products</h1>
                 <div className="buttons-gift-deadline">
                     <button
@@ -252,10 +284,20 @@ export default function PollPage() {
                                     <div className="products-link-comments">
 
                                         <button onClick={() => navigate(product.link)} className="details-button">Details</button>
-                                        <button className="details-button">Comments (0)</button>
+                                        <button className="details-button" onClick={() => showComments(product.id)}>Comments ({product.comments})</button>
                                         <button onClick={() => handleDeleteProduct(String(product.id))} className="details-button">Delete</button>
 
                                     </div>
+
+                                    {openCommentsProductId === product.id &&
+                                        comments[product.id]?.map(comment => (
+                                            <div key={comment.id} className="comment">
+                                                <p>{comment.text}</p>
+                                                <small>By {comment.created_by}</small>
+                                            </div>
+                                        ))
+                                    }
+
                                 </div>
 
                             </div>

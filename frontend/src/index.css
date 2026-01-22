@@ -418,6 +418,7 @@ button.add-product-to-poll {
 .poll-title-container,
 .poll-budget-container {
   min-height: 24px; /* same height as your h3 / p */
+  display: flex;
 }
 
 .edit-input {

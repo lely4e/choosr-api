@@ -12,6 +12,8 @@ export interface Product {
   rating: number;
   price: number;
   created_at: string;
+  votes: number;
+  comments: number;
 }
 
 
@@ -38,4 +40,10 @@ export interface GiftIdea {
 
 export interface SearchProps {
     userSearch?: string;
+}
+
+export interface Comment {
+  id: number,
+  text: string,
+  created_by: string
 }

@@ -47,3 +47,8 @@ export interface Comment {
   text: string,
   created_by: string
 }
+
+export interface Vote {
+  user_id: number;
+  product_id: number;
+}

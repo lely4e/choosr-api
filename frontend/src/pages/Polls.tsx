@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 import type { Poll } from "../utils/types";
 import { authFetch } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
-import { deletePoll } from "../utils/deletePoll";
+// import { deletePoll } from "../utils/deletePoll";
 
 const Polls: React.FC = () => {
   const [polls, setPolls] = useState<Poll[]>([]);
+
+  
   const navigate = useNavigate();
 
 
@@ -36,24 +38,24 @@ const Polls: React.FC = () => {
   }, []);
 
   // delete poll
-  const handleDelete = async (
-    e: React.MouseEvent,
-    uuid: string) => {
-    e.stopPropagation();
+  // const handleDelete = async (
+  //   e: React.MouseEvent,
+  //   uuid: string) => {
+  //   e.stopPropagation();
 
-    if (!confirm("Are you sure you want to delete this poll?")) return;
+  //   if (!confirm("Are you sure you want to delete this poll?")) return;
 
-    try {
-      await deletePoll(uuid);
-      navigate("/my-polls");
-      setPolls(prev => prev.filter(poll => poll.uuid !== uuid));
+  //   try {
+  //     await deletePoll(uuid);
+  //     navigate("/my-polls");
+  //     setPolls(prev => prev.filter(poll => poll.uuid !== uuid));
 
-      console.log("Poll deleted");
-    } catch (error: any) {
-      // alert("Server is unreachable");
-      console.error(error.message);
-    }
-  };
+  //     console.log("Poll deleted");
+  //   } catch (error: any) {
+  //     // alert("Server is unreachable");
+  //     console.error(error.message);
+  //   }
+  // };
 
 
   return (
@@ -80,7 +82,7 @@ const Polls: React.FC = () => {
                 <h3>{poll.title}</h3>
                 <div className="alarm-text">
                   {/* <p className="alarm">✏️</p> */}
-                  <p className="alarm" onClick={(e) => handleDelete(e, poll.uuid)}>🗑️</p>
+                  {/* <p className="alarm" onClick={(e) => handleDelete(e, poll.uuid)}>🗑️</p> */}
                   <p className="alarm">🔗</p>
                   {/* <p className="alarm">🔔</p> */}
                   <button className="active-button">Active</button>
@@ -90,13 +92,6 @@ const Polls: React.FC = () => {
                 Budget: {poll.budget}$
               </p>
               <p className="deadline">🛍️ 6 options  | ⏳ 2 days left</p>
-
-              {/* <div className="actions">
-                <button className="polls-buttons" onClick={() => handleDelete(poll.uuid)}>Delete</button>
-                <button className="polls-buttons" onClick={() => navigate(`/update_poll/${poll.uuid}`)}>Update</button>
-                <button className="polls-buttons">Share</button>
-                <button className="polls-buttons" onClick={() => navigate(`/ideas`)}>Ideas</button>
-              </div> */}
 
             </div>
           ))}

@@ -18,8 +18,10 @@ export default function PollPage() {
     const [editedTitle, setEditedTitle] = useState<string>("");
     const [editedBudget, setEditedBudget] = useState<number>(0);
 
-    const [comments, setComments] = useState<Record<number, Comment[]>>([]);
+    const [comments, setComments] = useState<Record<number, Comment[]>>({});
     const [openCommentsProductId, setOpenCommentsProductId] = useState<number | null>(null);
+
+    const [vote, setVote] = useState<Record<number, boolean>>({});
 
     const navigate = useNavigate();
 
@@ -68,6 +70,8 @@ export default function PollPage() {
 
                 setProducts(data);
                 console.log("Products fetched:", data);
+                console.log("Amount of products:", data.length)
+
             } catch (error) {
                 // alert("Server is unreachable");
                 console.error(error);
@@ -170,13 +174,53 @@ export default function PollPage() {
             }));
 
             setOpenCommentsProductId(productId);
-            
+
             console.log("Counts:", data.length)
         } catch (error) {
             console.error(error);
         }
     };
 
+    // vote
+    async function addVote(productId: number) {
+        const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${productId}/vote`, {
+            method: 'POST'
+        });
+
+        return response
+    }
+
+    async function deleteVote(productId: number) {
+        const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${productId}/vote`, {
+            method: 'DELETE'
+        });
+
+        return response
+    }
+
+
+    const handleVote = async (productId: number) => {
+        if (!uuid) return;
+        const hasVoted = vote[productId];
+
+        try {
+            if (hasVoted) {
+                await deleteVote(productId);
+            } else {
+                await addVote(productId);
+            }
+
+
+            setVote((prev) => ({
+                ...prev,
+                [productId]: !hasVoted,
+            }));
+
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     return (
         <>
@@ -234,7 +278,7 @@ export default function PollPage() {
                                 )}
                             </p>
                         </div>
-                        <p className="deadline">🛍️ 6 options  | ⏳ 2 days left</p>
+                        <p className="deadline">🛍️ {products.length} options  | ⏳ 2 days left</p>
 
                     </div>
                 </div>
@@ -273,17 +317,20 @@ export default function PollPage() {
                                         <div className="product-price">${product.price}</div>
                                     </div>
 
-                                    <div className="product-rating"><div style={{ color: '#FF6A00' }}>★★★★★ </div> <strong>{product.rating}</strong> (2,345 reviews)</div>
+                                    <div className="product-title-price">
+                                        <div className="product-rating"><div style={{ color: '#FF6A00' }}>★★★★★ </div> <strong>{product.rating}</strong> (2,345 reviews)</div>
+                                        <div><strong>{product.votes} votes</strong> </div>
+                                    </div>
 
                                     <div className="progress">
                                         <div className="progress-bar" style={{ width: "40%" }}></div>
                                     </div>
                                     <div>
-                                        <button className="vote">Vote!</button>
+                                        <button onClick={() => handleVote(product.id)} className="vote">{!vote[product.id] ? "Vote for This Product!" : "Voted!"}</button>
                                     </div>
                                     <div className="products-link-comments">
 
-                                        <button onClick={() => navigate(product.link)} className="details-button">Details</button>
+                                        <button onClick={() => window.open(product.link, "_blank")} className="details-button">Details</button>
                                         <button className="details-button" onClick={() => showComments(product.id)}>Comments ({product.comments})</button>
                                         <button onClick={() => handleDeleteProduct(String(product.id))} className="details-button">Delete</button>
 

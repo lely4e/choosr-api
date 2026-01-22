@@ -5,6 +5,7 @@ import type { Product } from "../utils/types";
 import { authFetch } from "../utils/auth";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { deletePoll } from "../utils/deletePoll";
 
 
 export default function PollPage() {
@@ -47,6 +48,7 @@ export default function PollPage() {
     }, [uuid]);
 
 
+
     // fetch products on mount
     useEffect(() => {
         const getProducts = async () => {
@@ -65,6 +67,7 @@ export default function PollPage() {
 
         getProducts();
     }, [uuid]);
+
 
     // delete product
     const handleDeleteProduct = async (product_id: string) => {
@@ -91,20 +94,39 @@ export default function PollPage() {
 
     if (!poll) return <p>Loading poll...</p>;
 
+    // delete poll
+    const handleDelete = async (
+        e: React.MouseEvent,
+        uuid: string) => {
+        e.stopPropagation();
+
+        if (!confirm("Are you sure you want to delete this poll?")) return;
+
+        try {
+            await deletePoll(uuid);
+            navigate("/my-polls");
+            
+            console.log("Poll deleted");
+        } catch (error: any) {
+            // alert("Server is unreachable");
+            console.error(error.message);
+        }
+    };
+
 
     return (
         <>
             <a href="/my-polls">Back to polls</a>
 
-            <div className="wrap-poll-title">
-                <div className="poll-grid-container">
+            <div className="wrap-product">
+                <div className="product-container">
 
-                    <div key={poll.uuid} className="card" onClick={() => navigate(`/${poll.uuid}`)}>
+                    <div key={poll.uuid} className="card">
                         <div className="poll-text">
                             <h3>{poll.title}</h3>
                             <div className="alarm-text">
                                 <p className="alarm">✏️</p>
-                                <p className="alarm">🗑️</p>
+                                <p className="alarm" onClick={(e) => handleDelete(e, poll.uuid)}>🗑️</p>
                                 <p className="alarm">🔗</p>
                                 <p className="alarm">🔔</p>
                                 <button className="active-button">Active</button>
@@ -125,14 +147,14 @@ export default function PollPage() {
                     </div>
 
 
-                    <div className="card create-card" onClick={() => navigate("/add-poll")}>
+                    {/* <div className="card create-card" onClick={() => navigate("/add-poll")}>
                         <div className="create-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                             </svg>
                         </div>
                         <p className="create-title">Create New Event</p>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
@@ -165,12 +187,12 @@ export default function PollPage() {
 
                                 <div className="product-text">
                                     <div className="product-title-price">
-                                    <div className="product-title">{truncate(product.title, 60)}</div>
-                                    <div className="product-price">${product.price}</div>
-                                </div>
+                                        <div className="product-title">{truncate(product.title, 60)}</div>
+                                        <div className="product-price">${product.price}</div>
+                                    </div>
 
-                                    <div className="product-rating"><div style={{color: '#FF6A00'}}>★★★★★ </div> <strong>{product.rating}</strong> (2,345 reviews)</div>
-                                    
+                                    <div className="product-rating"><div style={{ color: '#FF6A00' }}>★★★★★ </div> <strong>{product.rating}</strong> (2,345 reviews)</div>
+
                                     <div className="progress">
                                         <div className="progress-bar" style={{ width: "40%" }}></div>
                                     </div>

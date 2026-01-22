@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import type { Poll } from "../utils/types";
 import { authFetch } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
+import { deletePoll } from "../utils/deletePoll";
 
 const Polls: React.FC = () => {
   const [polls, setPolls] = useState<Poll[]>([]);
@@ -35,27 +36,25 @@ const Polls: React.FC = () => {
   }, []);
 
   // delete poll
-  const handleDelete = async (uuid: string) => {
+  const handleDelete = async (
+    e: React.MouseEvent,
+    uuid: string) => {
+    e.stopPropagation();
+
+    if (!confirm("Are you sure you want to delete this poll?")) return;
+
     try {
-      const response = await authFetch(`http://127.0.0.1:8000/${uuid}`, {
-        method: "DELETE",
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.detail || "Unauthorized");
-        console.error("Unauthorized:", data);
-        return;
-      }
-
+      await deletePoll(uuid);
+      navigate("/my-polls");
       setPolls(prev => prev.filter(poll => poll.uuid !== uuid));
-      console.log("Poll deleted:", data);
-    } catch (error) {
+
+      console.log("Poll deleted");
+    } catch (error: any) {
       // alert("Server is unreachable");
-      console.error(error);
+      console.error(error.message);
     }
   };
+
 
   return (
     <>
@@ -80,12 +79,12 @@ const Polls: React.FC = () => {
               <div className="poll-text">
                 <h3>{poll.title}</h3>
                 <div className="alarm-text">
-                 <p className="alarm">✏️</p>
-                                <p className="alarm" onClick={() => handleDelete(poll.uuid)}>🗑️</p>
-                                <p className="alarm">🔗</p>
-                                <p className="alarm">🔔</p>
-                <button className="active-button">Active</button>
-               </div>
+                  {/* <p className="alarm">✏️</p> */}
+                  <p className="alarm" onClick={(e) => handleDelete(e, poll.uuid)}>🗑️</p>
+                  <p className="alarm">🔗</p>
+                  {/* <p className="alarm">🔔</p> */}
+                  <button className="active-button">Active</button>
+                </div>
               </div>
               <p className="poll-text">
                 Budget: {poll.budget}$
@@ -101,7 +100,7 @@ const Polls: React.FC = () => {
 
             </div>
           ))}
-         
+
           <div className="card create-card" onClick={() => navigate("/add-poll")}>
             <div className="create-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -112,7 +111,7 @@ const Polls: React.FC = () => {
           </div>
         </div>
       </div>
-      
+
     </>
   );
 };

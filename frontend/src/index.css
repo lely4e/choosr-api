@@ -194,8 +194,8 @@ div.button-signup {
 .password-form,
 .email-form,
 .budget-form,
-.title-form,
-.search-product {
+.title-form
+ {
   display: flex;
   width: 300px;
   height: 40px;
@@ -214,8 +214,7 @@ div.button-signup {
 .email-form::placeholder,
 .password-form::placeholder,
 .title-form::placeholder,
-.budget-form::placeholder,
-.search-product::placeholder {
+.budget-form::placeholder{
   color: #fff1ea;
   font-style: italic;
   font-weight: 400;
@@ -223,6 +222,13 @@ div.button-signup {
   text-align: center;
 }
 
+.search-product::placeholder {
+  color: #737791;
+  font-style: italic;
+  font-weight: 400;
+  opacity: 1;
+  text-align: center;
+}
 
 .username-color,
 .email-color,
@@ -271,6 +277,13 @@ div.poll-description {
   /* flex: 1; */
 }
 
+.idea-text {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+  text-align: left;
+  flex: 1;
+}
 .product-image {
   width: 80px;
   height: 80px;
@@ -312,6 +325,32 @@ button.add-product-to-poll {
   justify-content: space-between;
 }
 
+.search-save-buttons {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+
+}
+
+.search-product {
+  flex: 1;
+  padding: 6px 12px;
+  border: 1px solid #0dadf2;
+  cursor: pointer;
+  white-space: nowrap;
+  color: #0a0a0a;
+  background-color: transparent;
+  font-weight: 800;
+}
+
+
+
+.search-save-buttons button {
+  flex-shrink: 0;   /* 👈 buttons keep size */
+  padding: 8px 12px;
+  white-space: nowrap;
+}
+
 .product-title-price {
   display: flex;
   justify-content: space-between;
@@ -342,6 +381,21 @@ button.add-product-to-poll {
   color: #0d78f2;
   background-color: transparent;
   font-size: 0.85rem;
+}
+
+.ideas {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  margin-top: 20px;
+}
+
+.product-description {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  padding-left: 10px;
+  padding-top: 20px;
 }
 
 /* .main-page {

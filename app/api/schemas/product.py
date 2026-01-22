@@ -45,5 +45,6 @@ class ProductListOut(BaseModel):
     rating: float
     price: float
     votes: Optional[int]
+    comments: Optional[int]
 
     model_config = ConfigDict(from_attributes=True)

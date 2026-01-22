@@ -1,4 +1,4 @@
-from app.db.models import Product, Poll, Vote
+from app.db.models import Product, Poll, Vote, Comment
 from sqlalchemy.orm import Session
 from app.core.errors import UserNotFoundError, ProductNotFoundError, VoteNotFoundError
 from sqlalchemy import func
@@ -125,8 +125,10 @@ class VoteManager:
                 Product.rating,
                 Product.price,
                 func.count(Vote.user_id).label("votes"),
+                func.count(Comment.user_id).label("comments"),
             )
             .outerjoin(Vote, Vote.product_id == Product.id)
+            .outerjoin(Comment, Product.id == Comment.product_id)
             .join(Poll, Poll.id == Product.poll_id)
             .where(Poll.uuid == uuid)
             .group_by(Product.id)

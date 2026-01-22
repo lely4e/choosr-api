@@ -415,6 +415,19 @@ button.add-product-to-poll {
   padding-top: 20px;
 }
 
+.poll-title-container,
+.poll-budget-container {
+  min-height: 24px; /* same height as your h3 / p */
+}
+
+.edit-input {
+  width: 100%;       /* stretch input to fit card */
+  font-size: 1.1rem;
+  padding: 4px 8px;
+  box-sizing: border-box;
+}
+
+
 /* .main-page {
   position: relative;
   overflow: hidden;

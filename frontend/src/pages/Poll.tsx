@@ -6,12 +6,18 @@ import { authFetch } from "../utils/auth";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { deletePoll } from "../utils/deletePoll";
+import { updatePoll } from "../utils/updatePoll";
 
 
 export default function PollPage() {
     const { uuid } = useParams<{ uuid: string }>();
     const [poll, setPoll] = useState<Poll | null>(null);
     const [products, setProducts] = useState<Product[]>([]);
+
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [editedTitle, setEditedTitle] = useState<string>("");
+    const [editedBudget, setEditedBudget] = useState<number>(0);
+
     const navigate = useNavigate();
 
 
@@ -67,6 +73,7 @@ export default function PollPage() {
 
         getProducts();
     }, [uuid]);
+    if (!poll) return <p>Loading poll...</p>;
 
 
     // delete product
@@ -92,10 +99,10 @@ export default function PollPage() {
         }
     };
 
-    if (!poll) return <p>Loading poll...</p>;
+
 
     // delete poll
-    const handleDelete = async (
+    const handleDeletePoll = async (
         e: React.MouseEvent,
         uuid: string) => {
         e.stopPropagation();
@@ -105,7 +112,7 @@ export default function PollPage() {
         try {
             await deletePoll(uuid);
             navigate("/my-polls");
-            
+
             console.log("Poll deleted");
         } catch (error: any) {
             // alert("Server is unreachable");
@@ -113,6 +120,31 @@ export default function PollPage() {
         }
     };
 
+
+
+    const startEditing = () => {
+        setIsEditing(true);
+        setEditedTitle(poll.title);
+        setEditedBudget(poll.budget);
+    };
+
+    const cancelEditing = () => {
+        setIsEditing(false);
+    }
+
+    // update poll
+    const handleApply = async () => {
+        if (!uuid) return;
+
+        try {
+            await updatePoll(uuid!, editedTitle, editedBudget);
+            setPoll({ ...poll!, title: editedTitle, budget: editedBudget });
+            setIsEditing(false);
+            console.log("Poll updated");
+        } catch (error) {
+            console.error("Failed to update poll:", error);
+        }
+    };
 
     return (
         <>
@@ -123,44 +155,62 @@ export default function PollPage() {
 
                     <div key={poll.uuid} className="card">
                         <div className="poll-text">
-                            <h3>{poll.title}</h3>
-                            <div className="alarm-text">
-                                <p className="alarm">✏️</p>
-                                <p className="alarm" onClick={(e) => handleDelete(e, poll.uuid)}>🗑️</p>
-                                <p className="alarm">🔗</p>
-                                <p className="alarm">🔔</p>
-                                <button className="active-button">Active</button>
+                            <div className="poll-title-container">
+                            <h3>
+                                {!isEditing ? (
+                                    poll.title
+                                ) : (
+                                    <input
+                                        type="text"
+                                        value={editedTitle}
+                                        onChange={(e) => setEditedTitle(e.target.value)}
+                                        className="edit-input"
+                                    />
+                                )}
+                            </h3>
                             </div>
+                            <div className="alarm-text">
+                                {!isEditing ? (
+                                    <>
+                                        <p className="alarm" onClick={startEditing}>✏️</p>
+                                        <p className="alarm" onClick={(e) => handleDeletePoll(e, poll.uuid)}>🗑️</p>
+                                        <p className="alarm">🔗</p>
+                                        <p className="alarm">🔔</p>
+                                        <button className="active-button">Active</button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button onClick={handleApply} className="apply-button">Apply</button>
+                                        <button onClick={cancelEditing} className="cancel-button">Cancel</button>
+                                    </>
+                                )}
+                            </div>
+
                         </div>
+                        <div className="poll-budget-container">
                         <p className="poll-text">
-                            Budget: {poll.budget}$
+                            Budget:&nbsp;
+                            {!isEditing ? (
+                                `${poll.budget}$`
+                            ) : (
+                                <input
+                                    type="number"
+                                    value={editedBudget}
+                                    onChange={(e) => setEditedBudget(Number(e.target.value))}
+                                    className="edit-input"
+                                />
+                            )}
                         </p>
+                        </div>
                         <p className="deadline">🛍️ 6 options  | ⏳ 2 days left</p>
 
-                        {/* <div className="actions">
-                             <button className="polls-buttons"onClick={() => handleDelete(poll.uuid)} >Delete</button>  
-                            <button className="polls-buttons" onClick={() => navigate(`/update_poll/${poll.uuid}`)}>Update</button>
-                            <button className="polls-buttons">Share</button>
-                            <button className="polls-buttons" onClick={() => navigate(`/ideas`)}>Ideas</button>
-                        </div> */}
-
                     </div>
-
-
-                    {/* <div className="card create-card" onClick={() => navigate("/add-poll")}>
-                        <div className="create-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                            </svg>
-                        </div>
-                        <p className="create-title">Create New Event</p>
-                    </div> */}
                 </div>
             </div>
 
-            {/* <h1>{poll.title}</h1> */}
+            
             <div className="poll-description">
-                {/* <p>Budget: ${poll.budget}</p> */}
+                
                 <h1>Products</h1>
                 <div className="buttons-gift-deadline">
                     <button
@@ -176,7 +226,7 @@ export default function PollPage() {
             </div>
             <div className="wrap-product">
                 <div className="product-container">
-                    {/* <ul style={{ listStyle: "none", padding: 0 }}> */}
+
                     {products.map(product => (
                         <div key={product.id} style={{ marginBottom: "16px" }}>
                             <div className="card-product">
@@ -200,9 +250,7 @@ export default function PollPage() {
                                         <button className="vote">Vote!</button>
                                     </div>
                                     <div className="products-link-comments">
-                                        {/* <a href={product.link}>Details</a>
-                                        <a href="">Comments</a> */}
-                                        {/* <a onClick={() => handleDeleteProduct(String(product.id))}>Delete</a> */}
+
                                         <button onClick={() => navigate(product.link)} className="details-button">Details</button>
                                         <button className="details-button">Comments (0)</button>
                                         <button onClick={() => handleDeleteProduct(String(product.id))} className="details-button">Delete</button>
@@ -214,7 +262,7 @@ export default function PollPage() {
 
                         </div>
                     ))}
-                    {/* </ul> */}
+
                 </div>
             </div>
         </>

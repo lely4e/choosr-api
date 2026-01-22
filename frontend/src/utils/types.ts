@@ -30,3 +30,12 @@ export interface ProductSearch {
     rating: number | null;
     price: number | null;
 }
+
+export interface GiftIdea {
+    name: string;
+    description: string;
+}
+
+export interface SearchProps {
+    userSearch?: string;
+}

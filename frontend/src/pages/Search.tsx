@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { authFetch } from "../utils/auth";
 import type { SearchProps, ProductSearch } from "../utils/types";
+import { useParams } from "react-router-dom";
 
 
 const truncate = (text: string, maxLength = 100) => {
@@ -9,30 +10,30 @@ const truncate = (text: string, maxLength = 100) => {
 };
 
 export default function Search({ userSearch }: SearchProps) {
+    const { uuid } = useParams<{ uuid: string }>();
 
     const [userInput, setUserInput] = useState(userSearch ?? "");
     const [searchResults, setSearchResults] = useState<ProductSearch[]>([]);
     const [loading, setLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
 
-    useEffect(() => {
-        if (userSearch) {
-            setUserInput(userSearch);
-        }
-    }, [userSearch]);
-
+    const [showProducts, setShowProducts] = useState(false)
 
     const handleSearch = async () => {
+        if (showProducts) {
+            setShowProducts(false)
+            return
+        }
+
         const value = userInput.trim();
         console.log("Searching for:", userInput);
         if (value.length < 2) {
             alert("Please enter at least 2 characters");
             return;
         }
-
+        
         setLoading(true);
         setHasSearched(true);
-
 
         try {
             const response = await authFetch(
@@ -52,31 +53,73 @@ export default function Search({ userSearch }: SearchProps) {
             }
 
             setSearchResults(data);
+            setShowProducts(true)
             console.log("Search results:", data);
 
         } catch (error) {
-            // alert("Server is unreachable");
             console.error(error);
         } finally {
             setLoading(false);
+            
+        }
+    };
+
+    const handleAddProduct = async (product: ProductSearch) => {
+        try {
+            const response = await authFetch(
+                `http://127.0.0.1:8000/${uuid}/products`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: product.title,
+                    link: product.link,
+                    image: product.image,
+                    rating: product.rating,
+                    price: product.price,
+                }
+                ),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(
+                    data.detail ||
+                    data.error ||
+                    "Request failed"
+                );
+                console.error("API error:", data);
+                return;
+            }
+
+
+            alert("Product succesfully added")
+            console.log("Product added:", data);
+
+
+        } catch (error) {
+            console.error(error);
         }
     };
 
 
     return (
         <>
-            {/* <div className="wrap-search">
-                <h1 className="login-h1">Search Page</h1>
-                <p className="account-prompt">Search for products</p> */}
+            {/* <div className="wrap-search">*/}
+
+
+            {/* <a href={`/${uuid}`}>Back to poll</a> */}
+
+
             <div className="search-bar">
                 <input id="search" className="search-product" type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} placeholder="Wireless Headphones" />
-                <button onClick={handleSearch} disabled={loading}>{loading ? "Loading..." : "Search"}</button>
+                <button onClick={handleSearch} disabled={loading}>{loading ? "Loading..." : !showProducts ? "Search": "Hide"}</button>
             </div>
 
-            {hasSearched && searchResults.length === 0 && !loading && (
+            {showProducts && hasSearched && searchResults.length === 0 && !loading && (
                 <p style={{ textAlign: 'center', marginTop: '20px' }}>No results found.</p>
             )}
-            {searchResults.map((product) => (
+            {showProducts && searchResults.map((product) => (
                 <div key={product.link} style={{ marginBottom: "16px", display: 'flex', justifyContent: 'center' }}>
                     <div className="card-product">
 
@@ -94,8 +137,9 @@ export default function Search({ userSearch }: SearchProps) {
 
 
                             <div>
-                                <button className="add-product-to-poll">Add Product to Poll</button>
+                                <button type="button" onClick={() => handleAddProduct(product)} className="add-product-to-poll">{product ? "Add product to Poll!" : "Added!"}</button>
                             </div>
+
                             <div className="products-link-comments">
 
                                 <button onClick={() => window.open(product.link, "_blank")} className="product-details-button">Details</button>

@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Float, ForeignKey, DateTime, func
+from sqlalchemy import String, Integer, Float, ForeignKey, DateTime, func, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.database import Base
 import uuid as uuid_module
@@ -88,6 +88,7 @@ class Vote(Base):
     __tablename__ = "votes"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    has_voted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
     # Foreign Key link to user id, product id
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))

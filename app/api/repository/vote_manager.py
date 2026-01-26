@@ -10,6 +10,7 @@ class VoteManager:
 
     def add_vote(self, uuid, product_id, user):
         """Add vote to a specific product"""
+
         product = (
             self.db.query(
                 Product.id,
@@ -41,10 +42,7 @@ class VoteManager:
             if existing_vote:
                 return {"message": "You can vote only once"}
 
-            vote = Vote(
-                user_id=user.id,
-                product_id=product.id,
-            )
+            vote = Vote(user_id=user.id, product_id=product.id, has_voted=True)
 
             self.db.add(vote)
             self.db.commit()

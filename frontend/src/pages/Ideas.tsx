@@ -1,9 +1,8 @@
 import { useState } from "react";
-// import { useNavigate } from "react-router-dom"
 import { authFetch } from "../utils/auth";
 import Search from "./Search";
 import type { GiftIdea } from "../utils/types";
-// import { Link } from "react-router-dom";
+
 
 export default function Ideas() {
     const [eventTitle, setEventTitle] = useState("")
@@ -14,7 +13,6 @@ export default function Ideas() {
     const [budgetRange, setBudgetRange] = useState("")
     const [ideas, setIdeas] = useState<GiftIdea[]>([])
     const [loading, setLoading] = useState(false);
-    // const navigate = useNavigate()
 
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -53,13 +51,7 @@ export default function Ideas() {
             setLoading(false);
         }
     };
-    //   if (!localStorage.getItem("token")) {
-    //     return (
-    //         <div>
-    //             <p>You need to be logged in.</p>
-    //             <Link to="/login">log in</Link>
-    //         </div>)
-    // };
+
 
     return (
         <>
@@ -71,7 +63,7 @@ export default function Ideas() {
                         onSubmit={handleSubmit}
                         className="add-poll-form"
                     >
-                        {/* <a href="/my-polls">Back to polls</a> */}
+                        <a href="/my-polls">Back to polls</a>
 
                         <h1 className="login-h1">Gift Ideas</h1>
                         <p className="account-prompt">Get the best gift suggestions</p>
@@ -82,7 +74,7 @@ export default function Ideas() {
                             name="title"
                             placeholder="Mike's Birthday"
                             value={eventTitle}
-                            onChange={(e) => setEventTitle(e.target.value)} // e - event (React.ChangeEvent), e.target - input element itself(type="email"), e.taget.value = current text inside the input
+                            onChange={(e) => setEventTitle(e.target.value)} 
                             className="title-form"
                             required
                         />
@@ -95,7 +87,7 @@ export default function Ideas() {
                             name="title"
                             placeholder="Friend, Family, Colleague"
                             value={recipientRelation}
-                            onChange={(e) => setRecipientRelation(e.target.value)} // e - event (React.ChangeEvent), e.target - input element itself(type="email"), e.taget.value = current text inside the input
+                            onChange={(e) => setRecipientRelation(e.target.value)} 
                             className="title-form"
                             required
                         />
@@ -107,7 +99,7 @@ export default function Ideas() {
                             name="title"
                             placeholder="23"
                             value={recipientAge}
-                            onChange={(e) => setRecipientAge(e.target.value)} // e - event (React.ChangeEvent), e.target - input element itself(type="email"), e.taget.value = current text inside the input
+                            onChange={(e) => setRecipientAge(e.target.value)} 
                             className="title-form"
                             required
                         />
@@ -119,7 +111,7 @@ export default function Ideas() {
                             name="title"
                             placeholder="Sports, Music, Art, etc."
                             value={recipientHobbies}
-                            onChange={(e) => setRecipientHobbies(e.target.value)} // e - event (React.ChangeEvent), e.target - input element itself(type="email"), e.taget.value = current text inside the input
+                            onChange={(e) => setRecipientHobbies(e.target.value)} 
                             className="title-form"
                             required
                         />
@@ -131,7 +123,7 @@ export default function Ideas() {
                             name="title"
                             placeholder="Unique, Practical, Fun, etc."
                             value={giftType}
-                            onChange={(e) => setGiftType(e.target.value)} // e - event (React.ChangeEvent), e.target - input element itself(type="email"), e.taget.value = current text inside the input
+                            onChange={(e) => setGiftType(e.target.value)} 
                             className="title-form"
                             required
                         />
@@ -143,7 +135,7 @@ export default function Ideas() {
                             name="title"
                             placeholder="350-400"
                             value={budgetRange}
-                            onChange={(e) => setBudgetRange(e.target.value)} // e - event (React.ChangeEvent), e.target - input element itself(type="email"), e.taget.value = current text inside the input
+                            onChange={(e) => setBudgetRange(e.target.value)} 
                             className="title-form"
                             required
                         />
@@ -160,24 +152,18 @@ export default function Ideas() {
 
                         </div>
                     </form>
-                    <h1 className="login-h1" style={{ margin: "30px" }}>Gift suggestions</h1>
-                    {/* <ul style={{ listStyle: "none", padding: 0 }}> */}
+
+                    { ideas.length > 0 &&
+                    <h1 className="login-h1" style={{ margin: "30px" }}>Gift suggestions</h1>}
+                
                     {ideas.map((idea, index) => (
                         <div key={index} style={{ marginBottom: "16px" }}>
 
                             <div className="card-product">
                                 <div className="idea-text">
-                                    {/* <div className="search-save-buttons"> */}
-                                        
-                                        {/* <input id="search" className="search-product" type="text" value={idea.name} />
-                                        <button>Search</button>
-                                        <button>Save</button> */}
 
                                         <Search userSearch={idea.name} />
                                         
-
-
-                                    {/* </div> */}
                                     <div className="product-description">{idea.description}</div>
                                 </div>
                             </div>

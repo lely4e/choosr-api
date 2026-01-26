@@ -51,4 +51,5 @@ export interface Comment {
 export interface Vote {
   user_id: number;
   product_id: number;
+  has_voted: boolean;
 }

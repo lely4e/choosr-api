@@ -1,11 +1,12 @@
 
-import { useEffect, useState } from "react";
-import type { Poll, Product, Comment } from "../utils/types";
+import React, { useEffect, useState } from "react";
+import type { Poll, Product, Comment, Vote } from "../utils/types";
 import { authFetch } from "../utils/auth";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { deletePoll } from "../utils/deletePoll";
 import { updatePoll } from "../utils/updatePoll";
+// import Search from "./Search";
 
 
 export default function PollPage() {
@@ -21,7 +22,8 @@ export default function PollPage() {
     const [comments, setComments] = useState<Record<number, Comment[]>>({});
     const [openCommentsProductId, setOpenCommentsProductId] = useState<number | null>(null);
 
-    const [vote, setVote] = useState<Record<number, boolean>>({});
+    // const [vote, setVote] = useState<Record<number, boolean>>({});
+    const [vote, setVote] = useState<Record<number, Vote | null>>({});
 
     const navigate = useNavigate();
 
@@ -31,6 +33,24 @@ export default function PollPage() {
         return text.slice(0, maxLength) + "...";
     };
 
+    // fetch products
+    const getProducts = async () => {
+        if (!uuid) return;
+
+        try {
+            const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products`);
+
+            const data = await response.json();
+
+            setProducts(data);
+            console.log("Products fetched:", data);
+            console.log("Amount of products:", data.length)
+
+        } catch (error) {
+            // alert("Server is unreachable");
+            console.error(error);
+        }
+    };
 
     // fetch polls on mount
     useEffect(() => {
@@ -62,6 +82,8 @@ export default function PollPage() {
 
     // fetch products on mount
     useEffect(() => {
+        if (!uuid) return;
+
         const getProducts = async () => {
             try {
                 const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products`);
@@ -79,6 +101,7 @@ export default function PollPage() {
         };
 
         getProducts();
+
     }, [uuid]);
     if (!poll) return <p>Loading poll...</p>;
 
@@ -107,14 +130,13 @@ export default function PollPage() {
     };
 
 
-
     // delete poll
     const handleDeletePoll = async (
         e: React.MouseEvent,
         uuid: string) => {
         e.stopPropagation();
 
-        if (!confirm("Are you sure you want to delete this poll?")) return;
+        if (!window.confirm("Are you sure you want to delete this poll?")) return;
 
         try {
             await deletePoll(uuid);
@@ -128,7 +150,7 @@ export default function PollPage() {
     };
 
 
-
+    // update poll
     const startEditing = () => {
         setIsEditing(true);
         setEditedTitle(poll.title);
@@ -139,7 +161,6 @@ export default function PollPage() {
         setIsEditing(false);
     }
 
-    // update poll
     const handleApply = async () => {
         if (!uuid) return;
 
@@ -182,49 +203,58 @@ export default function PollPage() {
     };
 
     // vote
-    async function addVote(productId: number) {
+    const addVote = async (productId: number) => {
         const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${productId}/vote`, {
             method: 'POST'
         });
+        console.log("Add Vote:", response)
+        return response;
+    };
 
-        return response
-    }
-
-    async function deleteVote(productId: number) {
+    const deleteVote = async (productId: number) => {
         const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${productId}/vote`, {
             method: 'DELETE'
         });
-
-        return response
-    }
-
+        console.log("Delete Vote:", response)
+        return response;
+    };
 
     const handleVote = async (productId: number) => {
         if (!uuid) return;
         const hasVoted = vote[productId];
-
+        console.log("hasVoted", hasVoted)
         try {
             if (hasVoted) {
                 await deleteVote(productId);
+                setVote((prev) => {
+                    const updated = { ...prev };
+                    console.log("Updated:", updated)
+                    delete updated[productId];
+                    return updated;
+                });
+
             } else {
-                await addVote(productId);
+                const response = await addVote(productId);
+                const data = await response.json();
+                console.log("Data", data)
+                setVote((prev) => ({
+                    ...prev,
+                    [productId]: data,
+                }));
+
             }
-
-
-            setVote((prev) => ({
-                ...prev,
-                [productId]: !hasVoted,
-            }));
-
-
+            await getProducts();
         } catch (error) {
             console.error(error);
         }
-    }
+
+    };
 
     return (
         <>
+
             <a href="/my-polls">Back to polls</a>
+
 
             <div className="wrap-product">
                 <div className="product-container">
@@ -290,13 +320,15 @@ export default function PollPage() {
                 <h1>Products</h1>
                 <div className="buttons-gift-deadline">
                     <button
-                        onClick={() => navigate("/search")}
+                        onClick={() => navigate(`/${uuid}/search`)}
                         className="add-product"
                     >
-                        Add Product
+                        Find Product
                     </button>
                     <button
-                        onClick={() => navigate("/ideas")}>Get Gift Ideas</button>
+                        onClick={() => navigate(`/${uuid}/ideas`)}
+                    >
+                        Get Gift Ideas</button>
                 </div>
 
             </div>

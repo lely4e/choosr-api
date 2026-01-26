@@ -24,8 +24,8 @@ export default function App() {
         <Route path="/:uuid" element={<PollPage />} />
         <Route path="/add-poll" element={<PollAdd />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/ideas" element={<Ideas />} />
+        <Route path="/:uuid/search" element={<Search />} />
+        <Route path="/:uuid/ideas" element={<Ideas />} />
       </Routes>
     </Router>
   )

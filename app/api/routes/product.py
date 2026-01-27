@@ -20,7 +20,7 @@ async def get_products(
 ) -> list[ProductListOut]:
     """Retrieve all products from the selected poll"""
     user = user_manager.get_user_by_email(request.state.user)
-    products_with_votes = vote_manager.get_products_with_votes(uuid)
+    products_with_votes = vote_manager.get_products_with_votes(uuid, user)
     return products_with_votes
 
 

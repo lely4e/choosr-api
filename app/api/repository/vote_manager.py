@@ -1,7 +1,7 @@
 from app.db.models import Product, Poll, Vote, Comment
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 from app.core.errors import UserNotFoundError, ProductNotFoundError, VoteNotFoundError
-from sqlalchemy import func
+from sqlalchemy import func, distinct, and_
 
 
 class VoteManager:
@@ -112,8 +112,9 @@ class VoteManager:
             raise VoteNotFoundError
         return vote
 
-    def get_products_with_votes(self, uuid):
+    def get_products_with_votes(self, uuid, user):
         """Retrieve all products with votes"""
+        VoteAlias = aliased(Vote)
         votes = (
             self.db.query(
                 Product.id,
@@ -123,9 +124,14 @@ class VoteManager:
                 Product.rating,
                 Product.price,
                 func.count(Vote.user_id).label("votes"),
-                func.count(Comment.user_id).label("comments"),
+                (func.count(VoteAlias.id) > 0).label("has_voted"),
+                func.count(distinct(Comment.id)).label("comments"),
             )
             .outerjoin(Vote, Vote.product_id == Product.id)
+            .outerjoin(
+                VoteAlias,
+                and_(VoteAlias.product_id == Product.id, VoteAlias.user_id == user.id),
+            )
             .outerjoin(Comment, Product.id == Comment.product_id)
             .join(Poll, Poll.id == Product.poll_id)
             .where(Poll.uuid == uuid)

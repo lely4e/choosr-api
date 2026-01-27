@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import type { Poll, Product, Comment, Vote } from "../utils/types";
+import type { Poll, Product, Comment } from "../utils/types";
 import { authFetch } from "../utils/auth";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +23,7 @@ export default function PollPage() {
     const [openCommentsProductId, setOpenCommentsProductId] = useState<number | null>(null);
 
     // const [vote, setVote] = useState<Record<number, boolean>>({});
-    const [vote, setVote] = useState<Record<number, Vote | null>>({});
+    // const [vote, setVote] = useState<Record<number, Vote | null>>({});
 
     const navigate = useNavigate();
 
@@ -203,52 +203,77 @@ export default function PollPage() {
     };
 
     // vote
-    const addVote = async (productId: number) => {
-        const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${productId}/vote`, {
-            method: 'POST'
-        });
-        console.log("Add Vote:", response)
-        return response;
-    };
+    // const addVote = async (productId: number) => {
+    //     const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${productId}/vote`, {
+    //         method: 'POST'
+    //     });
+    //     console.log("Add Vote:", response)
+    //     return response;
+    // };
 
-    const deleteVote = async (productId: number) => {
-        const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${productId}/vote`, {
-            method: 'DELETE'
-        });
-        console.log("Delete Vote:", response)
-        return response;
-    };
+    // const deleteVote = async (productId: number) => {
+    //     const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${productId}/vote`, {
+    //         method: 'DELETE'
+    //     });
+    //     console.log("Delete Vote:", response)
+    //     return response;
+    // };
 
-    const handleVote = async (productId: number) => {
-        if (!uuid) return;
-        const hasVoted = vote[productId];
-        console.log("hasVoted", hasVoted)
-        try {
-            if (hasVoted) {
-                await deleteVote(productId);
-                setVote((prev) => {
-                    const updated = { ...prev };
-                    console.log("Updated:", updated)
-                    delete updated[productId];
-                    return updated;
-                });
+    // const handleVote = async (productId: number) => {
+    //     if (!uuid) return;
+    //     const hasVoted = vote[productId];
+    //     console.log("hasVoted", hasVoted)
+    //     try {
+    //         if (hasVoted) {
+    //             await deleteVote(productId);
+    //             setVote((prev) => {
+    //                 const updated = { ...prev };
+    //                 console.log("Updated:", updated)
+    //                 delete updated[productId];
+    //                 return updated;
+    //             });
 
-            } else {
-                const response = await addVote(productId);
-                const data = await response.json();
-                console.log("Data", data)
-                setVote((prev) => ({
-                    ...prev,
-                    [productId]: data,
-                }));
+    //         } else {
+    //             const response = await addVote(productId);
+    //             const data = await response.json();
+    //             console.log("Data", data)
+    //             setVote((prev) => ({
+    //                 ...prev,
+    //                 [productId]: data,
+    //             }));
 
-            }
-            await getProducts();
-        } catch (error) {
-            console.error(error);
+    //         }
+    //         await getProducts();
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+
+    // };
+
+    const handleVote = async (productId: number, hasVoted: boolean) => {
+    if (!uuid) return;
+
+    try {
+        if (hasVoted) {
+            await authFetch(
+                `http://127.0.0.1:8000/${uuid}/products/${productId}/vote`,
+                { method: "DELETE" }
+                
+            ); console.log("hasVoted ->", hasVoted, "deleting vote")
+        } else {
+            await authFetch(
+                `http://127.0.0.1:8000/${uuid}/products/${productId}/vote`,
+                { method: "POST" }
+            ); console.log("hasVoted ->", hasVoted, "adding vote")
         }
 
-    };
+        await getProducts();
+
+    } catch (error) {
+        console.error("Vote failed:", error);
+    }
+};
+
 
     return (
         <>
@@ -358,7 +383,7 @@ export default function PollPage() {
                                         <div className="progress-bar" style={{ width: "40%" }}></div>
                                     </div>
                                     <div>
-                                        <button onClick={() => handleVote(product.id)} className="vote">{!vote[product.id] ? "Vote for This Product!" : "Voted!"}</button>
+                                        <button onClick={() => handleVote(product.id, product.has_voted)} className="vote">{!product.has_voted ? "Vote for This Product!" : "Voted!"}</button>
                                     </div>
                                     <div className="products-link-comments">
 

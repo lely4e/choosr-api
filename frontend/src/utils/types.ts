@@ -14,6 +14,7 @@ export interface Product {
   created_at: string;
   votes: number;
   comments: number;
+  has_voted: boolean;
 }
 
 

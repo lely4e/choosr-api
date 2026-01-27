@@ -19,10 +19,6 @@
 
  }
 
- .logo:hover {
-   filter: drop-shadow(0 0 2em #ff6a00);
- }
-
  @media (prefers-reduced-motion: no-preference) {
    a:nth-of-type(2) .logo {
      animation: logo-spin infinite 20s linear;
@@ -290,9 +286,12 @@
 
  .buttons-gift-deadline {
    display: flex;
-   margin-top: 30px;
+   /* margin-top: 30px; */
    gap: 24px;
+   justify-content: space-between;
  }
+
+
 
  /* body { */
  /* background-color: rgb(235, 226, 239); */

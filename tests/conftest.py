@@ -137,6 +137,7 @@ async def add_user_poll_product_and_comment(add_user_poll_and_product):
         text=fake.sentence(nb_words=4),
         user_id=user.id,
         product_id=product.id,
+        created_by=user.username,
     )
     db.add(comment)
     db.commit()

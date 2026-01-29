@@ -156,16 +156,17 @@ export default function Ideas() {
                     { ideas.length > 0 &&
                     <h1 className="login-h1" style={{ margin: "30px" }}>Gift suggestions</h1>}
                 
-                    {ideas.map((idea, index) => (
+                    {ideas.map((idea, index) => ( 
                         <div key={index} style={{ marginBottom: "16px" }}>
 
-                            <div className="card-product">
+                            <div className="card-product">                        
                                 <div className="idea-text">
 
                                         <Search userSearch={idea.name} />
                                         
                                     <div className="product-description">{idea.description}</div>
                                 </div>
+                                <button className="save-idea">Save Idea</button>
                             </div>
                         </div>
                     ))}

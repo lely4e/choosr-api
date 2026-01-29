@@ -17,7 +17,7 @@
 
 a {
   font-weight: 500;
-  color: #d233ea;
+  color: #33aaea;
   text-decoration: inherit;
 }
 
@@ -115,6 +115,17 @@ p {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.photo-change {
+  display: grid;
+  align-items: center;
+  align-content: center;
+}
+
+.change-photo {
+  text-align: center;
+  color: #737791;
 }
 
 body {
@@ -279,28 +290,72 @@ div.poll-description {
 
 .profile-text {
   display: flex;
-  flex-direction: column;
-  padding: 0 20px;
+  align-items: center;
+  /* flex-direction: column; */
+  /* padding: 0 20px; */
   text-align: left;
-  padding-bottom: 20px;
+  /* padding-bottom: 20px; */
+  gap: 10px;
 }
 
 .username-input {
   display: flex;
   flex-direction: column;
-  
-  padding: 0 20px;
-  padding-bottom: 20px;
+  justify-content: center;
+  padding-left: 40px;
   gap: 10px;
+}
+
+.username-label {
+  display: flex;
+align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.field-username {
+  border-radius: 8px;
+  border: 1px solid #3bb5f6;
+  background-color: transparent;
+  color: #737791;
+  padding-left: 10px;
+  height: 35px;
+  font-size: 16px;
+  width: 300px
 }
 
 .idea-text {
   display: flex;
   flex-direction: column;
-  padding: 0 20px;
   text-align: left;
   flex: 1;
 }
+
+.save-idea {
+width: 50px;
+display: flex;
+height: 55px;
+align-items: center;
+justify-content: center;
+}
+
+.poll-apply {
+  display: flex;
+  justify-content: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.apply-button,
+.cancel-button {
+height: 39px;
+display: flex;
+align-items: center;
+font-size: 16px;
+display: flex;
+justify-content: center;
+}
+
 .product-image {
   width: 80px;
   height: 80px;
@@ -359,8 +414,6 @@ button.add-product-to-poll {
   background-color: transparent;
   font-weight: 800;
 }
-
-
 
 .search-save-buttons button {
   flex-shrink: 0;   /* 👈 buttons keep size */
@@ -426,6 +479,46 @@ button.add-product-to-poll {
   font-size: 1.1rem;
   padding: 4px 8px;
   box-sizing: border-box;
+}
+
+.comment-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.comment-box textarea {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  background-color: #ffffff;
+  color: #737791;
+}
+
+.comment-box textarea:focus {
+  border-color: #F25E0D;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+}
+
+.comment-btn {
+  align-self: flex-end;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background: #ff7d63;
+  color: white; 
+  cursor: pointer;
+}
+
+.comment-btn:hover {
+  background: #554eea;
+}
+
+textarea {
+  font-family: inherit;
 }
 
 

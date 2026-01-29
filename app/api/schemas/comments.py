@@ -12,6 +12,7 @@ class CommentOut(BaseModel):
     user_id: int
     product_id: int
     created_at: datetime
+    created_by: str
 
     model_config = ConfigDict(from_attributes=True)
 

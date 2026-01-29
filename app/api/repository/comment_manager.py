@@ -28,6 +28,7 @@ class CommentManager:
                 text=comment_in.text,
                 user_id=user.id,
                 product_id=product.id,
+                created_by=user.username,
             )
 
             self.db.add(comment)

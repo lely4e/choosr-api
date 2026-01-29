@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import type { Poll } from "../utils/types";
 import { authFetch } from "../utils/auth";
@@ -36,27 +35,6 @@ const Polls: React.FC = () => {
 
     getPolls();
   }, []);
-
-  // delete poll
-  // const handleDelete = async (
-  //   e: React.MouseEvent,
-  //   uuid: string) => {
-  //   e.stopPropagation();
-
-  //   if (!confirm("Are you sure you want to delete this poll?")) return;
-
-  //   try {
-  //     await deletePoll(uuid);
-  //     navigate("/my-polls");
-  //     setPolls(prev => prev.filter(poll => poll.uuid !== uuid));
-
-  //     console.log("Poll deleted");
-  //   } catch (error: any) {
-  //     // alert("Server is unreachable");
-  //     console.error(error.message);
-  //   }
-  // };
-
 
   return (
     <>

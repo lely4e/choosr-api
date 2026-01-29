@@ -280,12 +280,16 @@ export default function PollPage() {
                                     {!isEditing ? (
                                         poll.title
                                     ) : (
+                                        <div className="poll-apply">
                                         <input
                                             type="text"
                                             value={editedTitle}
                                             onChange={(e) => setEditedTitle(e.target.value)}
                                             className="field-username"
                                         />
+                                         <button onClick={handleApply} className="apply-button">Apply</button>
+                                        <button onClick={cancelEditing} className="cancel-button">Cancel</button>
+                                        </div>
                                     )}
                                 </h3>
                             </div>
@@ -300,8 +304,8 @@ export default function PollPage() {
                                     </>
                                 ) : (
                                     <>
-                                        <button onClick={handleApply} className="apply-button">Apply</button>
-                                        <button onClick={cancelEditing} className="cancel-button">Cancel</button>
+                                        {/* <button onClick={handleApply} className="apply-button">Apply</button>
+                                        <button onClick={cancelEditing} className="cancel-button">Cancel</button> */}
                                     </>
                                 )}
                             </div>

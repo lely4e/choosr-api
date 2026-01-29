@@ -1,87 +1,141 @@
-
 import { useEffect, useState } from "react";
 import type { User } from "../utils/types";
 import { authFetch } from "../utils/auth";
 import { Link } from "react-router-dom";
 import { updateUsername } from "../utils/updateUser";
 
-
 export default function Profile() {
-    const [user, setUser] = useState<User | null>(null);
-    const [newUsername, setNewUsername] = useState<string>("");
+  const [user, setUser] = useState<User | null>(null);
+  const [newUsername, setNewUsername] = useState<string>("");
 
-    // fetch user on mount
-    useEffect(() => {
-        const getUser = async () => {
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
-            try {
-                const response = await authFetch(`http://127.0.0.1:8000/me`);
-                const data = await response.json();
 
-                if (!response.ok) {
-                    alert(data.detail || "Unauthorized");
-                    console.error("Unauthorized:", data);
-                    return;
-                }
+  // fetch user on mount
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const response = await authFetch(`http://127.0.0.1:8000/me`);
+        const data = await response.json();
 
-                setUser(data);
-                setNewUsername(data.username);
-                console.log("User updated:", data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        getUser();
-    }, []);
-
-    if (!user) {
-        return (
-            <div>
-                <p>You need to be logged in.</p>
-                <Link to="/login">log in</Link>
-            </div>
-        );
-    }
-
-    const handleUpdateUser = async () => {
-        try {
-            await updateUsername(newUsername);
-            setUser({ ...user, username: newUsername });
-        } catch (error) {
-            console.error("Failed to update username:", error);
+        if (!response.ok) {
+          alert(data.detail || "Unauthorized");
+          console.error("Unauthorized:", data);
+          return;
         }
 
-    }
+        setUser(data);
 
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getUser();
+  }, []);
+
+  if (!user) {
     return (
-        <div className="wrap-product">
-            <div className="product-container">
-                <div className="card">
-                    <h1>Profile Information</h1>
-                    <div className="profile-text">Username: {user.username}</div>
-                    <div className="profile-text">Email: {user.email}</div>
+      <div>
+        <p>You need to be logged in.</p>
+        <Link to="/login">log in</Link>
+      </div>
+    );
+  }
 
-<div className="username-input">
-                    <label htmlFor="username">
-                        New Username
-                        <input
-                            type="text"
-                            id="username"
-                            value={newUsername}
-                            onChange={(e) => setNewUsername(e.target.value)}
+  const startEditing = () => {
+    setIsEditing(true);
+    setNewUsername(user.username);
 
-                        />
-                        <button onClick={handleUpdateUser}>Update</button>
-                    </label>
-</div>
-                    <button>Delete</button>
-                </div>
+  };
+
+  const cancelEditing = () => {
+    setIsEditing(false);
+  }
+
+  const handleUpdateUser = async () => {
+    try {
+      await updateUsername(newUsername);
+      setUser({ ...user, username: newUsername });
+      setNewUsername(newUsername);
+      console.log("User updated:", newUsername);
+    } catch (error) {
+      console.error("Failed to update username:", error);
+    }
+  };
+
+  return (
+    <>
+      <div className="wrap-profile">
+        <div className="product-container">
+          <div className="profile-card">
+            <div className="photo-change">
+              <img src="../src/assets/profile.svg" alt="profile-foto" width={140} />
+              <p className="change-photo">✏️ Change photo</p>
             </div>
-            <div>saved products</div>
-            <div>saved ideas</div>
+            <div>
+            </div>
+            <div className="username-input">
+
+
+
+              {!isEditing ? (
+                <>
+                {/* VIEW MODE*/}
+                <div className="user-edit">
+                  <div className="profile-text">
+                    <strong>Username:</strong> {user.username}
+                    <button onClick={startEditing}>Edit</button>
+                  </div>
+                  
+                  </div>
+                </>
+              ) : (
+                <>
+                {/* EDIT MODE*/}
+                  <label htmlFor="username">
+                    <strong>New username:</strong>
+                  </label>
+                  <input
+                    className="field-username"
+                    type="text"
+                    id="username"
+                    value={newUsername}
+                    onChange={(e) => setNewUsername(e.target.value)}
+                  />
+
+                  <div className="edit-actions">
+                    <button
+                      className="apply-button"
+                      onClick={async () => {
+                        await handleUpdateUser();
+                        setIsEditing(false);
+                      }}
+                    >
+                      Apply
+                    </button>
+
+                    <button
+                      className="cancel-button"
+                      onClick={cancelEditing}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              )}
+
+
+
+
+              <div className="profile-text"><strong>Email address:</strong> {user.email}</div>
+
+
+
+            </div>
+          </div>
         </div>
-    )
-};
-
-
+      </div>
+    </>
+  );
+}

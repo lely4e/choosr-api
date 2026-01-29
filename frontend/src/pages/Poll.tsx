@@ -22,8 +22,7 @@ export default function PollPage() {
     const [comments, setComments] = useState<Record<number, Comment[]>>({});
     const [openCommentsProductId, setOpenCommentsProductId] = useState<number | null>(null);
 
-    // const [vote, setVote] = useState<Record<number, boolean>>({});
-    // const [vote, setVote] = useState<Record<number, Vote | null>>({});
+    const [textComment, setTextComment] = useState<Record<number, string>>({});
 
     const navigate = useNavigate();
 
@@ -196,95 +195,85 @@ export default function PollPage() {
 
             setOpenCommentsProductId(productId);
 
-            console.log("Counts:", data.length)
+            console.log("Amount of comments:", data.length)
         } catch (error) {
             console.error(error);
         }
     };
 
-    // vote
-    // const addVote = async (productId: number) => {
-    //     const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${productId}/vote`, {
-    //         method: 'POST'
-    //     });
-    //     console.log("Add Vote:", response)
-    //     return response;
-    // };
-
-    // const deleteVote = async (productId: number) => {
-    //     const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${productId}/vote`, {
-    //         method: 'DELETE'
-    //     });
-    //     console.log("Delete Vote:", response)
-    //     return response;
-    // };
-
-    // const handleVote = async (productId: number) => {
-    //     if (!uuid) return;
-    //     const hasVoted = vote[productId];
-    //     console.log("hasVoted", hasVoted)
-    //     try {
-    //         if (hasVoted) {
-    //             await deleteVote(productId);
-    //             setVote((prev) => {
-    //                 const updated = { ...prev };
-    //                 console.log("Updated:", updated)
-    //                 delete updated[productId];
-    //                 return updated;
-    //             });
-
-    //         } else {
-    //             const response = await addVote(productId);
-    //             const data = await response.json();
-    //             console.log("Data", data)
-    //             setVote((prev) => ({
-    //                 ...prev,
-    //                 [productId]: data,
-    //             }));
-
-    //         }
-    //         await getProducts();
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-
-    // };
 
     const handleVote = async (productId: number, hasVoted: boolean) => {
-    if (!uuid) return;
+        if (!uuid) return;
 
-    try {
-        if (hasVoted) {
-            await authFetch(
-                `http://127.0.0.1:8000/${uuid}/products/${productId}/vote`,
-                { method: "DELETE" }
-                
-            ); console.log("hasVoted ->", hasVoted, "deleting vote")
-        } else {
-            await authFetch(
-                `http://127.0.0.1:8000/${uuid}/products/${productId}/vote`,
-                { method: "POST" }
-            ); console.log("hasVoted ->", hasVoted, "adding vote")
+        try {
+            if (hasVoted) {
+                await authFetch(
+                    `http://127.0.0.1:8000/${uuid}/products/${productId}/vote`,
+                    { method: "DELETE" }
+
+                ); console.log("hasVoted ->", hasVoted, "deleting vote")
+            } else {
+                await authFetch(
+                    `http://127.0.0.1:8000/${uuid}/products/${productId}/vote`,
+                    { method: "POST" }
+                ); console.log("hasVoted ->", hasVoted, "adding vote")
+            }
+
+            await getProducts();
+
+        } catch (error) {
+            console.error("Vote failed:", error);
         }
+    };
 
-        await getProducts();
+    const handleAddComment = async (
+        productId: number
+    ) => {
+        if (!uuid) return;
 
-    } catch (error) {
-        console.error("Vote failed:", error);
-    }
-};
+        try {
+            const response = await authFetch(
+                `http://127.0.0.1:8000/${uuid}/products/${productId}/comments`,
+                {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: textComment[productId],
+                    }),
+                });
 
+            const data = await response.json();
+            if (!response.ok) {
+                alert(data.detail || data.error || "Adding comment failed");
+                console.error("Error by adding comment:", data);
+                return;
+            }
+
+            console.log("Comment added successfully:", data);
+
+            await getProducts();
+
+            setComments(prev => ({
+                ...prev,
+                [productId]: [...(prev[productId] || []), data],
+            }));
+
+            setTextComment(prev => ({ ...prev, [productId]: "" }));
+
+
+        } catch (error) {
+            console.error("Error adding comment:", error);
+        }
+    };
 
     return (
         <>
 
-            <a href="/my-polls">Back to polls</a>
-
-
             <div className="wrap-product">
-                <div className="product-container">
 
-                    <div key={poll.uuid} className="card">
+                <div className="product-container">
+                    <a href="/my-polls">Back to polls</a>
+                    <div key={poll.uuid} className="card-poll">
                         <div className="poll-text">
                             <div className="poll-title-container">
                                 <h3>
@@ -295,7 +284,7 @@ export default function PollPage() {
                                             type="text"
                                             value={editedTitle}
                                             onChange={(e) => setEditedTitle(e.target.value)}
-                                            className="title-form"
+                                            className="field-username"
                                         />
                                     )}
                                 </h3>
@@ -328,7 +317,7 @@ export default function PollPage() {
                                         type="number"
                                         value={editedBudget}
                                         onChange={(e) => setEditedBudget(Number(e.target.value))}
-                                        className="title-form"
+                                        className="field-username"
                                     />
                                 )}
                             </p>
@@ -383,24 +372,56 @@ export default function PollPage() {
                                         <div className="progress-bar" style={{ width: "40%" }}></div>
                                     </div>
                                     <div>
-                                        <button onClick={() => handleVote(product.id, product.has_voted)} className="vote">{!product.has_voted ? "Vote for This Product!" : "Voted!"}</button>
+                                        <button onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleVote(product.id, product.has_voted)
+                                        }} className="vote">{!product.has_voted ? "Vote for This Product!" : "Voted!"}</button>
                                     </div>
                                     <div className="products-link-comments">
 
                                         <button onClick={() => window.open(product.link, "_blank")} className="details-button">Details</button>
-                                        <button className="details-button" onClick={() => showComments(product.id)}>Comments ({product.comments})</button>
+                                        <button className="details-button" onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            showComments(product.id)
+                                        }}>Comments ({product.comments})</button>
                                         <button onClick={() => handleDeleteProduct(String(product.id))} className="details-button">Delete</button>
 
                                     </div>
 
-                                    {openCommentsProductId === product.id &&
-                                        comments[product.id]?.map(comment => (
-                                            <div key={comment.id} className="comment">
-                                                <p>{comment.text}</p>
-                                                <small>By {comment.created_by}</small>
-                                            </div>
-                                        ))
-                                    }
+                                    {openCommentsProductId === product.id && (
+                                        <>
+                                            {comments[product.id]?.map(comment => (
+                                                <div key={comment.id} className="comment">
+                                                    <p style={{ color: "#737791" }}>
+                                                        {comment.created_by}: "{comment.text}"
+                                                    </p>
+                                                </div>
+                                            ))}
+
+                                            <form
+                                                className="comment-box"
+                                                onSubmit={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    handleAddComment(product.id);
+                                                }}
+                                            >
+                                                <textarea
+                                                    value={textComment[product.id] || ""}
+                                                    onChange={(e) =>
+                                                        setTextComment(prev => ({
+                                                            ...prev,
+                                                            [product.id]: e.target.value,
+                                                        }))
+                                                    }
+                                                />
+
+                                                <button type="submit">Add Comment</button>
+                                            </form>
+                                        </>
+                                    )}
 
                                 </div>
 

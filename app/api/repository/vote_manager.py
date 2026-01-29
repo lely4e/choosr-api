@@ -123,7 +123,7 @@ class VoteManager:
                 Product.image,
                 Product.rating,
                 Product.price,
-                func.count(Vote.user_id).label("votes"),
+                func.count(distinct(Vote.id)).label("votes"),
                 (func.count(VoteAlias.id) > 0).label("has_voted"),
                 func.count(distinct(Comment.id)).label("comments"),
             )

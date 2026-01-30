@@ -17,6 +17,9 @@ export interface Product {
   has_voted: boolean;
 }
 
+export interface ProductsProps {
+  uuid?: string;
+}
 
 export interface User {
 

@@ -8,8 +8,8 @@ import Polls from "./pages/Polls"
 import PollPage from "./pages/Poll"
 import PollAdd from "./pages/PollAdd"
 import Profile from "./pages/Profile"
-import Search from "./pages/Search"
-import Ideas from "./pages/Ideas"
+import Search from "./components/Search"
+import Ideas from "./components/Ideas"
 
 
 export default function App() {

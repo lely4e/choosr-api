@@ -11,10 +11,11 @@ export default function Navbar() {
                 </div>
                 {/* <a href="/">HOME</a> */}
                 <div className="menu-text">
-                <a href="/my-polls">Events</a>
+                <a href="/my-polls">Polls</a>
+                <a href="/add-poll">+ Create Poll</a>
                 {/* <a href="/search">Search</a> */}
                 {/* <a href="/ideas">Gift Ideas</a> */}
-                <a href="/saved">Saved</a>
+                {/* <a href="/saved">Saved</a> */}
                 {/* <a href="">PROFILE</a> */}
                 <a href="/login">Sign in</a>
                 {/* <a href="/signup">Sign up</a> */}

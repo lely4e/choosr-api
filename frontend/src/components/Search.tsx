@@ -2,6 +2,8 @@ import { useState } from "react";
 import { authFetch } from "../utils/auth";
 import type { SearchProps, ProductSearch } from "../utils/types";
 import { useParams } from "react-router-dom";
+import { Star, StarIcon } from "lucide-react"
+
 
 
 const truncate = (text: string, maxLength = 100) => {
@@ -133,7 +135,24 @@ export default function Search({ userSearch }: SearchProps) {
                                 <div className="product-price"> ${product.price}</div>
                             </div>
 
-                            <div className="product-rating"><div style={{ color: '#FF6A00' }}>★★★★★ </div> <strong>{product.rating}</strong> (2,345 reviews)</div>
+                            {/* <div className="product-rating"><div style={{ color: '#FF6A00' }}>★★★★★ </div> <strong>{product.rating}</strong> (2,345 reviews)</div> */}
+
+                                         <div className="rating-votes" >
+                                        <div className="product-rating">
+                                            <div style={{ color: '#FF6A00' , display:"flex", alignItems: "center", marginBottom:20, justifyContent: "center"}}>
+                                            <StarIcon size={12}  fill="#F25E0D" strokeWidth={1.5}/>
+                                            <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5}/>
+                                            <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5}/>
+                                            <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5}/>
+                                            <Star size={12} strokeWidth={1.5} />
+                                            </div>
+                                            
+                                            <div>
+                                            <div><strong>{product.rating}</strong> (2,345 reviews)</div> </div> </div>
+                                          
+                                        
+                                       
+                                    </div>
 
 
                             <div>

@@ -429,6 +429,14 @@ button.add-product-to-poll {
 
 }
 
+.rating-votes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+
+}
+
 .details-button {
 
   flex: 1;

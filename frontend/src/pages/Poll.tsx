@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import type { Poll } from "../utils/types";
 import { authFetch } from "../utils/auth";
@@ -9,6 +8,7 @@ import { updatePoll } from "../utils/updatePoll";
 import Search from "../components/Search";
 import Ideas from "../components/Ideas";
 import Products from "../components/Products";
+import { Share2, ShoppingBagIcon, Clock, CheckCircle, Edit, Trash2, Bell, MoreHorizontal, Gift, SearchCheck } from "lucide-react"
 
 
 export default function PollPage() {
@@ -152,12 +152,13 @@ export default function PollPage() {
                             <div className="alarm-text">
                                 {!isEditing ? (
                                     <>
-                                        <p className="alarm" onClick={startEditing}>|| ✏️</p>
-                                        <p className="alarm">🔔</p>
-                                        <p className="alarm" onClick={(e) => handleDeletePoll(e, poll.uuid)}>🗑️ ||</p>
-                                        <button className="active-button">Active</button>
-                                        <p className="alarm">🔗</p>
-                                        <p className="alarm"><strong>⋮</strong></p>
+                                        <p className="alarm" onClick={startEditing}><Edit size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></p>
+                                        <p className="alarm"><Bell size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></p>
+                                        <p className="alarm" onClick={(e) => handleDeletePoll(e, poll.uuid)}><Trash2 size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></p>
+                                        <button className="active-button"><CheckCircle size={10} strokeWidth={1.5} color="#356d8a" style={{ marginRight: "6px" }} />Active</button>
+
+                                        <p className="alarm"><Share2 size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></p>
+                                        <p className="alarm"><strong><MoreHorizontal size={20} strokeWidth={1.5} color="#356d8a" /></strong></p>
 
 
                                     </>
@@ -186,7 +187,11 @@ export default function PollPage() {
                             </p>
                         </div>
                         {/* <p className="deadline">🛍️ Products: {products.length} options  | ⏳ Time left: 2 days </p> */}
-
+                        <p className="deadline" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <ShoppingBagIcon size={14} strokeWidth={1.5} /> Products: 6 options
+                            <span style={{ margin: "0 4px", color: "#F25E0D" }}>·</span>
+                            <Clock size={14} strokeWidth={1.5} /> Time Left: 2 days
+                        </p>
                     </div>
                 </div>
             </div>
@@ -197,8 +202,8 @@ export default function PollPage() {
                 <h1>Products</h1>
                 <p>Add products to this poll so everyone can compare and vote.</p>
                 <div className="buttons-gift-deadline">
-                    <button onClick={handleShowProducts}>
-                        Products
+                    <button onClick={handleShowProducts} style={{ display: "flex", alignItems: "center" }}>
+                        <ShoppingBagIcon size={14} strokeWidth={2} style={{ marginRight: "6px" }} /> Products
                     </button>
 
 
@@ -212,8 +217,9 @@ export default function PollPage() {
                     <button
                         onClick={handleShowSearch}
                         className="add-product"
+                        style={{ display: "flex", alignItems: "center" }}
                     >
-                        Search
+                        <SearchCheck size={16} strokeWidth={2} style={{ marginRight: "6px" }} /> Search
                         {/* {!showSearch ? "Search Products" : "Hide Products"} */}
                     </button>
 
@@ -224,9 +230,9 @@ export default function PollPage() {
                         Get Gift Ideas</button> */}
 
                     <button
-                        onClick={handleShowIdeas}
+                        onClick={handleShowIdeas} style={{ display: "flex", alignItems: "center" }}
                     >
-                        Gift Ideas
+                        <Gift size={16} strokeWidth={2} style={{ marginRight: "6px" }} /> Gift Ideas
                         {/* {!showGiftIdeas ? "Get Gift Ideas" : "Hide Gift Ideas"} */}
                     </button>
 

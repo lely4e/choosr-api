@@ -1,11 +1,10 @@
-
 import { useEffect, useState } from "react";
 import type { ProductsProps, Product, Comment } from "../utils/types";
 import { authFetch } from "../utils/auth";
+import { FileText, ThumbsUp, CheckCircle, Star, StarIcon, MessageCircle, Trash2 } from "lucide-react"
 
 
-
-export default function Products({uuid}: ProductsProps) {
+export default function Products({ uuid }: ProductsProps) {
 
     const [products, setProducts] = useState<Product[]>([]);
 
@@ -40,7 +39,7 @@ export default function Products({uuid}: ProductsProps) {
         }
     };
 
-        // fetch products on mount
+    // fetch products on mount
     useEffect(() => {
         if (!uuid) return;
         getProducts();
@@ -48,7 +47,7 @@ export default function Products({uuid}: ProductsProps) {
     }, [uuid]);
     // if (!poll) return <p>Loading poll...</p>;
 
-    
+
     // delete product
     const handleDeleteProduct = async (product_id: string) => {
         try {
@@ -76,7 +75,7 @@ export default function Products({uuid}: ProductsProps) {
 
 
 
-    
+
     // fetch comments
     const showComments = async (productId: number) => {
         // toggle off
@@ -173,7 +172,7 @@ export default function Products({uuid}: ProductsProps) {
     return (
         <>
 
-            
+
 
 
 
@@ -194,9 +193,22 @@ export default function Products({uuid}: ProductsProps) {
                                         <div className="product-price">${product.price}</div>
                                     </div>
 
-                                    <div className="product-title-price">
-                                        <div className="product-rating"><div style={{ color: '#FF6A00' }}>★★★★★ </div> <strong>{product.rating}</strong> (2,345 reviews)</div>
+                                    <div className="rating-votes">
+                                        <div className="product-rating">
+                                            <div style={{ color: '#FF6A00' , display:"flex", alignItems: "center"}}>
+                                            <StarIcon size={12}  fill="#F25E0D" strokeWidth={1.5}/>
+                                            <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5}/>
+                                            <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5}/>
+                                            <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5}/>
+                                            <Star size={12} strokeWidth={1.5} />
+                                            </div>
+                                            
+                                            <div>
+                                            <div><strong>{product.rating}</strong> (2,345 reviews)</div> </div> </div>
+                                            <div className="product-rating">
+                                        <div style={{ display:"flex", alignItems: "center"}}><ThumbsUp size={12} strokeWidth={2} /></div>
                                         <div><strong>{product.votes} votes</strong> </div>
+                                        </div>
                                     </div>
 
                                     <div className="progress">
@@ -207,17 +219,61 @@ export default function Products({uuid}: ProductsProps) {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             handleVote(product.id, product.has_voted)
-                                        }} className="vote">{!product.has_voted ? "Vote for This Product!" : "Voted!"}</button>
+                                        }} className="vote"
+                                            style={{
+                                                background: !product.has_voted ? "#F25E0D" : "#b1b1b1",
+                                                display: "flex",
+                                                gap: 10
+                                            }}
+                                        >
+                                            {!product.has_voted ? (
+                                                <ThumbsUp size={14} strokeWidth={2} />
+
+                                            ) : (
+                                                <CheckCircle size={14} strokeWidth={2} />)}
+
+                                            {!product.has_voted ? "Vote for This Product!" : "Voted!"}
+
+
+                                        </button>
                                     </div>
                                     <div className="products-link-comments">
 
-                                        <button onClick={() => window.open(product.link, "_blank")} className="details-button">Details</button>
-                                        <button className="details-button" onClick={(e) => {
+                                        <button onClick={() => window.open(product.link, "_blank")} className="details-button"
+                                            style={{
+                                                display: "flex",
+                                                gap: 5,
+                                                justifyContent: "center",
+                                                alignItems: "center"
+                                            }}>
+                                            <FileText size={14} strokeWidth={1.5} />Details
+                                        </button>
+
+                                        <button className="details-button" 
+                                        style={{
+                                                display: "flex",
+                                                gap: 5,
+                                                justifyContent: "center",
+                                                alignItems: "center"
+                                            }}
+                                                onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             showComments(product.id)
-                                        }}>Comments ({product.comments})</button>
-                                        <button onClick={() => handleDeleteProduct(String(product.id))} className="details-button">Delete/ if owner</button>
+                                            
+                                        }}
+                                        >
+                                            <MessageCircle size={14} strokeWidth={1.5} /> Comments ({product.comments})</button>
+
+                                        <button 
+                                        style={{
+                                                display: "flex",
+                                                gap: 5,
+                                                justifyContent: "center",
+                                                alignItems: "center"
+                                            }}
+                                                onClick={() => handleDeleteProduct(String(product.id))} className="details-button">
+                                                    <Trash2 size={14} strokeWidth={1.5} /> Delete/ if owner</button>
 
                                     </div>
 
@@ -264,7 +320,7 @@ export default function Products({uuid}: ProductsProps) {
                 </div>
             </div>
 
-            
+
         </>
     );
 };

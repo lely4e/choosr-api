@@ -1,5 +1,5 @@
 from app.api.schemas.product import ProductSearchOut
-from app.services.products import get_items_test
+from app.services.products import get_items_test, get_items_from_API
 from fastapi import APIRouter, Depends, Query
 from app.core.security import oauth2_scheme
 from fastapi.concurrency import run_in_threadpool

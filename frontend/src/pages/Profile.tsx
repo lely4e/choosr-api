@@ -3,6 +3,8 @@ import type { User } from "../utils/types";
 import { authFetch } from "../utils/auth";
 import { Link } from "react-router-dom";
 import { updateUsername } from "../utils/updateUser";
+import { Edit } from "lucide-react"
+
 
 export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
@@ -71,7 +73,7 @@ export default function Profile() {
           <div className="profile-card">
             <div className="photo-change">
               <img src="../src/assets/profile.svg" alt="profile-foto" width={140} />
-              <p className="change-photo">✏️ Change photo</p>
+              {/* <p className="change-photo">✏️ Change photo</p> */}
             </div>
             <div>
             </div>
@@ -85,7 +87,7 @@ export default function Profile() {
                 <div className="user-edit">
                   <div className="profile-text">
                     <strong>Username:</strong> {user.username}
-                    <button onClick={startEditing}>Edit</button>
+                    <a onClick={startEditing}><Edit size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></a>
                   </div>
                   
                   </div>

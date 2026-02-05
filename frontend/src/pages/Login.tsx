@@ -94,7 +94,7 @@ export default function Login() {
                 Sign In
               </button>
               <p className="account-prompt">
-                Already have an account?{" "}
+                Don’t have an account?{" "}
                 <Link to="/signup" className="login-link">
                   Sign up
                 </Link>

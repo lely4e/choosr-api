@@ -2,7 +2,7 @@
 
 :root {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  line-height: 1.5;
+  /* line-height: 1.5; */
   font-weight: 400;
 
   color-scheme: light dark;
@@ -372,6 +372,7 @@ button.vote {
   /* border: none;
   cursor: pointer;
   white-space: nowrap; */
+  margin-top: 10px;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #FF6A00, #ec4899);
@@ -441,12 +442,13 @@ button.add-product-to-poll {
 
   flex: 1;
   padding: 6px 12px;
-  border: 1px solid #F25E0D;
+  border: 1px solid #737791;
   cursor: pointer;
   white-space: nowrap;
-  color: #F25E0D;
+  color: #737791;
   background-color: transparent;
   font-size: 0.85rem;
+  border-radius: 20px;
 }
 
 .product-details-button {

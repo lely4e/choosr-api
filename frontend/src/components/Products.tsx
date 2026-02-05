@@ -50,6 +50,8 @@ export default function Products({ uuid }: ProductsProps) {
 
     // delete product
     const handleDeleteProduct = async (product_id: string) => {
+         if (!window.confirm("Are you sure you want to delete this poll?")) return;
+
         try {
             const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${product_id}`, {
                 method: "DELETE",
@@ -70,10 +72,6 @@ export default function Products({ uuid }: ProductsProps) {
             console.error(error);
         }
     };
-
-
-
-
 
 
     // fetch comments
@@ -195,26 +193,26 @@ export default function Products({ uuid }: ProductsProps) {
 
                                     <div className="rating-votes">
                                         <div className="product-rating">
-                                            <div style={{ color: '#FF6A00' , display:"flex", alignItems: "center"}}>
-                                            <StarIcon size={12}  fill="#F25E0D" strokeWidth={1.5}/>
-                                            <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5}/>
-                                            <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5}/>
-                                            <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5}/>
+                                            <div style={{ color: '#737791' , display:"flex", alignItems: "center"}}>
+                                            <StarIcon size={12}  fill="#737791" strokeWidth={1.5}/>
+                                            <StarIcon size={12} fill="#737791" strokeWidth={1.5}/>
+                                            <StarIcon size={12} fill="#737791" strokeWidth={1.5}/>
+                                            <StarIcon size={12} fill="#737791" strokeWidth={1.5}/>
                                             <Star size={12} strokeWidth={1.5} />
                                             </div>
                                             
                                             <div>
-                                            <div><strong>{product.rating}</strong> (2,345 reviews)</div> </div> </div>
+                                            <div style={{ color: '#737791'}}><strong>{product.rating}</strong> (2,345 reviews)</div> </div> </div>
                                             <div className="product-rating">
-                                        <div style={{ display:"flex", alignItems: "center"}}><ThumbsUp size={12} strokeWidth={2} /></div>
+                                        <div style={{ display:"flex", alignItems: "center"}}><ThumbsUp size={14} strokeWidth={2} /></div>
                                         <div><strong>{product.votes} votes</strong> </div>
                                         </div>
                                     </div>
 
-                                    <div className="progress">
-                                        <div className="progress-bar" style={{ width: "40%" }}></div>
-                                    </div>
+                                   
+
                                     <div>
+                                        
                                         <button onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
@@ -227,16 +225,23 @@ export default function Products({ uuid }: ProductsProps) {
                                             }}
                                         >
                                             {!product.has_voted ? (
-                                                <ThumbsUp size={14} strokeWidth={2} />
+                                                <ThumbsUp size={24} strokeWidth={1.5} />
 
                                             ) : (
-                                                <CheckCircle size={14} strokeWidth={2} />)}
+                                                <CheckCircle size={24} strokeWidth={1.5} />)}
 
-                                            {!product.has_voted ? "Vote for This Product!" : "Voted!"}
+                                            {!product.has_voted ? "Vote!" : "Voted!"}
 
 
                                         </button>
                                     </div>
+
+
+                                     <div className="progress">
+                                        <div className="progress-bar" style={{ width: "40%" }}></div>
+                                    </div>
+
+
                                     <div className="products-link-comments">
 
                                         <button onClick={() => window.open(product.link, "_blank")} className="details-button"
@@ -244,9 +249,11 @@ export default function Products({ uuid }: ProductsProps) {
                                                 display: "flex",
                                                 gap: 5,
                                                 justifyContent: "center",
-                                                alignItems: "center"
+                                                alignItems: "center",
+                                                color: "#737791",
+                                                
                                             }}>
-                                            <FileText size={14} strokeWidth={1.5} />Details
+                                            <FileText size={14} strokeWidth={1.5} />
                                         </button>
 
                                         <button className="details-button" 
@@ -263,7 +270,7 @@ export default function Products({ uuid }: ProductsProps) {
                                             
                                         }}
                                         >
-                                            <MessageCircle size={14} strokeWidth={1.5} /> Comments ({product.comments})</button>
+                                            <MessageCircle size={14} strokeWidth={1.5} /> ({product.comments})</button>
 
                                         <button 
                                         style={{
@@ -273,17 +280,31 @@ export default function Products({ uuid }: ProductsProps) {
                                                 alignItems: "center"
                                             }}
                                                 onClick={() => handleDeleteProduct(String(product.id))} className="details-button">
-                                                    <Trash2 size={14} strokeWidth={1.5} /> Delete/ if owner</button>
+                                                    <Trash2 size={14} strokeWidth={1.5} /> </button>
 
                                     </div>
 
                                     {openCommentsProductId === product.id && (
                                         <>
                                             {comments[product.id]?.map(comment => (
-                                                <div key={comment.id} className="comment">
+                                                <div key={comment.id} className="comment"   style={{
+                                                display: "flex",
+                                                gap: 5,
+                                                justifyContent: "space-between",
+                                                alignItems: "center"
+                                            }}>
                                                     <p style={{ color: "#737791" }}>
                                                         {comment.created_by}: "{comment.text}"
                                                     </p>
+                                                    <div 
+                                        style={{
+                                                display: "flex",
+                                                gap: 5,
+                                                justifyContent: "center",
+                                                alignItems: "center"
+                                            }}
+                                                >
+                                                    <Trash2 size={14} strokeWidth={1.5} onClick={() => handleDeleteProduct(String(product.id))} /> </div>
                                                 </div>
                                             ))}
 

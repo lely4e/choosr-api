@@ -46,8 +46,8 @@ export default function Signup() {
     <div className="wrap-poll">
     <section>
       <div className="card-form">
-             <h1 className="login-h1">Sign up</h1>
-        <p className="account-prompt">Please sign up to continue</p>
+             <h1 className="login-h1">Create your account</h1>
+        <p className="account-prompt">Get started in seconds</p>
       <form
         onSubmit={handleSubmit}
         className="signup-form"
@@ -100,9 +100,9 @@ export default function Signup() {
             Signup
           </button>
           <p className="account-prompt">
-            Don’t have an account?{" "}
+            Already have an account?{" "}
             <Link to="/login" className="login-link">
-              Log in
+              Sign in
             </Link>
           </p>
         </div>

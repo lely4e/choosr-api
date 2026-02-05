@@ -8,7 +8,7 @@ import { updatePoll } from "../utils/updatePoll";
 import Search from "../components/Search";
 import Ideas from "../components/Ideas";
 import Products from "../components/Products";
-import { Share2, ShoppingBagIcon, Clock, CheckCircle, Edit, Trash2, Bell, MoreHorizontal, Gift, SearchCheck } from "lucide-react"
+import { Share2, ShoppingBagIcon, Clock, Edit, Trash2, Bell, MoreHorizontal, Gift, SearchCheck } from "lucide-react"
 
 
 export default function PollPage() {
@@ -71,8 +71,8 @@ export default function PollPage() {
             }
         };
 
-        getPoll();
-    }, [uuid]);
+            getPoll();
+        }, [uuid]);
     if (!poll) return <p>Loading poll...</p>;
 
 
@@ -155,7 +155,7 @@ export default function PollPage() {
                                         <p className="alarm" onClick={startEditing}><Edit size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></p>
                                         <p className="alarm"><Bell size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></p>
                                         <p className="alarm" onClick={(e) => handleDeletePoll(e, poll.uuid)}><Trash2 size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></p>
-                                        <button className="active-button"><CheckCircle size={10} strokeWidth={1.5} color="#356d8a" style={{ marginRight: "6px" }} />Active</button>
+                                        <button className="active-button">Active</button>
 
                                         <p className="alarm"><Share2 size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></p>
                                         <p className="alarm"><strong><MoreHorizontal size={20} strokeWidth={1.5} color="#356d8a" /></strong></p>
@@ -200,26 +200,23 @@ export default function PollPage() {
             <div className="poll-description">
 
                 <h1>Products</h1>
-                <p>Add products to this poll so everyone can compare and vote.</p>
-                <div className="buttons-gift-deadline">
-                    <button onClick={handleShowProducts} style={{ display: "flex", alignItems: "center" }}>
-                        <ShoppingBagIcon size={14} strokeWidth={2} style={{ marginRight: "6px" }} /> Products
+                <p className="account-prompt">Add products to this poll so everyone can compare and vote.</p>
+                <div className="buttons-gift-deadline" >
+                {/* style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}> */}
+                    <button 
+                    onClick={handleShowProducts} 
+                    style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}>
+                        <ShoppingBagIcon size={14} strokeWidth={2} style={{ marginRight: "6px" }} /> 
+                        Products
                     </button>
-
-
-                    {/* <button
-                        onClick={() => navigate(`/${uuid}/search`)}
-                        className="add-product"
-                    >
-                        Search Products Navigate
-                    </button> */}
 
                     <button
                         onClick={handleShowSearch}
                         className="add-product"
-                        style={{ display: "flex", alignItems: "center" }}
+                        style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}
                     >
-                        <SearchCheck size={16} strokeWidth={2} style={{ marginRight: "6px" }} /> Search
+                        <SearchCheck size={16} strokeWidth={2} style={{ marginRight: "6px" }} /> 
+                        Search
                         {/* {!showSearch ? "Search Products" : "Hide Products"} */}
                     </button>
 
@@ -230,13 +227,15 @@ export default function PollPage() {
                         Get Gift Ideas</button> */}
 
                     <button
-                        onClick={handleShowIdeas} style={{ display: "flex", alignItems: "center" }}
+                        onClick={handleShowIdeas} style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}
                     >
-                        <Gift size={16} strokeWidth={2} style={{ marginRight: "6px" }} /> Gift Ideas
+                        <Gift size={16} strokeWidth={2} style={{ marginRight: "6px" }} /> 
+                        Gift Ideas
                         {/* {!showGiftIdeas ? "Get Gift Ideas" : "Hide Gift Ideas"} */}
                     </button>
 
                 </div>
+                
                 <div style={{ margin: 20 }}>
                     {showSearch && <Search />}
                     {showGiftIdeas && <Ideas />}

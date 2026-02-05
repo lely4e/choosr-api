@@ -40,14 +40,16 @@ export default function addPoll() {
   };
 
   return (
+    <div className="wrap-poll">
     <section>
-
+<div className="card-form">
       <form
         onSubmit={handleSubmit}
         className="add-poll-form"
       >
-        <a href="/my-polls">Back to polls</a>
-        <h1>Create Poll</h1>
+        {/* <a href="/my-polls">Back to polls</a> */}
+        <h1 className="login-h1">Create Poll</h1>
+        <p className="account-prompt">Set up your poll in a few steps</p>
         <label htmlFor="title" className="title-color">Title</label>
         <input
           id="title"
@@ -74,10 +76,10 @@ export default function addPoll() {
         />
 
 
-        <div className="buttons-gift-deadline">
+        {/* <div className="buttons-gift-deadline">
           <button>Set Deadline</button>
 
-        </div>
+        </div> */}
 
         <div className="button-signup">
           <button
@@ -91,8 +93,9 @@ export default function addPoll() {
         </div>
       </form>
 
-
+</div>
     </section>
+    </div>
   )
 }
 

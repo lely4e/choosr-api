@@ -155,12 +155,12 @@ export default function Ideas() {
 
                     { ideas.length > 0 &&
                     <h1 className="login-h1" style={{ margin: "30px" }}>Gift suggestions</h1>}
-                
+                <div className="ideas-list">
                     {ideas.map((idea, index) => ( 
                         <div key={index} style={{ marginBottom: "16px" }}>
 
-                            <div className="card-product">                        
-                                <div className="idea-text">
+                            <div className="card-product-ideas">                        
+                                <div className="gift-idea-search-wrapper">
 
                                         <Search userSearch={idea.name} />
                                         
@@ -168,11 +168,12 @@ export default function Ideas() {
                                 </div>
                                 <button className="save-idea">Save Idea</button>
                             </div>
-                        </div>
+                         </div>
                     ))}
-                 
+                 </div>
                 </section>
             </div>
+            
         </>
     )
 }

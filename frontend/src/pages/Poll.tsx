@@ -8,7 +8,9 @@ import { updatePoll } from "../utils/updatePoll";
 import Search from "../components/Search";
 import Ideas from "../components/Ideas";
 import Products from "../components/Products";
-import { Share2, ShoppingBagIcon, Clock, Edit, Trash2, Bell, MoreHorizontal, Gift, SearchCheck } from "lucide-react"
+import { Share2, ShoppingBagIcon, Clock, Edit, Trash2, Bell, MoreHorizontal, Gift } from "lucide-react"
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 
 export default function PollPage() {
@@ -20,7 +22,7 @@ export default function PollPage() {
     const [editedTitle, setEditedTitle] = useState<string>("");
     const [editedBudget, setEditedBudget] = useState<number>(0);
 
-    const [showSearch, setShowSearch] = useState(false);
+    // const [showSearch, setShowSearch] = useState(false);
     const [showGiftIdeas, setShowGiftIdeas] = useState(false);
     const [showProducts, setShowProducts] = useState(true)
 
@@ -28,23 +30,23 @@ export default function PollPage() {
     const navigate = useNavigate();
 
 
-    const handleShowSearch = () => {
-        setShowSearch((prev => !prev))
-        setShowGiftIdeas(false)
-        setShowProducts(false)
-    }
+    // const handleShowSearch = () => {
+    //     setShowSearch((prev => !prev))
+    //     setShowGiftIdeas(false)
+    //     setShowProducts(false)
+    // }
 
     const handleShowIdeas = () => {
-        setShowSearch(false)
+        // setShowSearch(false)
         setShowGiftIdeas((prev => !prev))
-        setShowProducts(false)
+        setShowProducts((prev => !prev))
     }
 
-    const handleShowProducts = () => {
-        setShowProducts(true)
-        setShowGiftIdeas(false)
-        setShowSearch(false)
-    }
+    // const handleShowProducts = () => {
+    //     setShowProducts(true)
+    //     setShowGiftIdeas(false)
+    //     setShowSearch(false)
+    // }
 
 
 
@@ -71,8 +73,8 @@ export default function PollPage() {
             }
         };
 
-            getPoll();
-        }, [uuid]);
+        getPoll();
+    }, [uuid]);
     if (!poll) return <p>Loading poll...</p>;
 
 
@@ -202,23 +204,23 @@ export default function PollPage() {
                 <h1>Products</h1>
                 <p className="account-prompt">Add products to this poll so everyone can compare and vote.</p>
                 <div className="buttons-gift-deadline" >
-                {/* style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}> */}
-                    <button 
+                    {/* style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}> */}
+                    {/* <button 
                     onClick={handleShowProducts} 
                     style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}>
                         <ShoppingBagIcon size={14} strokeWidth={2} style={{ marginRight: "6px" }} /> 
                         Products
-                    </button>
+                    </button> */}
 
-                    <button
+                    {/* <button
                         onClick={handleShowSearch}
                         className="add-product"
                         style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}
                     >
                         <SearchCheck size={16} strokeWidth={2} style={{ marginRight: "6px" }} /> 
                         Search
-                        {/* {!showSearch ? "Search Products" : "Hide Products"} */}
-                    </button>
+                        {/* {!showSearch ? "Search Products" : "Hide Products"} 
+                    </button> */}
 
 
                     {/* <button
@@ -227,18 +229,22 @@ export default function PollPage() {
                         Get Gift Ideas</button> */}
 
                     <button
-                        onClick={handleShowIdeas} style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}
+                        onClick={handleShowIdeas}
+                        style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}
                     >
-                        <Gift size={16} strokeWidth={2} style={{ marginRight: "6px" }} /> 
-                        Gift Ideas
-                        {/* {!showGiftIdeas ? "Get Gift Ideas" : "Hide Gift Ideas"} */}
+                        <Gift size={16} strokeWidth={2} style={{ marginRight: "6px" }} />
+                        {/* Gift Ideas */}
+                        {!showGiftIdeas ? "Get Gift Ideas" : "Hide Gift Ideas"}
                     </button>
 
                 </div>
-                
+
+                {showGiftIdeas && <Ideas />}
+                <Search />
+
                 <div style={{ margin: 20 }}>
-                    {showSearch && <Search />}
-                    {showGiftIdeas && <Ideas />}
+                    {/* {showSearch && <Search />} */}
+                    {/* {showGiftIdeas && <Ideas />} */}
                     {/* {showProducts && <Products/>} */}
                 </div>
             </div>

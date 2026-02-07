@@ -2,179 +2,250 @@ import { useState } from "react";
 import { authFetch } from "../utils/auth";
 import type { SearchProps, ProductSearch } from "../utils/types";
 import { useParams } from "react-router-dom";
-import { Star, StarIcon } from "lucide-react"
+import { StarIcon, FileText, Bookmark, LucideArrowLeft, LucideArrowRight, SearchIcon, ChevronUp, Plus, Check } from "lucide-react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
+type Layout = "poll" | "gift";
 
+interface ExtendedSearchProps extends SearchProps {
+  layout?: Layout;
+}
 
-const truncate = (text: string, maxLength = 100) => {
-    if (text.length <= maxLength) return text;
-    return text.slice(0, maxLength) + "...";
+const CustomPrevArrow = (props: any) => {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{
+        ...style,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#0096FF",
+        borderRadius: "50%",
+        width: 36,
+        height: 36,
+        zIndex: 2,
+        cursor: "pointer",
+      }}
+      onClick={onClick}
+    >
+      <LucideArrowLeft color="white" size={20} />
+    </div>
+  );
 };
 
-export default function Search({ userSearch }: SearchProps) {
-    const { uuid } = useParams<{ uuid: string }>();
+const CustomNextArrow = (props: any) => {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{
+        ...style,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#0096FF",
+        borderRadius: "50%",
+        width: 36,
+        height: 36,
+        zIndex: 2,
+        cursor: "pointer",
+      }}
+      onClick={onClick}
+    >
+      <LucideArrowRight color="white" size={20} />
+    </div>
+  );
+};
 
-    const [userInput, setUserInput] = useState(userSearch ?? "");
-    const [searchResults, setSearchResults] = useState<ProductSearch[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [hasSearched, setHasSearched] = useState(false);
+const truncate = (text: string, maxLength = 100) => {
+  if (text.length <= maxLength) return text;
+  return text.slice(0, maxLength) + "...";
+};
 
-    const [showProducts, setShowProducts] = useState(false)
+export default function Search({ userSearch, layout = "poll" }: ExtendedSearchProps) {
+  const { uuid } = useParams<{ uuid: string }>();
 
-    const handleSearch = async () => {
-        if (showProducts) {
-            setShowProducts(false)
-            return
-        }
+  const [userInput, setUserInput] = useState(userSearch ?? "");
+  const [searchResults, setSearchResults] = useState<ProductSearch[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [showProducts, setShowProducts] = useState(false);
+  const [addedProduct, setAddedProduct] = useState<string[]>([]);
 
-        const value = userInput.trim();
-        console.log("Searching for:", userInput);
-        if (value.length < 2) {
-            alert("Please enter at least 2 characters");
-            return;
-        }
-        
-        setLoading(true);
-        setHasSearched(true);
+  const handleSearch = async () => {
+    if (showProducts) {
+      setShowProducts(false);
+      return;
+    }
 
-        try {
-            const response = await authFetch(
-                `http://127.0.0.1:8000/products/search?search=${encodeURIComponent(value)}`
-            );
+    const value = userInput.trim();
+    if (value.length < 2) {
+      alert("Please enter at least 2 characters");
+      return;
+    }
 
-            const data = await response.json();
+    setLoading(true);
+    setHasSearched(true);
 
-            if (!response.ok) {
-                alert(
-                    data.detail ||
-                    data.error ||
-                    "Request failed"
-                );
-                console.error("API error:", data);
-                return;
-            }
+    try {
+      const response = await authFetch(
+        `http://127.0.0.1:8000/products/search?search=${encodeURIComponent(value)}`
+      );
+      const data = await response.json();
 
-            setSearchResults(data);
-            setShowProducts(true)
-            console.log("Search results:", data);
+      if (!response.ok) {
+        alert(data.detail || data.error || "Request failed");
+        return;
+      }
 
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-            
-        }
-    };
+      setSearchResults(data);
+      setShowProducts(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const handleAddProduct = async (product: ProductSearch) => {
-        try {
-            const response = await authFetch(
-                `http://127.0.0.1:8000/${uuid}/products`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    title: product.title,
-                    link: product.link,
-                    image: product.image,
-                    rating: product.rating,
-                    price: product.price,
-                }
-                ),
-            });
+  const handleAddProduct = async (product: ProductSearch) => {
+    try {
+      const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: product.title,
+          link: product.link,
+          image: product.image,
+          rating: product.rating,
+          price: product.price,
+        }),
+      });
+      const data = await response.json();
 
-            const data = await response.json();
+      if (!response.ok) {
+        alert(data.detail || data.error || "Request failed");
+        return;
+      }
 
-            if (!response.ok) {
-                alert(
-                    data.detail ||
-                    data.error ||
-                    "Request failed"
-                );
-                console.error("API error:", data);
-                return;
-            }
+      console.log("Product added:", data);
+      setAddedProduct(prev => [...prev, product.link]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
+  // --- SLICK SETTINGS ---
+  const settings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: layout === "poll" ? 4 : 2,
+    slidesToScroll: 1,
+    arrows: true,
+    nextArrow: <CustomNextArrow />,
+    prevArrow: <CustomPrevArrow />,
+    swipe: true,
+    draggable: true,
+    swipeToSlide: true,
+    touchMove: true,
+    touchThreshold: 10,
+    adaptiveHeight: true,
+    responsive: [
+      { breakpoint: 1024, settings: { slidesToShow: layout === "poll" ? 3 : 1 } },
+      { breakpoint: 768, settings: { slidesToShow: layout === "poll" ? 2 : 1 } },
+      { breakpoint: 480, settings: { slidesToShow: 1 } },
+    ],
+  };
 
-            alert("Product succesfully added")
-            console.log("Product added:", data);
+  return (
+    <div className={`search-root ${layout === "gift" ? "search-gift" : "search-poll"}`}>
+      {/* --- SEARCH BAR --- */}
+      <div className="search-bar">
+        <div className="search-container">
+          <input
+            id="search"
+            className="search-product"
+            type="text"
+            value={userInput}
+            onChange={e => setUserInput(e.target.value)}
+            placeholder="Wireless Headphones"
+          />
+          <button onClick={handleSearch} disabled={loading}>
+            {loading
+              ? "Loading..."
+              : !showProducts
+              ? <SearchIcon size={24} strokeWidth={2} />
+              : <ChevronUp size={24} strokeWidth={2} />}
+          </button>
+        </div>
+      </div>
 
+      {/* --- NO RESULTS --- */}
+      {showProducts && hasSearched && searchResults.length === 0 && !loading && (
+        <p style={{ textAlign: "center", marginTop: "20px" }}>No results found.</p>
+      )}
 
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-
-    return (
-        <>
-            {/* <div className="wrap-search">*/}
-
-
-            {/* <a href={`/${uuid}`}>Back to poll</a> */}
-
-
-            <div className="search-bar">
-                <input id="search" className="search-product" type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} placeholder="Wireless Headphones" />
-                <button onClick={handleSearch} disabled={loading}>{loading ? "Loading..." : !showProducts ? "Search": "Hide"}</button>
-            </div>
-
-            {showProducts && hasSearched && searchResults.length === 0 && !loading && (
-                <p style={{ textAlign: 'center', marginTop: '20px' }}>No results found.</p>
-            )}
-            {showProducts && searchResults.map((product) => (
-                <div key={product.link} style={{ marginBottom: "16px", display: 'flex', justifyContent: 'center' }}>
-                    <div className="card-product">
-
-                        <div className="product-image-container">
-                            <img src={product.image} alt={product.title} className="product-image" />
-                        </div>
-
-                        <div className="product-text">
-                            <div className="product-title-price">
-                                <div className="product-title">{truncate(product.title, 60)}</div>
-                                <div className="product-price"> ${product.price}</div>
-                            </div>
-
-                            {/* <div className="product-rating"><div style={{ color: '#FF6A00' }}>★★★★★ </div> <strong>{product.rating}</strong> (2,345 reviews)</div> */}
-
-                                         <div className="rating-votes" >
-                                        <div className="product-rating">
-                                            <div style={{ color: '#FF6A00' , display:"flex", alignItems: "center", marginBottom:20, justifyContent: "center"}}>
-                                            <StarIcon size={12}  fill="#F25E0D" strokeWidth={1.5}/>
-                                            <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5}/>
-                                            <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5}/>
-                                            <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5}/>
-                                            <Star size={12} strokeWidth={1.5} />
-                                            </div>
-                                            
-                                            <div>
-                                            <div><strong>{product.rating}</strong> (2,345 reviews)</div> </div> </div>
-                                          
-                                        
-                                       
-                                    </div>
-
-
-                            <div>
-                                <button type="button" onClick={() => handleAddProduct(product)} className="add-product-to-poll">{product ? "Add product to Poll!" : "Added!"}</button>
-                            </div>
-
-                            <div className="products-link-comments">
-
-                                <button onClick={() => window.open(product.link, "_blank")} className="product-details-button">Details</button>
-                                <button className="product-details-button">Save</button>
-
-
-                            </div>
-                        </div>
-
-                    </div>
-
+      {/* --- PRODUCTS CAROUSEL --- */}
+      {showProducts && searchResults.length > 0 && (
+        <Slider {...settings} className="products-carousel">
+          {searchResults.map(product => (
+            <div key={product.link} className="carousel-item">
+              <div className="card-product-search">
+                <div className="product-image-container-search">
+                  <img src={product.image} alt={product.title} className="product-image" />
                 </div>
-            ))}
-            {/* </div> */}
-            {/* </div> */}
 
-        </>
-    );
+                <div className="product-text-search">
+                  <div className="rating-votes">
+                    <div style={{ display: "flex", justifyContent: "center", gap: 2, color: "#F25E0D", alignItems: "center" }}>
+                      <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5} />
+                      <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5} />
+                      <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5} />
+                      <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5} />
+                      <StarIcon size={12} strokeWidth={1.5} />
+                      <div style={{ fontSize: 14, marginLeft: 10, color: "#737791" }}>
+                        <strong>{product.rating}</strong>
+                      </div>
+                    </div>
+                    <div className="product-price">${product.price}</div>
+                  </div>
+
+                  <div className="product-title-price">
+                    <div className="product-title-search">{truncate(product.title, 100)}</div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleAddProduct(product)}
+                    className="add-product-to-poll"
+                    disabled={addedProduct.includes(product.link)}
+                    style={{
+                      background: addedProduct.includes(product.link) ? "#B0B6CC" : "",
+                    }}
+                  >
+                    {addedProduct.includes(product.link)
+                      ? <Check size={24} strokeWidth={2} />
+                      : <Plus size={24} strokeWidth={2} />}
+                  </button>
+
+                  <div className="products-link-comments" style={{ display: "flex", gap: 10, marginTop: 10 }}>
+                    <button onClick={() => window.open(product.link, "_blank")} className="product-details-button">
+                      <FileText size={16} strokeWidth={2} />
+                    </button>
+                    <button className="product-details-button">
+                      <Bookmark size={16} strokeWidth={2} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </Slider>
+      )}
+    </div>
+  );
 }

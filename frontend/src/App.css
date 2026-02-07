@@ -79,6 +79,7 @@
 }
 
 @media (min-width: 768px) {
+
   .poll-grid,
   .poll-grid-container {
     grid-template-columns: repeat(2, 1fr);
@@ -237,13 +238,13 @@ img.product-image {
 .user-edit {
   display: flex;
   align-items: center;
- justify-content: space-between;
+  justify-content: space-between;
 }
 
 .edit-actions {
   display: flex;
-   justify-content: space-between;
-   gap: 10px;
+  justify-content: space-between;
+  gap: 10px;
 
 }
 
@@ -342,7 +343,7 @@ p.poll-text {
 
 p.deadline {
   display: flex;
- align-items: center;
+  align-items: center;
   margin-top: auto;
   /* margin-top: 2rem; */
   margin-bottom: 20px;
@@ -375,7 +376,7 @@ h3 {
   gap: 120px;
   justify-content: space-between;
   border-radius: 30px;
-  padding: 0 10% ;
+  padding: 0 10%;
 }
 
 /* body { */
@@ -448,18 +449,187 @@ span {
 }
 
 .search-bar {
+  width: 100%;
+
+}
+
+.search-container {
   display: flex;
   gap: 10px;
-  margin-bottom: 20px;
+  max-width: 800px;
+  margin: 20px auto;
 }
 
 .search-product {
-  width: 300px;
+  flex: 1;
+  min-width: 0;
   height: 40px;
   border-radius: 8px;
   padding: 0 10px;
   font-size: 16px;
+  
 }
+
+.carousel {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 20px;
+  
+}
+
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-item {
+  padding: 0 5px;
+  box-sizing: border-box;
+  display: flex;
+  height: 100%;
+}
+
+.products-carousel {
+  width: 100%;
+  /* margin: 0 -10px; */
+  background-color: #0095ff76; 
+  padding: 60px;             
+  border-radius: 30px;    
+}
+
+.slick-track {
+  display: flex;
+}
+
+.slick-slide {
+  display: flex;
+  height: auto;
+}
+
+.slick-slide>div {
+  display: flex;
+  height: 100%;
+}
+
+.slick-list {
+  overflow: visible;   
+}
+
+.slick-prev::before,
+.slick-next::before {
+  display: none !important;
+}
+
+.card-product-search {
+  display: flex;
+  flex-direction: column;
+  /* width: 100%; */
+  height: 100%;
+  background: rgb(255, 255, 255);
+  max-width: 800px;
+ 
+  border-radius: 30px;
+  padding: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.06),
+    0 4px 10px rgba(0, 0, 0, 0.04);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  align-items: center;
+  gap: 20px;
+ overflow: hidden;
+}
+
+.product-image-container-search {
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.product-title-search {
+    font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  line-clamp: inherit;
+  -webkit-line-clamp: 2;  
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-text-search {
+  display: flex;
+  flex-direction: column;
+  padding: 0px;
+  text-align: left;
+}
+
+
+
+
+
+
+.search-gift {
+  width: 100%;
+  overflow: visible;
+}
+
+.search-poll {
+  width: 100%;
+}
+
+
+.gift-idea-search-wrapper {
+  width: 100%;       /* full width of card */
+  min-width: 300px;  /* prevent shrinking too small */
+}
+
+.products-carousel {
+  width: 100%;
+}
+
+.slick-slide > div {
+  display: flex;
+  justify-content: center; /* center each card */
+}
+
+.card-product-search {
+  max-width: 250px;  /* or adjust for your layout */
+  flex: 0 0 auto;    /* prevent stretching */
+}
+
+.card-product-ideas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;        /* space between carousel, description, and button */
+  width: 100%;
+  min-width: 300px; /* adjust based on your design */
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+  box-sizing: border-box;
+
+}
+
+.ideas-list {
+  max-width: 1200px;   /* ← choose your layout width */
+  margin: 0 auto;      /* center on page */
+  padding: 0 16px;
+}
+
+.gift-idea-search-wrapper {
+  width: 100%;       /* ensure wrapper stretches full card width */
+  display: block;
+}
+
 
 .create-card {
   background-color: transparent;

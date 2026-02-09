@@ -1,4 +1,4 @@
-## 🎈 Choosr API - FastAPI Backend for Polling and Voting
+## 🎈 Choosr API - FastAPI Backend with a React + TypeScript frontend for Polling and Voting
 ![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.118.0-009688.svg)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)
@@ -7,7 +7,7 @@
 ![CI/CD](https://img.shields.io/badge/CI%2FCD-Render%20Auto--Deploy-8A2BE2.svg)
 ![Docs](https://img.shields.io/badge/docs-Swagger-blue)
 
-A FastAPI backend for creating collaborative polls and event-based voting. Users can share event links, add products using search Amazon API, and vote on their favorites, making group decision-making simple and interactive. Features JWT authentication, PostgreSQL with SQLAlchemy ORM, clean architecture, and full CRUD support—perfect for event planning, group shopping, and collaborative voting apps.
+A full-stack app with a FastAPI backend and React + TypeScript frontend for creating collaborative polls and event-based voting. Users can share event links, add products via an Amazon search API, and vote on their favorites, making group decision-making simple and interactive. Features JWT authentication, PostgreSQL with SQLAlchemy ORM, clean architecture, and full CRUD support—perfect for event planning, group shopping, and collaborative voting apps.
 
 ## 🔐 Authentication & Access Control
 The app uses JWT (JSON Web Token) authentication to secure all endpoints. Only registered users can access the application, create polls, add items, or vote.
@@ -31,6 +31,8 @@ Core Features
 
 Technical Features
 
+* ⚛️ React – Component-based UI
+* 🟦 TypeScript – Strong typing and safer code
 * 🐘 PostgreSQL database (SQLAlchemy ORM)
 * 📦 Clean, modular architecture (routes → schemas → services → managers)
 * 🐳 Dockerized for production

@@ -173,18 +173,19 @@
     transform 0.25s ease,
     box-shadow 0.25s ease;
   align-items: flex-start;
-
+align-items: normal;
   gap: 12px;
 }
 
 .product-image-container {
   width: 200px;
+  max-height: 219px;
   aspect-ratio: 1 / 1;
   /* always square */
   border-radius: 12px;
   overflow: hidden;
   /* required for cropping */
-  margin-right: 16px;
+  /* margin-right: 16px; */
 }
 
 img.product-image {
@@ -197,17 +198,22 @@ img.product-image {
 }
 
 .product-title {
-  font-size: 1rem;
+  position: relative;
+  /* font-size: 1rem; */
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  /* margin-bottom: 0.5rem; */
+    font-size: 0.9rem;
+  line-height: 1.4;
 }
+
 
 .product-price {
   font-size: 1.5rem;
   font-weight: 800;
   color: #333333;
   margin-bottom: 0.5rem;
-  color: #f25e0d;
+  /* color: #f25e0d; */
+   color: #737791;
 }
 
 .product-rating {
@@ -216,7 +222,18 @@ img.product-image {
   color: #555555;
   /* margin-bottom: 0.5rem; */
   gap: 10px;
-  justify-content: center;
+  /* justify-content: center; */
+  /* padding-bottom: 10px; */
+  align-items: center;
+}
+
+.product-votes-percent {
+  display: flex;
+  font-size: 0.9rem;
+  color: #555555;
+  gap: 10px;
+  justify-content: space-between;
+
 }
 
 .progress {
@@ -225,7 +242,7 @@ img.product-image {
   background: #e5e7eb;
   border-radius: 999px;
   overflow: hidden;
-  margin: 12px 0;
+  margin: 5px 0 10px 0;
 }
 
 .progress-bar {
@@ -379,6 +396,35 @@ h3 {
   padding: 0 10%;
 }
 
+.tooltip {
+  position: absolute;
+  bottom: 80%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  background: #737791;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+
+  max-width: 300px;
+  text-align: center;
+  white-space: normal;
+
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.details-button:hover .tooltip,
+.vote:hover .tooltip,
+.product-title:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
 /* body { */
 /* background-color: rgb(235, 226, 239); */
 /* background-color: rgb(25, 20, 20); */

@@ -283,9 +283,10 @@ div.poll-description {
 .product-text {
   display: flex;
   flex-direction: column;
-  padding: 0 20px;
+  /* padding: 0 20px; */
+  padding-left: 20px;
   text-align: left;
-  /* flex: 1; */
+  flex: 1;
 }
 
 .profile-text {
@@ -364,7 +365,8 @@ justify-content: center;
   flex-shrink: 0;
 }
 
-button.vote {
+.vote {
+  position: relative;
   display: flex;
   /* padding: 6px 12px; */
   border-radius: 6px;
@@ -372,7 +374,7 @@ button.vote {
   /* border: none;
   cursor: pointer;
   white-space: nowrap; */
-  margin-top: 10px;
+  /* margin-top: 10px; */
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #FF6A00, #ec4899);
@@ -427,7 +429,7 @@ button.add-product-to-poll {
   justify-content: space-between;
   align-items: top;
   gap: 20px;
-padding: 10px 0;
+padding-bottom: 6px;
 }
 
 .rating-votes {
@@ -438,8 +440,16 @@ padding: 10px 0;
 
 }
 
-.details-button {
+.rating {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  gap: 20px;
+padding: 10px 0;
+}
 
+.details-button {
+position: relative;
   flex: 1;
   padding: 6px 12px;
   border: 1px solid #737791;

@@ -14,7 +14,7 @@ export default function Products({ uuid }: ProductsProps) {
     const [textComment, setTextComment] = useState<Record<number, string>>({});
 
 
-    const truncate = (text: string, maxLength = 100) => {
+    const truncate = (text: string, maxLength = 65) => {
         if (text.length <= maxLength) return text;
         return text.slice(0, maxLength) + "...";
     };
@@ -50,7 +50,7 @@ export default function Products({ uuid }: ProductsProps) {
 
     // delete product
     const handleDeleteProduct = async (product_id: string) => {
-         if (!window.confirm("Are you sure you want to delete this poll?")) return;
+        if (!window.confirm("Are you sure you want to delete this poll?")) return;
 
         try {
             const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${product_id}`, {
@@ -187,62 +187,99 @@ export default function Products({ uuid }: ProductsProps) {
 
                                 <div className="product-text">
                                     <div className="product-title-price">
-                                        <div className="product-title">{truncate(product.title, 60)}</div>
+                                        {/* <div className="product-title">{truncate(product.title, 60)}</div> */}
+                                        <div className="product-rating">
+                                            <div style={{ color: '#737791', display: "flex", alignItems: "center" }}>
+                                                <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
+                                                <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
+                                                <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
+                                                <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
+                                                <Star size={12} strokeWidth={1.5} />
+                                            </div>
+
+                                            <div>
+                                                <div style={{ color: '#737791' }}><strong>{product.rating}</strong>
+                                                    {/* (2,345 reviews) */}
+                                                </div></div></div>
                                         <div className="product-price">${product.price}</div>
                                     </div>
+                                    <div className="product-title">{truncate(product.title)} <span className="tooltip">{product.title}</span></div>
+                                    <div className="rating">
+                                        {/* <div className="product-rating"> */}
+                                        {/* <div style={{ color: '#737791', display: "flex", alignItems: "center" }}>
+                                                <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
+                                                <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
+                                                <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
+                                                <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
+                                                <Star size={12} strokeWidth={1.5} />
+                                            </div> */}
 
-                                    <div className="rating-votes">
-                                        <div className="product-rating">
-                                            <div style={{ color: '#737791' , display:"flex", alignItems: "center"}}>
-                                            <StarIcon size={12}  fill="#737791" strokeWidth={1.5}/>
-                                            <StarIcon size={12} fill="#737791" strokeWidth={1.5}/>
-                                            <StarIcon size={12} fill="#737791" strokeWidth={1.5}/>
-                                            <StarIcon size={12} fill="#737791" strokeWidth={1.5}/>
-                                            <Star size={12} strokeWidth={1.5} />
-                                            </div>
-                                            
-                                            <div>
-                                            <div style={{ color: '#737791'}}><strong>{product.rating}</strong> (2,345 reviews)</div> </div> </div>
-                                            <div className="product-rating">
-                                        <div style={{ display:"flex", alignItems: "center"}}><ThumbsUp size={14} strokeWidth={2} /></div>
-                                        <div><strong>{product.votes} votes</strong> </div>
+                                        {/* <div> */}
+                                        {/* <div style={{ color: '#737791' }}><strong>{product.rating}</strong> */}
+                                        {/* (2,345 reviews) */}
+                                        {/* </div>  */}
+                                        {/* </div>  */}
+                                        {/* </div> */}
+                                        {/* <div className="product-rating">
+                                            <div style={{ display: "flex", alignItems: "center" }}><ThumbsUp size={14} strokeWidth={2} style={{ color: '#F25E0D' }} /></div>
+                                            <div style={{ color: '#F25E0D' }}><strong>{product.votes} votes</strong> </div>
+                                        </div> */}
+                                        <div className="products-link-comments">
+
+                                            <button onClick={() => window.open(product.link, "_blank")} 
+                                            className="details-button"
+                                                style={{
+                                                    display: "flex",
+                                                    gap: 5,
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
+                                                    color: "#737791",
+
+                                                }}>
+                                                <FileText size={14} strokeWidth={1.5} />
+                                                <span className="tooltip">Details</span>
+                                            </button>
+
+                                            <button className="details-button"
+                                                style={{
+                                                    display: "flex",
+                                                    gap: 5,
+                                                    justifyContent: "center",
+                                                    alignItems: "center"
+                                                }}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    showComments(product.id)
+
+                                                }}
+                                            >
+                                                <MessageCircle size={14} strokeWidth={1.5} /> ({product.comments})
+                                                <span className="tooltip">Comments</span>
+                                                </button>
+                                            <button
+                                                style={{
+                                                    display: "flex",
+                                                    gap: 5,
+                                                    justifyContent: "center",
+                                                    alignItems: "center"
+                                                }}
+                                                onClick={() => handleDeleteProduct(String(product.id))} 
+                                                className="details-button">
+                                                <Trash2 size={14} strokeWidth={1.5} /> 
+                                                <span className="tooltip">Delete Product</span>
+                                                </button>
                                         </div>
                                     </div>
 
-                                   
-
-                                    <div>
-                                        
-                                        <button onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            handleVote(product.id, product.has_voted)
-                                        }} className="vote"
-                                            style={{
-                                                background: !product.has_voted ? "#F25E0D" : "#b1b1b1",
-                                                display: "flex",
-                                                gap: 10
-                                            }}
-                                        >
-                                            {!product.has_voted ? (
-                                                <ThumbsUp size={24} strokeWidth={1.5} />
-
-                                            ) : (
-                                                <CheckCircle size={24} strokeWidth={1.5} />)}
-
-                                            {!product.has_voted ? "Vote!" : "Voted!"}
 
 
-                                        </button>
-                                    </div>
 
 
-                                     <div className="progress">
-                                        <div className="progress-bar" style={{ width: "40%" }}></div>
-                                    </div>
 
 
-                                    <div className="products-link-comments">
+
+                                    {/* <div className="products-link-comments">
 
                                         <button onClick={() => window.open(product.link, "_blank")} className="details-button"
                                             style={{
@@ -251,60 +288,109 @@ export default function Products({ uuid }: ProductsProps) {
                                                 justifyContent: "center",
                                                 alignItems: "center",
                                                 color: "#737791",
-                                                
+
                                             }}>
                                             <FileText size={14} strokeWidth={1.5} />
                                         </button>
 
-                                        <button className="details-button" 
-                                        style={{
+                                        <button className="details-button"
+                                            style={{
                                                 display: "flex",
                                                 gap: 5,
                                                 justifyContent: "center",
                                                 alignItems: "center"
                                             }}
-                                                onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            showComments(product.id)
-                                            
-                                        }}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                showComments(product.id)
+
+                                            }}
                                         >
                                             <MessageCircle size={14} strokeWidth={1.5} /> ({product.comments})</button>
 
-                                        <button 
-                                        style={{
+                                        <button
+                                            style={{
                                                 display: "flex",
                                                 gap: 5,
                                                 justifyContent: "center",
                                                 alignItems: "center"
                                             }}
-                                                onClick={() => handleDeleteProduct(String(product.id))} className="details-button">
-                                                    <Trash2 size={14} strokeWidth={1.5} /> </button>
+                                            onClick={() => handleDeleteProduct(String(product.id))} className="details-button">
+                                            <Trash2 size={14} strokeWidth={1.5} /> </button>
 
+                                    </div> */}
+
+
+
+                                    <div className="product-votes-percent ">
+
+                                        <div className="product-rating">
+                                            <div style={{ display: "flex", alignItems: "center" }}><ThumbsUp size={14} strokeWidth={2} style={{ color: '#F25E0D' }} /></div>
+                                            <div style={{ color: '#F25E0D' }}><strong>{product.votes} votes</strong> </div>
+                                        </div>
+
+
+                                        <div className="product-rating">
+
+
+                                            <div>
+                                                <div style={{ color: '#F25E0D', fontSize: 20 }}><strong>43%</strong>
+                                                    {/* (2,345 reviews) */}
+                                                </div> </div> </div>
+
+                                    </div>
+
+                                    <div className="progress">
+                                        <div className="progress-bar" style={{ width: "40%" }}></div>
+                                    </div>
+
+                                    <div>
+
+                                        <button onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleVote(product.id, product.has_voted)
+                                        }} className="vote"
+                                            style={{
+                                                background: !product.has_voted ? "#F25E0D" : "#B0B6CC",
+                                                display: "flex",
+                                                gap: 10
+                                            }}
+                                        >
+                                            {!product.has_voted ? (
+                                                <ThumbsUp size={24} strokeWidth={2} />
+
+                                            ) : (
+                                                <CheckCircle size={24} strokeWidth={2} />)}
+
+                                            {/* {!product.has_voted ? "Vote!" : "Voted!"} */}
+
+        <span className="tooltip">{!product.has_voted ? "Vote for this Product!" : "Voted"}</span>
+                                        </button>
                                     </div>
 
                                     {openCommentsProductId === product.id && (
                                         <>
                                             {comments[product.id]?.map(comment => (
-                                                <div key={comment.id} className="comment"   style={{
-                                                display: "flex",
-                                                gap: 5,
-                                                justifyContent: "space-between",
-                                                alignItems: "center"
-                                            }}>
+                                                <div key={comment.id} className="comment" style={{
+                                                    display: "flex",
+                                                    gap: 5,
+                                                    justifyContent: "space-between",
+                                                    alignItems: "center"
+                                                }}>
                                                     <p style={{ color: "#737791" }}>
                                                         {comment.created_by}: "{comment.text}"
                                                     </p>
-                                                    <div 
-                                        style={{
-                                                display: "flex",
-                                                gap: 5,
-                                                justifyContent: "center",
-                                                alignItems: "center"
-                                            }}
-                                                >
-                                                    <Trash2 size={14} strokeWidth={1.5} onClick={() => handleDeleteProduct(String(product.id))} /> </div>
+                                                    <div
+                                                        style={{
+                                                            display: "flex",
+                                                            gap: 5,
+                                                            justifyContent: "center",
+                                                            alignItems: "center"
+                                                        }}
+                                                    >
+                                                        <Trash2 size={14} strokeWidth={1.5} onClick={() => handleDeleteProduct(String(product.id))} /> </div>
                                                 </div>
                                             ))}
 

@@ -4,9 +4,7 @@ import { authFetch } from "../utils/auth";
 import { FileText, ThumbsUp, CheckCircle, Star, StarIcon, MessageCircle, Trash2 } from "lucide-react"
 
 
-export default function Products({ uuid }: ProductsProps) {
-
-    const [products, setProducts] = useState<Product[]>([]);
+export default function Products({ uuid, products, setProducts }: ProductsProps) {
 
     const [comments, setComments] = useState<Record<number, Comment[]>>({});
     const [openCommentsProductId, setOpenCommentsProductId] = useState<number | null>(null);

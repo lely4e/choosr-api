@@ -19,6 +19,8 @@ export interface Product {
 
 export interface ProductsProps {
   uuid?: string;
+  products: Product[];
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
 }
 
 export interface User {

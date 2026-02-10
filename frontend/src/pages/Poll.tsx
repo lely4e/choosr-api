@@ -11,6 +11,8 @@ import Products from "../components/Products";
 import { Share2, ShoppingBagIcon, Clock, Edit, Trash2, Bell, MoreHorizontal, Gift } from "lucide-react"
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import type {Product} from "../utils/types";
+import { Link } from "react-router-dom";
 
 
 export default function PollPage() {
@@ -26,6 +28,7 @@ export default function PollPage() {
     const [showGiftIdeas, setShowGiftIdeas] = useState(false);
     const [showProducts, setShowProducts] = useState(true)
 
+    const [products, setProducts] = useState<Product[]>([]);
 
     const navigate = useNavigate();
 
@@ -39,7 +42,7 @@ export default function PollPage() {
     const handleShowIdeas = () => {
         // setShowSearch(false)
         setShowGiftIdeas((prev => !prev))
-        setShowProducts((prev => !prev))
+        setShowProducts(true)
     }
 
     // const handleShowProducts = () => {
@@ -75,7 +78,15 @@ export default function PollPage() {
 
         getPoll();
     }, [uuid]);
-    if (!poll) return <p>Loading poll...</p>;
+    // if (!poll) return <p>Loading poll...</p>;
+    if (!poll) {
+    return (
+      <div>
+        <p>You need to be logged in.</p>
+        <Link to="/login">log in</Link>
+      </div>
+    );
+  }
 
 
     // delete poll
@@ -188,9 +199,9 @@ export default function PollPage() {
                                 )}
                             </p>
                         </div>
-                        {/* <p className="deadline">🛍️ Products: {products.length} options  | ⏳ Time left: 2 days </p> */}
                         <p className="deadline" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            <ShoppingBagIcon size={14} strokeWidth={1.5} /> Products: 6 options
+                            <ShoppingBagIcon size={14} strokeWidth={1.5} /> 
+                            {products.length === 1 ? `Products: ${products.length} option` : `Products: ${products.length} options`}
                             <span style={{ margin: "0 4px", color: "#F25E0D" }}>·</span>
                             <Clock size={14} strokeWidth={1.5} /> Time Left: 2 days
                         </p>
@@ -249,7 +260,7 @@ export default function PollPage() {
                 </div>
             </div>
 
-            {showProducts ? <Products uuid={uuid} /> : ""}
+            {showProducts ? <Products uuid={uuid} products={products} setProducts={setProducts} /> : ""}
 
 
         </>

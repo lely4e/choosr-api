@@ -7,10 +7,12 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
+
 type Layout = "poll" | "gift";
 
 interface ExtendedSearchProps extends SearchProps {
   layout?: Layout;
+  getProducts?: () => Promise<void>;
 }
 
 const CustomPrevArrow = (props: any) => {
@@ -66,7 +68,7 @@ const truncate = (text: string, maxLength = 100) => {
   return text.slice(0, maxLength) + "...";
 };
 
-export default function Search({ userSearch, layout = "poll" }: ExtendedSearchProps) {
+export default function Search({ userSearch, layout = "poll", getProducts }: ExtendedSearchProps) {
   const { uuid } = useParams<{ uuid: string }>();
 
   const [userInput, setUserInput] = useState(userSearch ?? "");
@@ -133,6 +135,9 @@ export default function Search({ userSearch, layout = "poll" }: ExtendedSearchPr
 
       console.log("Product added:", data);
       setAddedProduct(prev => [...prev, product.link]);
+
+      if (getProducts) await getProducts();
+
     } catch (error) {
       console.error(error);
     }
@@ -178,8 +183,8 @@ export default function Search({ userSearch, layout = "poll" }: ExtendedSearchPr
             {loading
               ? "Loading..."
               : !showProducts
-              ? <SearchIcon size={24} strokeWidth={2} />
-              : <ChevronUp size={24} strokeWidth={2} />}
+                ? <SearchIcon size={24} strokeWidth={2} />
+                : <ChevronUp size={24} strokeWidth={2} />}
           </button>
         </div>
       </div>

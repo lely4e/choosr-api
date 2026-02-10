@@ -1,49 +1,20 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { ProductsProps, Product, Comment } from "../utils/types";
 import { authFetch } from "../utils/auth";
 import { FileText, ThumbsUp, CheckCircle, Star, StarIcon, MessageCircle, Trash2 } from "lucide-react"
 
 
-export default function Products({ uuid, products, setProducts }: ProductsProps) {
+export default function Products({ uuid, products, setProducts, getProducts }: ProductsProps) {
 
     const [comments, setComments] = useState<Record<number, Comment[]>>({});
     const [openCommentsProductId, setOpenCommentsProductId] = useState<number | null>(null);
 
     const [textComment, setTextComment] = useState<Record<number, string>>({});
 
-
     const truncate = (text: string, maxLength = 65) => {
         if (text.length <= maxLength) return text;
         return text.slice(0, maxLength) + "...";
     };
-
-    // fetch products
-    const getProducts = async () => {
-        if (!uuid) return;
-
-        try {
-            const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products`);
-
-            const data = await response.json();
-
-            setProducts(data);
-            console.log("Products fetched:", data);
-            console.log("Amount of products:", data.length)
-
-
-        } catch (error) {
-            // alert("Server is unreachable");
-            console.error(error);
-        }
-    };
-
-    // fetch products on mount
-    useEffect(() => {
-        if (!uuid) return;
-        getProducts();
-
-    }, [uuid]);
-    // if (!poll) return <p>Loading poll...</p>;
 
 
     // delete product
@@ -203,29 +174,11 @@ export default function Products({ uuid, products, setProducts }: ProductsProps)
                                     </div>
                                     <div className="product-title">{truncate(product.title)} <span className="tooltip">{product.title}</span></div>
                                     <div className="rating">
-                                        {/* <div className="product-rating"> */}
-                                        {/* <div style={{ color: '#737791', display: "flex", alignItems: "center" }}>
-                                                <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
-                                                <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
-                                                <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
-                                                <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
-                                                <Star size={12} strokeWidth={1.5} />
-                                            </div> */}
 
-                                        {/* <div> */}
-                                        {/* <div style={{ color: '#737791' }}><strong>{product.rating}</strong> */}
-                                        {/* (2,345 reviews) */}
-                                        {/* </div>  */}
-                                        {/* </div>  */}
-                                        {/* </div> */}
-                                        {/* <div className="product-rating">
-                                            <div style={{ display: "flex", alignItems: "center" }}><ThumbsUp size={14} strokeWidth={2} style={{ color: '#F25E0D' }} /></div>
-                                            <div style={{ color: '#F25E0D' }}><strong>{product.votes} votes</strong> </div>
-                                        </div> */}
                                         <div className="products-link-comments">
 
-                                            <button onClick={() => window.open(product.link, "_blank")} 
-                                            className="details-button"
+                                            <button onClick={() => window.open(product.link, "_blank")}
+                                                className="details-button"
                                                 style={{
                                                     display: "flex",
                                                     gap: 5,
@@ -254,7 +207,7 @@ export default function Products({ uuid, products, setProducts }: ProductsProps)
                                             >
                                                 <MessageCircle size={14} strokeWidth={1.5} /> ({product.comments})
                                                 <span className="tooltip">Comments</span>
-                                                </button>
+                                            </button>
                                             <button
                                                 style={{
                                                     display: "flex",
@@ -262,11 +215,11 @@ export default function Products({ uuid, products, setProducts }: ProductsProps)
                                                     justifyContent: "center",
                                                     alignItems: "center"
                                                 }}
-                                                onClick={() => handleDeleteProduct(String(product.id))} 
+                                                onClick={() => handleDeleteProduct(String(product.id))}
                                                 className="details-button">
-                                                <Trash2 size={14} strokeWidth={1.5} /> 
+                                                <Trash2 size={14} strokeWidth={1.5} />
                                                 <span className="tooltip">Delete Product</span>
-                                                </button>
+                                            </button>
                                         </div>
                                     </div>
 
@@ -364,7 +317,7 @@ export default function Products({ uuid, products, setProducts }: ProductsProps)
 
                                             {/* {!product.has_voted ? "Vote!" : "Voted!"} */}
 
-        <span className="tooltip">{!product.has_voted ? "Vote for this Product!" : "Voted"}</span>
+                                            <span className="tooltip">{!product.has_voted ? "Vote for this Product!" : "Voted"}</span>
                                         </button>
                                     </div>
 

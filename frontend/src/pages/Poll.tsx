@@ -11,7 +11,7 @@ import Products from "../components/Products";
 import { Share2, ShoppingBagIcon, Clock, Edit, Trash2, Bell, MoreHorizontal, Gift } from "lucide-react"
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import type {Product} from "../utils/types";
+import type { Product } from "../utils/types";
 import { Link } from "react-router-dom";
 
 
@@ -51,7 +51,33 @@ export default function PollPage() {
     //     setShowSearch(false)
     // }
 
+    // fetch products
+    const getProducts = async () => {
+        if (!uuid) return;
 
+        try {
+            const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products`);
+
+            const data = await response.json();
+
+            setProducts(data);
+            console.log("Products fetched:", data);
+            console.log("Amount of products:", data.length)
+
+
+        } catch (error) {
+            // alert("Server is unreachable");
+            console.error(error);
+        }
+    };
+
+    // fetch products on mount
+    useEffect(() => {
+        if (!uuid) return;
+        getProducts();
+
+    }, [uuid]);
+    // if (!poll) return <p>Loading poll...</p>;
 
     // fetch polls on mount
     useEffect(() => {
@@ -80,13 +106,13 @@ export default function PollPage() {
     }, [uuid]);
     // if (!poll) return <p>Loading poll...</p>;
     if (!poll) {
-    return (
-      <div>
-        <p>You need to be logged in.</p>
-        <Link to="/login">log in</Link>
-      </div>
-    );
-  }
+        return (
+            <div>
+                <p>You need to be logged in.</p>
+                <Link to="/login">log in</Link>
+            </div>
+        );
+    }
 
 
     // delete poll
@@ -200,7 +226,7 @@ export default function PollPage() {
                             </p>
                         </div>
                         <p className="deadline" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            <ShoppingBagIcon size={14} strokeWidth={1.5} /> 
+                            <ShoppingBagIcon size={14} strokeWidth={1.5} />
                             {products.length === 1 ? `Products: ${products.length} option` : `Products: ${products.length} options`}
                             <span style={{ margin: "0 4px", color: "#F25E0D" }}>·</span>
                             <Clock size={14} strokeWidth={1.5} /> Time Left: 2 days
@@ -215,52 +241,24 @@ export default function PollPage() {
                 <h1>Products</h1>
                 <p className="account-prompt">Add products to this poll so everyone can compare and vote.</p>
                 <div className="buttons-gift-deadline" >
-                    {/* style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}> */}
-                    {/* <button 
-                    onClick={handleShowProducts} 
-                    style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}>
-                        <ShoppingBagIcon size={14} strokeWidth={2} style={{ marginRight: "6px" }} /> 
-                        Products
-                    </button> */}
-
-                    {/* <button
-                        onClick={handleShowSearch}
-                        className="add-product"
-                        style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}
-                    >
-                        <SearchCheck size={16} strokeWidth={2} style={{ marginRight: "6px" }} /> 
-                        Search
-                        {/* {!showSearch ? "Search Products" : "Hide Products"} 
-                    </button> */}
-
-
-                    {/* <button
-                        onClick={() => navigate(`/${uuid}/ideas`)}
-                    >
-                        Get Gift Ideas</button> */}
 
                     <button
                         onClick={handleShowIdeas}
                         style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}
                     >
                         <Gift size={16} strokeWidth={2} style={{ marginRight: "6px" }} />
-                        {/* Gift Ideas */}
+
                         {!showGiftIdeas ? "Get Gift Ideas" : "Hide Gift Ideas"}
                     </button>
 
                 </div>
 
-                {showGiftIdeas && <Ideas />}
-                <Search />
+                {showGiftIdeas && <Ideas getProducts={getProducts} />}
+                <Search getProducts={getProducts} />
 
-                <div style={{ margin: 20 }}>
-                    {/* {showSearch && <Search />} */}
-                    {/* {showGiftIdeas && <Ideas />} */}
-                    {/* {showProducts && <Products/>} */}
-                </div>
             </div>
 
-            {showProducts ? <Products uuid={uuid} products={products} setProducts={setProducts} /> : ""}
+            {showProducts ? <Products uuid={uuid} products={products} setProducts={setProducts} getProducts={getProducts} /> : ""}
 
 
         </>

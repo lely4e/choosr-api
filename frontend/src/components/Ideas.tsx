@@ -2,9 +2,10 @@ import { useState } from "react";
 import { authFetch } from "../utils/auth";
 import Search from "../components/Search";
 import type { GiftIdea } from "../utils/types";
+import type { IdeasProps } from "../utils/types";
 
 
-export default function Ideas() {
+export default function Ideas({ getProducts }: IdeasProps) {
     const [eventTitle, setEventTitle] = useState("")
     const [recipientRelation, setRecipientRelation] = useState("")
     const [recipientAge, setRecipientAge] = useState("")
@@ -74,7 +75,7 @@ export default function Ideas() {
                             name="title"
                             placeholder="Mike's Birthday"
                             value={eventTitle}
-                            onChange={(e) => setEventTitle(e.target.value)} 
+                            onChange={(e) => setEventTitle(e.target.value)}
                             className="title-form"
                             required
                         />
@@ -87,7 +88,7 @@ export default function Ideas() {
                             name="title"
                             placeholder="Friend, Family, Colleague"
                             value={recipientRelation}
-                            onChange={(e) => setRecipientRelation(e.target.value)} 
+                            onChange={(e) => setRecipientRelation(e.target.value)}
                             className="title-form"
                             required
                         />
@@ -99,7 +100,7 @@ export default function Ideas() {
                             name="title"
                             placeholder="23"
                             value={recipientAge}
-                            onChange={(e) => setRecipientAge(e.target.value)} 
+                            onChange={(e) => setRecipientAge(e.target.value)}
                             className="title-form"
                             required
                         />
@@ -111,7 +112,7 @@ export default function Ideas() {
                             name="title"
                             placeholder="Sports, Music, Art, etc."
                             value={recipientHobbies}
-                            onChange={(e) => setRecipientHobbies(e.target.value)} 
+                            onChange={(e) => setRecipientHobbies(e.target.value)}
                             className="title-form"
                             required
                         />
@@ -123,7 +124,7 @@ export default function Ideas() {
                             name="title"
                             placeholder="Unique, Practical, Fun, etc."
                             value={giftType}
-                            onChange={(e) => setGiftType(e.target.value)} 
+                            onChange={(e) => setGiftType(e.target.value)}
                             className="title-form"
                             required
                         />
@@ -135,7 +136,7 @@ export default function Ideas() {
                             name="title"
                             placeholder="350-400"
                             value={budgetRange}
-                            onChange={(e) => setBudgetRange(e.target.value)} 
+                            onChange={(e) => setBudgetRange(e.target.value)}
                             className="title-form"
                             required
                         />
@@ -153,27 +154,27 @@ export default function Ideas() {
                         </div>
                     </form>
 
-                    { ideas.length > 0 &&
-                    <h1 className="login-h1" style={{ margin: "30px" }}>Gift suggestions</h1>}
-                <div className="ideas-list">
-                    {ideas.map((idea, index) => ( 
-                        <div key={index} style={{ marginBottom: "16px" }}>
+                    {ideas.length > 0 &&
+                        <h1 className="login-h1" style={{ margin: "30px" }}>Gift suggestions</h1>}
+                    <div className="ideas-list">
+                        {ideas.map((idea, index) => (
+                            <div key={index} style={{ marginBottom: "16px" }}>
 
-                            <div className="card-product-ideas">                        
-                                <div className="gift-idea-search-wrapper">
+                                <div className="card-product-ideas">
+                                    <div className="gift-idea-search-wrapper">
 
-                                        <Search userSearch={idea.name} />
-                                        
-                                    <div className="product-description">{idea.description}</div>
+                                        <Search userSearch={idea.name} getProducts={getProducts} />
+
+                                        <div className="product-description">{idea.description}</div>
+                                    </div>
+                                    <button className="save-idea">Save Idea</button>
                                 </div>
-                                <button className="save-idea">Save Idea</button>
                             </div>
-                         </div>
-                    ))}
-                 </div>
+                        ))}
+                    </div>
                 </section>
             </div>
-            
+
         </>
     )
 }

@@ -21,6 +21,11 @@ export interface ProductsProps {
   uuid?: string;
   products: Product[];
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  getProducts: () => Promise<void>;
+}
+
+export interface IdeasProps {
+  getProducts?: () => Promise<void>;
 }
 
 export interface User {
@@ -32,20 +37,20 @@ export interface User {
 }
 
 export interface ProductSearch {
-    title: string;
-    link: string;
-    image: string;
-    rating: number | null;
-    price: number | null;
+  title: string;
+  link: string;
+  image: string;
+  rating: number | null;
+  price: number | null;
 }
 
 export interface GiftIdea {
-    name: string;
-    description: string;
+  name: string;
+  description: string;
 }
 
 export interface SearchProps {
-    userSearch?: string;
+  userSearch?: string;
 }
 
 export interface Comment {

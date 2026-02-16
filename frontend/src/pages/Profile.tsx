@@ -68,47 +68,58 @@ export default function Profile() {
 
   return (
     <>
-      <div className="wrap-profile">
-        <div className="product-container">
-          <div className="profile-card">
-            <div className="photo-change">
+      <div className="grid justify-center mx-auto">
+        <div className="grid gap-6 w-full max-w-200 my-10 mx-auto grid-cols-1">
+          <div className="
+    w-full
+    flex
+    justify-center
+    p-6
+    rounded-[30px]
+    bg-white/50
+    backdrop-blur-[10px]
+    shadow-[0_10px_25px_rgba(0,0,0,0.157),0_4px_10px_rgba(0,0,0,0.04)]
+    transition-transform duration-250
+    hover:-translate-y-1
+    hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]
+  ">
+            <div className="grid items-center content-center">
               <img src="../src/assets/profile.svg" alt="profile-foto" width={140} />
               {/* <p className="change-photo">✏️ Change photo</p> */}
             </div>
             <div>
             </div>
-            <div className="username-input">
-
+            <div className="flex flex-col justify-center pl-10 gap-2.5">
 
 
               {!isEditing ? (
                 <>
-                {/* VIEW MODE*/}
-                <div className="user-edit">
-                  <div className="profile-text">
-                    <strong>Username:</strong> {user.username}
-                    <a onClick={startEditing}><Edit size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></a>
-                  </div>
-                  
+                  {/* View Mode */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center text-left gap-2.5">
+                      <strong>Username:</strong> {user.username}
+                      <a onClick={startEditing} className="cursor-pointer color-[#737791] "><Edit size={20} strokeWidth={1.5} /></a>
+                    </div>
+
                   </div>
                 </>
               ) : (
                 <>
-                {/* EDIT MODE*/}
-                  <label htmlFor="username">
+                  {/* Edit Mode */}
+                  <label htmlFor="username" className="text-left">
                     <strong>New username:</strong>
                   </label>
                   <input
-                    className="field-username"
+                    className="rounded-lg border border-[#3bb5f6] bg-transparent text-[#737791] pl-2.5 h-8.75 text-base w-75"
                     type="text"
                     id="username"
                     value={newUsername}
                     onChange={(e) => setNewUsername(e.target.value)}
                   />
 
-                  <div className="edit-actions">
+                  <div className="flex justify-between gap-2.5 ">
                     <button
-                      className="apply-button"
+                      className="h-8.75 flex items-center flex-1 text-base justify-center bg-[#0096FF] text-white font-normal rounded-xl cursor-pointer"
                       onClick={async () => {
                         await handleUpdateUser();
                         setIsEditing(false);
@@ -118,7 +129,7 @@ export default function Profile() {
                     </button>
 
                     <button
-                      className="cancel-button"
+                      className="h-8.75 flex flex-1 items-center text-base justify-center bg-[#0096FF] text-white font-normal rounded-xl cursor-pointer"
                       onClick={cancelEditing}
                     >
                       Cancel
@@ -127,13 +138,9 @@ export default function Profile() {
                 </>
               )}
 
-
-
-
-              <div className="profile-text"><strong>Email address:</strong> {user.email}</div>
-
-
-
+              <div className="flex items-center text-left gap-2.5">
+                <strong>Email address:</strong> {user.email}
+              </div>
             </div>
           </div>
         </div>

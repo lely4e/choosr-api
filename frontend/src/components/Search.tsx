@@ -143,7 +143,7 @@ export default function Search({ userSearch, layout = "poll", getProducts }: Ext
     }
   };
 
-  // --- SLICK SETTINGS ---
+  // Slick Settings
   const settings = {
     dots: false,
     infinite: false,
@@ -167,90 +167,141 @@ export default function Search({ userSearch, layout = "poll", getProducts }: Ext
   };
 
   return (
-    <div className={`search-root ${layout === "gift" ? "search-gift" : "search-poll"}`}>
-      {/* --- SEARCH BAR --- */}
-      <div className="search-bar">
-        <div className="search-container">
-          <input
-            id="search"
-            className="search-product"
-            type="text"
-            value={userInput}
-            onChange={e => setUserInput(e.target.value)}
-            placeholder="Wireless Headphones"
-          />
-          <button onClick={handleSearch} disabled={loading}>
-            {loading
-              ? "Loading..."
-              : !showProducts
-                ? <SearchIcon size={24} strokeWidth={2} />
-                : <ChevronUp size={24} strokeWidth={2} />}
-          </button>
-        </div>
+  <div className="w-full">
+    {/* Search Bar */}
+    <div className="grid place-items-center w-full">
+      <div className="flex gap-2 w-full max-w-200 my-5">
+        <input
+          id="search"
+          type="text"
+          value={userInput}
+          onChange={e => setUserInput(e.target.value)}
+          placeholder="Wireless Headphones"
+          className="flex-1 h-12 rounded-xl px-5 text-base
+                     border border-[#0dadf2]
+                     bg-transparent
+                     placeholder:text-[#737791]
+                     placeholder:italic
+                     focus:outline-none focus:ring-2 focus:ring-[#0096FF]"
+        />
+
+        <button
+          onClick={handleSearch}
+          disabled={loading}
+          className="flex items-center justify-center cursor-pointer 
+                     w-12 h-12 rounded-xl
+                     bg-[#0096FF] text-white
+                     transition hover:bg-[#F25E0D]
+                     disabled:opacity-50"
+        >
+          {loading
+            ? "..."
+            : !showProducts
+              ? <SearchIcon size={20} strokeWidth={2} />
+              : <ChevronUp size={20} strokeWidth={2} />}
+        </button>
       </div>
+    </div>
 
-      {/* --- NO RESULTS --- */}
-      {showProducts && hasSearched && searchResults.length === 0 && !loading && (
-        <p style={{ textAlign: "center", marginTop: "20px" }}>No results found.</p>
-      )}
+    {/* No Results */}
+    {showProducts && hasSearched && searchResults.length === 0 && !loading && (
+      <p className="text-center mt-5 text-sm text-[#737791]">
+        No results found.
+      </p>
+    )}
 
-      {/* --- PRODUCTS CAROUSEL --- */}
-      {showProducts && searchResults.length > 0 && (
-        <Slider {...settings} className="products-carousel">
+    {/* Products carousel */}
+    {showProducts && searchResults.length > 0 && (
+      <div className="w-full bg-[#0095ff20] rounded-[30px] p-10">
+        <Slider {...settings}>
           {searchResults.map(product => (
-            <div key={product.link} className="carousel-item">
-              <div className="card-product-search">
-                <div className="product-image-container-search">
-                  <img src={product.image} alt={product.title} className="product-image" />
+            <div key={product.link} className="flex justify-center px-2">
+              <div className="flex flex-col gap-4
+                              bg-white rounded-[30px] p-6
+                              shadow-md transition
+                              hover:-translate-y-1 hover:shadow-xl
+                              max-w-62.5 w-full">
+
+                {/* img */}
+                <div className="h-32.5 flex items-center justify-center">
+                  <img
+                    src={product.image}
+                    alt={product.title}
+                    className="max-h-full object-contain"
+                  />
                 </div>
 
-                <div className="product-text-search">
-                  <div className="rating-votes">
-                    <div style={{ display: "flex", justifyContent: "center", gap: 2, color: "#F25E0D", alignItems: "center" }}>
-                      <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5} />
-                      <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5} />
-                      <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5} />
-                      <StarIcon size={12} fill="#F25E0D" strokeWidth={1.5} />
-                      <StarIcon size={12} strokeWidth={1.5} />
-                      <div style={{ fontSize: 14, marginLeft: 10, color: "#737791" }}>
-                        <strong>{product.rating}</strong>
-                      </div>
+                {/* Content */}
+                <div className="flex flex-col gap-3">
+
+                  {/* Rating Price */}
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center  text-[#F25E0D]">
+                      <StarIcon size={12} fill="#F25E0D" />
+                      <StarIcon size={12} fill="#F25E0D" />
+                      <StarIcon size={12} fill="#F25E0D" />
+                      <StarIcon size={12} fill="#F25E0D" />
+                      <StarIcon size={12} />
+                      <span className="text-sm ml-0 text-[#737791] font-semibold">
+                        {product.rating}
+                      </span>
                     </div>
-                    <div className="product-price">${product.price}</div>
+
+                    <span className="text-lg font-extrabold text-[#737791]">
+                      ${product.price}
+                    </span>
                   </div>
 
-                  <div className="product-title-price">
-                    <div className="product-title-search">{truncate(product.title, 100)}</div>
+                  {/* Title */}
+                  <div className="text-sm font-semibold leading-snug line-clamp-2 text-left">
+                    {truncate(product.title, 100)}
                   </div>
 
+                  {/* Add Button */}
                   <button
                     type="button"
                     onClick={() => handleAddProduct(product)}
-                    className="add-product-to-poll"
                     disabled={addedProduct.includes(product.link)}
-                    style={{
-                      background: addedProduct.includes(product.link) ? "#B0B6CC" : "",
-                    }}
+                    className={`w-full h-10 rounded-md flex items-center justify-center text-white 
+                               transition
+                               ${addedProduct.includes(product.link)
+                        ? "bg-[#B0B6CC] cursor-not-allowed"
+                        : "bg-linear-to-br from-[#0084ff] to-[#48d9ec] hover:opacity-90 cursor-pointer "
+                      }`}
                   >
                     {addedProduct.includes(product.link)
-                      ? <Check size={24} strokeWidth={2} />
-                      : <Plus size={24} strokeWidth={2} />}
+                      ? <Check size={20} />
+                      : <Plus size={20} />}
                   </button>
 
-                  <div className="products-link-comments" style={{ display: "flex", gap: 10, marginTop: 10 }}>
-                    <button onClick={() => window.open(product.link, "_blank")} className="product-details-button">
-                      <FileText size={16} strokeWidth={2} />
+                  {/* Action Buttons */}
+                  <div className="flex justify-between gap-3 mt-2">
+                    <button
+                      onClick={() => window.open(product.link, "_blank")}
+                      className="flex-1 rounded-full border border-[#0d78f2] cursor-pointer
+                                 text-[#0d78f2] py-2 text-sm
+                                 flex items-center justify-center
+                                 hover:bg-[#0d78f210] transition"
+                    >
+                      <FileText size={16} />
                     </button>
-                    <button className="product-details-button">
-                      <Bookmark size={16} strokeWidth={2} />
+
+                    <button
+                      className="flex-1 rounded-full border border-[#0d78f2] cursor-pointer
+                                 text-[#0d78f2] py-2 text-sm
+                                 flex items-center justify-center
+                                 hover:bg-[#0d78f210] transition"
+                    >
+                      <Bookmark size={16} />
                     </button>
                   </div>
+
                 </div>
               </div>
             </div>
           ))}
         </Slider>
-      )}
-    </div>
-  );
-}
+      </div>
+    )}
+  </div>
+);}

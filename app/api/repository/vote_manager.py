@@ -126,6 +126,7 @@ class VoteManager:
                 func.count(distinct(Vote.id)).label("votes"),
                 (func.count(VoteAlias.id) > 0).label("has_voted"),
                 func.count(distinct(Comment.id)).label("comments"),
+                Product.user_id,
             )
             .outerjoin(Vote, Vote.product_id == Product.id)
             .outerjoin(

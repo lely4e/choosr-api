@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-
+import { UserProvider } from './context/UserContext';
 import Navbar from "./components/Navbar"
 import Signup from "./pages/Signup"
 import Login from "./pages/Login"
@@ -10,24 +10,27 @@ import PollAdd from "./pages/PollAdd"
 import Profile from "./pages/Profile"
 import Search from "./components/Search"
 import Ideas from "./components/Ideas"
+import ProtectedRoute from "./components/ProtectedRoute";
 
 
 export default function App() {
   return (
+    <UserProvider>
     <Router>
     <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/my-polls" element={<Polls />} />
-        <Route path="/:uuid" element={<PollPage />} />
-        <Route path="/add-poll" element={<PollAdd />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/:uuid/search" element={<Search />} />
-        <Route path="/:uuid/ideas" element={<Ideas />} />
+        <Route path="/my-polls" element={<ProtectedRoute><Polls /></ProtectedRoute>} />
+        <Route path="/:uuid" element={<ProtectedRoute><PollPage /></ProtectedRoute>} />
+        <Route path="/add-poll" element={<ProtectedRoute><PollAdd /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/:uuid/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
+        <Route path="/:uuid/ideas" element={<ProtectedRoute><Ideas /></ProtectedRoute>} />
       </Routes>
     </Router>
+    </UserProvider>
   )
 }
 

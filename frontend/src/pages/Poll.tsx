@@ -12,9 +12,14 @@ import { Share2, ShoppingBagIcon, Clock, Edit, Trash2, Bell, MoreHorizontal, Gif
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import type { Product } from "../utils/types";
+import { useUser } from "../context/UserContext";
 
 
 export default function PollPage() {
+    const { user } = useUser();
+    console.log("user", user)
+    console.log("user id", user?.id)
+
     const { uuid } = useParams<{ uuid: string }>();
 
     const [poll, setPoll] = useState<Poll | null>(null);
@@ -72,6 +77,7 @@ export default function PollPage() {
             }
         };
         getPoll();
+
     }, [uuid]);
 
     if (!poll) {
@@ -165,19 +171,26 @@ export default function PollPage() {
                             <div className="p-1.5 flex justify-between items-start gap-5 m-0">
                                 {!isEditing ? (
                                     <>
-                                    
-                                        <p className="flex justify-between items-start gap-5 m-0 cursor-pointer" onClick={startEditing}>
-                                            <Plus size={20} strokeWidth={1.5} style={{ color: "#737791" }} />
-                                        </p>
-                                        
-                                        <p className="flex justify-between items-start gap-5 m-0 cursor-pointer" onClick={startEditing}>
-                                            <Edit size={20} strokeWidth={1.5} style={{ color: "#737791" }} />
-                                        </p>
+                                        {/* add poll from other creators to vote  */}
+                                        {user && user.id !== poll.user_id && (
+                                            <p className="flex justify-between items-start gap-5 m-0 cursor-pointer" onClick={startEditing}>
+                                                <Plus size={20} strokeWidth={1.5} style={{ color: "#737791" }} />
+                                            </p>
+
+                                        )}
+
+                                        {user && user.id === poll.user_id && (
+                                            <>
+                                                <p className="flex justify-between items-start gap-5 m-0 cursor-pointer" onClick={startEditing}>
+                                                    <Edit size={20} strokeWidth={1.5} style={{ color: "#737791" }} />
+                                                </p>
+                                                <p className="flex justify-between items-start gap-5 m-0 cursor-pointer" onClick={(e) => handleDeletePoll(e, poll.uuid)}>
+                                                    <Trash2 size={20} strokeWidth={1.5} style={{ color: "#737791" }} />
+                                                </p>
+                                            </>)}
+
                                         <p className="flex justify-between items-start gap-5 m-0 cursor-pointer ">
                                             <Bell size={20} strokeWidth={1.5} style={{ color: "#737791" }} />
-                                        </p>
-                                        <p className="flex justify-between items-start gap-5 m-0 cursor-pointer" onClick={(e) => handleDeletePoll(e, poll.uuid)}>
-                                            <Trash2 size={20} strokeWidth={1.5} style={{ color: "#737791" }} />
                                         </p>
 
                                         <button className="bg-green-300/50 rounded-[20px] inline-flex items-center justify-center px-2 py-1 text-[0.7rem] h-5 text-[#356d8a] border-none cursor-pointer ">
@@ -228,7 +241,7 @@ export default function PollPage() {
                                     transform transition duration-300 ease-in-out
                                     hover:scale-105"
                                 >
-                                    <Gift size={30} strokeWidth={1.5}  />
+                                    <Gift size={30} strokeWidth={1.5} />
                                     {!showGiftIdeas ? "" : "Hide Gift Ideas"}
                                 </button>
                             </div>

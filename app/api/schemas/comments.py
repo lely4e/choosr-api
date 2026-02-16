@@ -21,5 +21,6 @@ class CommentListOut(BaseModel):
     id: int
     text: str
     created_by: str
+    user_id: int
 
     model_config = ConfigDict(from_attributes=True)

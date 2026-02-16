@@ -47,5 +47,6 @@ class ProductListOut(BaseModel):
     votes: Optional[int]
     comments: Optional[int]
     has_voted: Optional[bool]
+    user_id: int
 
     model_config = ConfigDict(from_attributes=True)

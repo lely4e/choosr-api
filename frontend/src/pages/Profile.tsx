@@ -1,40 +1,17 @@
-import { useEffect, useState } from "react";
-import type { User } from "../utils/types";
-import { authFetch } from "../utils/auth";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { updateUsername } from "../utils/updateUser";
-import { Edit } from "lucide-react"
+import { Edit, LogOut } from "lucide-react"
+import { useUser } from "../context/UserContext";
 
 
 export default function Profile() {
-  const [user, setUser] = useState<User | null>(null);
-  const [newUsername, setNewUsername] = useState<string>("");
+  // user from Context
+  const { user, updateUser, logout } = useUser();
 
+  const [newUsername, setNewUsername] = useState<string>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
-
-  // fetch user on mount
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const response = await authFetch(`http://127.0.0.1:8000/me`);
-        const data = await response.json();
-
-        if (!response.ok) {
-          alert(data.detail || "Unauthorized");
-          console.error("Unauthorized:", data);
-          return;
-        }
-
-        setUser(data);
-
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    getUser();
-  }, []);
 
   if (!user) {
     return (
@@ -58,8 +35,8 @@ export default function Profile() {
   const handleUpdateUser = async () => {
     try {
       await updateUsername(newUsername);
-      setUser({ ...user, username: newUsername });
-      setNewUsername(newUsername);
+      updateUser({ ...user, username: newUsername });
+      setIsEditing(false);
       console.log("User updated:", newUsername);
     } catch (error) {
       console.error("Failed to update username:", error);
@@ -141,6 +118,11 @@ export default function Profile() {
               <div className="flex items-center text-left gap-2.5">
                 <strong>Email address:</strong> {user.email}
               </div>
+
+              <button onClick={logout} className="cursor-pointer">
+              <LogOut />
+              </button>
+
             </div>
           </div>
         </div>

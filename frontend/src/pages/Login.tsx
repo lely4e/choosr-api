@@ -1,9 +1,10 @@
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
+import { useUser } from "../context/UserContext"
 
 export default function Login() {
-
+  const { login } = useUser();
   const [loginData, setLoginData] = useState({
     email: "",
     password: ""
@@ -20,6 +21,7 @@ export default function Login() {
     })
 
     try {
+      // login and get token
       const response = await fetch("http://127.0.0.1:8000/auth", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -34,14 +36,29 @@ export default function Login() {
         return
       }
 
+      console.log("Token recieved:", data.access_token)
+
+      const userResponse = await fetch("http://127.0.0.1:8000/me", {
+        headers: {
+          "Authorization": `Bearer ${data.access_token}`
+        }
+      })
+
+      if (!userResponse.ok) {
+        alert("Failed to fetch user data")
+        return
+      }
+
+      const userData = await userResponse.json()
+      console.log("User data fetched:", userData)
+
+      login(data.access_token, userData)
+
       alert("User login successfully!")
       console.log("Login successful:", data)
 
-      // Store the access token in session storage
-      sessionStorage.setItem("access_token", data.access_token)
-
-      // Redirect to another page (React-friendly approach)
-      setTimeout(() => { navigate("/my-polls") }, 1000)
+      // Redirect to another page
+      navigate("/my-polls")
     } catch (error) {
       alert("Server is unreachable")
       console.error(error)

@@ -8,11 +8,10 @@ import { updatePoll } from "../utils/updatePoll";
 import Search from "../components/Search";
 import Ideas from "../components/Ideas";
 import Products from "../components/Products";
-import { Share2, ShoppingBagIcon, Clock, Edit, Trash2, Bell, MoreHorizontal, Gift } from "lucide-react"
+import { Share2, ShoppingBagIcon, Clock, Edit, Trash2, Bell, MoreHorizontal, Gift, Dot, MoveLeft, Plus } from "lucide-react"
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import type { Product } from "../utils/types";
-import { Link } from "react-router-dom";
 
 
 export default function PollPage() {
@@ -24,7 +23,6 @@ export default function PollPage() {
     const [editedTitle, setEditedTitle] = useState<string>("");
     const [editedBudget, setEditedBudget] = useState<number>(0);
 
-    // const [showSearch, setShowSearch] = useState(false);
     const [showGiftIdeas, setShowGiftIdeas] = useState(false);
     const [showProducts, setShowProducts] = useState(true)
 
@@ -32,124 +30,82 @@ export default function PollPage() {
 
     const navigate = useNavigate();
 
-
-    // const handleShowSearch = () => {
-    //     setShowSearch((prev => !prev))
-    //     setShowGiftIdeas(false)
-    //     setShowProducts(false)
-    // }
-
     const handleShowIdeas = () => {
-        // setShowSearch(false)
         setShowGiftIdeas((prev => !prev))
         setShowProducts(true)
     }
 
-    // const handleShowProducts = () => {
-    //     setShowProducts(true)
-    //     setShowGiftIdeas(false)
-    //     setShowSearch(false)
-    // }
-
     // fetch products
     const getProducts = async () => {
         if (!uuid) return;
-
         try {
             const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products`);
-
             const data = await response.json();
-
             setProducts(data);
             console.log("Products fetched:", data);
             console.log("Amount of products:", data.length)
-
-
         } catch (error) {
-            // alert("Server is unreachable");
             console.error(error);
         }
     };
 
-    // fetch products on mount
     useEffect(() => {
         if (!uuid) return;
         getProducts();
-
     }, [uuid]);
-    // if (!poll) return <p>Loading poll...</p>;
 
-    // fetch polls on mount
     useEffect(() => {
         const getPoll = async () => {
             if (!uuid) return;
             try {
                 const response = await authFetch(`http://127.0.0.1:8000/${uuid}`);
-
                 const data = await response.json();
-
                 if (!response.ok) {
                     alert(data.detail || "Unauthorized");
                     console.error("Unauthorized:", data);
                     return;
                 }
-
                 setPoll(data);
                 console.log("Polls fetched:", data);
             } catch (error) {
-                // alert("Server is unreachable");
                 console.error(error);
             }
         };
-
         getPoll();
     }, [uuid]);
-    // if (!poll) return <p>Loading poll...</p>;
+
     if (!poll) {
         return (
             <div>
-                <p>You need to be logged in.</p>
-                <Link to="/login">log in</Link>
+                <p>Loading poll...</p>
             </div>
         );
     }
 
-
     // delete poll
-    const handleDeletePoll = async (
-        e: React.MouseEvent,
-        uuid: string) => {
+    const handleDeletePoll = async (e: React.MouseEvent, uuid: string) => {
         e.stopPropagation();
-
         if (!window.confirm("Are you sure you want to delete this poll?")) return;
-
         try {
             await deletePoll(uuid);
             navigate("/my-polls");
-
             console.log("Poll deleted");
         } catch (error: any) {
-            // alert("Server is unreachable");
             console.error(error.message);
         }
     };
 
-
     // update poll
     const startEditing = () => {
-
         setIsEditing(true);
         setEditedTitle(poll.title);
         setEditedBudget(poll.budget);
     };
 
-    const cancelEditing = () => {
-        setIsEditing(false);
-    }
+    const cancelEditing = () => setIsEditing(false);
 
     const handleApply = async () => {
         if (!uuid) return;
-
         try {
             await updatePoll(uuid!, editedTitle, editedBudget);
             setPoll({ ...poll!, title: editedTitle, budget: editedBudget });
@@ -163,55 +119,84 @@ export default function PollPage() {
 
     return (
         <>
+            {/* Poll card section */}
+            <div className="mx-auto flex justify-center px-4">
 
-            <div className="wrap-product">
+                {/* product-container */}
+                <div className="grid gap-6 w-full max-w-200 mt-10">
+                    <a href="/my-polls" className="flex gap-3 text-[#33aaea] hover:text-[#F25E0D] text-left">
+                        <MoveLeft /> Back to polls
+                    </a>
 
-                <div className="product-container">
-                    <a href="/my-polls">Back to polls</a>
-                    <div key={poll.uuid} className="card-poll">
-                        <div className="poll-text">
-                            <div className="poll-title-container">
-                                <h3>
+                    {/* card-poll */}
+                    <div key={poll.uuid} className="bg-white/50 backdrop-blur-md rounded-[30px] p-6 
+                    flex flex-col shadow-[0_10px_25px_rgba(0,0,0,0.06),0_4px_10px_rgba(0,0,0,0.04)] 
+                    transition-all duration-250 h-4/5">
+
+                        {/* poll-text */}
+                        <div className="flex justify-between items-start gap-5 m-0">
+
+                            {/* poll-title-container */}
+                            <div className="min-h-6 flex">
+                                <h3 className="text-left m-0 font-bold text-3xl text-black">
                                     {!isEditing ? (
                                         poll.title
                                     ) : (
-                                        <div className="poll-apply">
+
+                                        <div className="flex justify-between gap-2.5">
+                                            <p className="flex justify-between items-start gap-5 mt-2.5 text-sm text-black font-normal text-[15px] mr-7.5">
+                                                Title:
+                                            </p>
                                             <input
                                                 type="text"
                                                 value={editedTitle}
                                                 onChange={(e) => setEditedTitle(e.target.value)}
-                                                className="field-username"
+                                                className="rounded-lg border border-[#3bb5f6] bg-transparent text-[#737791] pl-2.5 h-8.75 text-base font-normal w-75"
                                             />
-                                            <button onClick={handleApply} className="apply-button">Apply</button>
-                                            <button onClick={cancelEditing} className="cancel-button">Cancel</button>
+
+                                            <button onClick={handleApply} className="h-8.75 w-25 flex items-center text-base justify-center bg-[#0096FF] text-white font-normal rounded-xl cursor-pointer">Apply</button>
+
+                                            <button onClick={cancelEditing} className="h-8.75 w-25 flex items-center text-base justify-center bg-[#0096FF] text-white font-normal rounded-xl cursor-pointer">Cancel</button>
                                         </div>
                                     )}
                                 </h3>
                             </div>
-                            <div className="alarm-text">
+
+                            <div className="p-1.5 flex justify-between items-start gap-5 m-0">
                                 {!isEditing ? (
                                     <>
-                                        <p className="alarm" onClick={startEditing}><Edit size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></p>
-                                        <p className="alarm"><Bell size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></p>
-                                        <p className="alarm" onClick={(e) => handleDeletePoll(e, poll.uuid)}><Trash2 size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></p>
-                                        <button className="active-button">Active</button>
+                                    
+                                        <p className="flex justify-between items-start gap-5 m-0 cursor-pointer" onClick={startEditing}>
+                                            <Plus size={20} strokeWidth={1.5} style={{ color: "#737791" }} />
+                                        </p>
+                                        
+                                        <p className="flex justify-between items-start gap-5 m-0 cursor-pointer" onClick={startEditing}>
+                                            <Edit size={20} strokeWidth={1.5} style={{ color: "#737791" }} />
+                                        </p>
+                                        <p className="flex justify-between items-start gap-5 m-0 cursor-pointer ">
+                                            <Bell size={20} strokeWidth={1.5} style={{ color: "#737791" }} />
+                                        </p>
+                                        <p className="flex justify-between items-start gap-5 m-0 cursor-pointer" onClick={(e) => handleDeletePoll(e, poll.uuid)}>
+                                            <Trash2 size={20} strokeWidth={1.5} style={{ color: "#737791" }} />
+                                        </p>
 
-                                        <p className="alarm"><Share2 size={20} strokeWidth={1.5} style={{ color: "#737791" }} /></p>
-                                        <p className="alarm"><strong><MoreHorizontal size={20} strokeWidth={1.5} color="#356d8a" /></strong></p>
+                                        <button className="bg-green-300/50 rounded-[20px] inline-flex items-center justify-center px-2 py-1 text-[0.7rem] h-5 text-[#356d8a] border-none cursor-pointer ">
+                                            Active
+                                        </button>
 
-
+                                        <p className="flex justify-between items-start gap-5 m-0 cursor-pointer ">
+                                            <Share2 size={20} strokeWidth={1.5} style={{ color: "#737791" }} />
+                                        </p>
+                                        <p className="flex justify-between items-start gap-5 m-0 cursor-pointer ">
+                                            <strong><MoreHorizontal size={20} strokeWidth={1.5} color="#356d8a" /></strong>
+                                        </p>
                                     </>
-                                ) : (
-                                    <>
-                                        {/* <button onClick={handleApply} className="apply-button">Apply</button>
-                                        <button onClick={cancelEditing} className="cancel-button">Cancel</button> */}
-                                    </>
-                                )}
+                                ) : null}
                             </div>
-
                         </div>
-                        <div className="poll-budget-container">
-                            <p className="poll-text">
+
+                        <div className="min-h-6 flex">
+                            <p className="flex justify-between items-start gap-5 mt-2.5 text-sm text-black">
                                 Budget:&nbsp;
                                 {!isEditing ? (
                                     `${poll.budget}$`
@@ -220,49 +205,55 @@ export default function PollPage() {
                                         type="number"
                                         value={editedBudget}
                                         onChange={(e) => setEditedBudget(Number(e.target.value))}
-                                        className="field-username"
+                                        className="rounded-lg border border-[#3bb5f6] bg-transparent text-[#737791] pl-2.5 h-8.75 text-base w-75"
                                     />
                                 )}
                             </p>
                         </div>
-                        <p className="deadline" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            <ShoppingBagIcon size={14} strokeWidth={1.5} />
-                            {products.length === 1 ? `Products: ${products.length} option` : `Products: ${products.length} options`}
-                            <span style={{ margin: "0 4px", color: "#F25E0D" }}>·</span>
-                            <Clock size={14} strokeWidth={1.5} /> Time Left: 2 days
+                        <p className="flex text-left  mt-2.5 text-sm text-[#737791]">
+                            Here will be a short description that you could add to your poll
                         </p>
+
+                        <div className="flex items-bottom  mb-2 gap-2 ml-0 text-[14px] text-[#EA7317] justify-between">
+                            <div className="flex items-center mt-10 mb-10 gap-2 ml-0 text-[14px] text-[#EA7317]">
+                                <ShoppingBagIcon size={14} strokeWidth={1.5} /> {products.length} options
+                                <span ><Dot className="mx-1" color="#F25E0D" size={14} /></span>
+                                <Clock size={14} strokeWidth={1.5} /> 2 days
+                            </div>
+                            <div>
+                                <button
+                                    onClick={handleShowIdeas}
+                                    className="flex items-center font-medium text-[16px] text-white bg-linear-to-r from-[#9900ff] to-pink-500 
+                                    rounded-[30px] px-4 py-2 h-14 cursor-pointer
+                                    transform transition duration-300 ease-in-out
+                                    hover:scale-105"
+                                >
+                                    <Gift size={30} strokeWidth={1.5}  />
+                                    {!showGiftIdeas ? "" : "Hide Gift Ideas"}
+                                </button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
 
-
-            <div className="poll-description">
-
-                <h1>Products</h1>
-                <p className="account-prompt">Add products to this poll so everyone can compare and vote.</p>
-                <div className="buttons-gift-deadline" >
-
-                    <button
-                        onClick={handleShowIdeas}
-                        style={{ display: "flex", alignItems: "center", color: "#737791", background: "white", borderRadius: 30, border: 1 }}
-                    >
-                        <Gift size={16} strokeWidth={2} style={{ marginRight: "6px" }} />
-
-                        {!showGiftIdeas ? "Get Gift Ideas" : "Hide Gift Ideas"}
-                    </button>
-
-                </div>
+            <div className="flex flex-col items-center ">
 
                 {showGiftIdeas && <Ideas getProducts={getProducts} />}
+
+                <p className="flex flex-col items-center text-[14px] text-[#737791]">
+                    Search and add products to compare and vote.
+                </p>
+
                 <Search getProducts={getProducts} />
+                <h1 className="text-left text-[2.0em] leading-tight pt-10">
+                    Products
+                </h1>
 
             </div>
 
             {showProducts ? <Products uuid={uuid} products={products} setProducts={setProducts} getProducts={getProducts} /> : ""}
-
-
         </>
     );
 };
-
-

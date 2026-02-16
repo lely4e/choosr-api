@@ -49,18 +49,23 @@ export default function Login() {
   }
 
   return (
-    <div className="wrap-poll">
+    <div className="mx-auto flex p-4 justify-center">
       <section>
-        {/* <h1>Login</h1> */}
-        <div className="card-form">
-          <h1 className="login-h1">Welcome back</h1>
-          <p className="account-prompt">Please sign in to continue</p>
+        <div className="w-100 p-6 flex flex-col rounded-[30px]
+            bg-[#eaf0ff97] backdrop-blur-[20px] 
+            shadow-[0_10px_25px_rgba(0,0,0,0.06),0_4px_10px_rgba(0,0,0,0.04)] 
+            transition-transform duration-250 ease-in-out
+            hover:translate-y-1
+            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]">
+
           <form
             onSubmit={handleSubmit}
-            className="login-form"
+            className="flex flex-col items-center gap-1.25 pb-0"
           >
+            <h1 className="text-center mb-3 mt-2 text-[#737791] font-black text-3xl">Welcome back</h1>
+            <p className="flex flex-col items-center text-[12px] text-[#737791]">Please sign in to continue</p>
 
-            <label htmlFor="email" className="email-color">Email</label>
+            <label htmlFor="email" className="text-[#737791] pt-5">Email</label>
             <input
               id="email"
               type="email"
@@ -68,12 +73,13 @@ export default function Login() {
               placeholder="email@example.com"
               value={loginData.email}
               onChange={(e) => setLoginData({ ...loginData, email: e.target.value })} // e - event (React.ChangeEvent), e.target - input element itself(type="email"), e.taget.value = current text inside the input
-              className="email-form"
+              className="flex w-75 h-10 bg-[#737791] text-white text-center text-[12px] rounded-[10px]
+              placeholder-[#fff1ea] placeholder-italic placeholder-font-normal placeholder-opacity-100 placeholder:text-center"
               required
             />
 
 
-            <label htmlFor="password" className="password-color">Password</label>
+            <label htmlFor="password" className="text-[#737791] pt-3">Password</label>
             <input
               id="password"
               type="password"
@@ -81,21 +87,22 @@ export default function Login() {
               placeholder="password"
               value={loginData.password}
               onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-              className="password-form"
+              className="flex w-75 h-10 bg-[#737791] text-white text-center text-[12px] rounded-[10px]
+              placeholder-[#fff1ea] placeholder-italic placeholder-font-normal placeholder-opacity-100 placeholder:text-center"
               required
             />
 
-            <div className="button-login">
+            <div className="p-7.5 pt-5">
               <button
                 id="submitButton"
                 type="submit"
-                className="login"
+                className="justify-center items-center gap-3 mx-auto w-75 h-11 bg-[#F25E0D] rounded-[10px] text-white cursor-pointer"
               >
                 Sign In
               </button>
-              <p className="account-prompt">
+              <p className="flex flex-col items-center text-[12px] text-[#737791] pt-7.5">
                 Don’t have an account?{" "}
-                <Link to="/signup" className="login-link">
+                <Link to="/signup" className="text-[#F25E0D]">
                   Sign up
                 </Link>
               </p>

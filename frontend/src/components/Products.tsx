@@ -4,11 +4,19 @@ import { authFetch } from "../utils/auth";
 import { FileText, ThumbsUp, CheckCircle, Star, StarIcon, MessageCircle, Trash2 } from "lucide-react"
 
 
+const Tooltip = ({ text }: { text: string }) => (
+    <span className="absolute bottom-[80%] left-1/2 -translate-x-1/2 bg-[#737791]
+     text-white px-2.5 py-1.5 rounded text-xs opacity-0 invisible group-hover:opacity-100 
+     group-hover:visible transition-opacity duration-200 pointer-events-none z-10 max-w-75
+     text-center whitespace-normal">
+        {text}
+    </span>
+);
+
 export default function Products({ uuid, products, setProducts, getProducts }: ProductsProps) {
 
     const [comments, setComments] = useState<Record<number, Comment[]>>({});
     const [openCommentsProductId, setOpenCommentsProductId] = useState<number | null>(null);
-
     const [textComment, setTextComment] = useState<Record<number, string>>({});
 
     const truncate = (text: string, maxLength = 65) => {
@@ -16,121 +24,80 @@ export default function Products({ uuid, products, setProducts, getProducts }: P
         return text.slice(0, maxLength) + "...";
     };
 
-
-    // delete product
     const handleDeleteProduct = async (product_id: string) => {
         if (!window.confirm("Are you sure you want to delete this poll?")) return;
-
         try {
             const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${product_id}`, {
                 method: "DELETE",
             });
-
             const data = await response.json();
-
             if (!response.ok) {
                 alert(data.detail || "Unauthorized");
                 console.error("Unauthorized:", data);
                 return;
             }
-
             setProducts(prev => prev.filter((product: Product) => product.id !== Number(product_id)));
             console.log("Product deleted:", data);
         } catch (error) {
-            // alert("Server is unreachable");
             console.error(error);
         }
     };
 
-
-    // fetch comments
     const showComments = async (productId: number) => {
-        // toggle off
         if (openCommentsProductId === productId) {
             setOpenCommentsProductId(null);
             return;
         }
-
         try {
             const response = await authFetch(
                 `http://127.0.0.1:8000/${uuid}/products/${productId}/comments`
             );
-
             const data = await response.json();
-
-            setComments((prev: Record<number, Comment[]>) => ({
-                ...prev,
-                [productId]: data,
-            }));
-
+            setComments((prev: Record<number, Comment[]>) => ({ ...prev, [productId]: data }));
             setOpenCommentsProductId(productId);
-
             console.log("Amount of comments:", data.length)
         } catch (error) {
             console.error(error);
         }
     };
 
-
     const handleVote = async (productId: number, hasVoted: boolean) => {
         if (!uuid) return;
-
         try {
             if (hasVoted) {
-                await authFetch(
-                    `http://127.0.0.1:8000/${uuid}/products/${productId}/vote`,
-                    { method: "DELETE" }
-
-                ); console.log("hasVoted ->", hasVoted, "deleting vote")
+                await authFetch(`http://127.0.0.1:8000/${uuid}/products/${productId}/vote`, { method: "DELETE" });
+                console.log("hasVoted ->", hasVoted, "deleting vote")
             } else {
-                await authFetch(
-                    `http://127.0.0.1:8000/${uuid}/products/${productId}/vote`,
-                    { method: "POST" }
-                ); console.log("hasVoted ->", hasVoted, "adding vote")
+                await authFetch(`http://127.0.0.1:8000/${uuid}/products/${productId}/vote`, { method: "POST" });
+                console.log("hasVoted ->", hasVoted, "adding vote")
             }
-
             await getProducts();
-
         } catch (error) {
             console.error("Vote failed:", error);
         }
     };
 
-    const handleAddComment = async (
-        productId: number
-    ) => {
+    const handleAddComment = async (productId: number) => {
         if (!uuid) return;
-
         try {
             const response = await authFetch(
                 `http://127.0.0.1:8000/${uuid}/products/${productId}/comments`,
                 {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        text: textComment[productId],
-                    }),
-                });
-
+                    body: JSON.stringify({ text: textComment[productId] }),
+                }
+            );
             const data = await response.json();
             if (!response.ok) {
                 alert(data.detail || data.error || "Adding comment failed");
                 console.error("Error by adding comment:", data);
                 return;
             }
-
             console.log("Comment added successfully:", data);
-
             await getProducts();
-
-            setComments(prev => ({
-                ...prev,
-                [productId]: [...(prev[productId] || []), data],
-            }));
-
+            setComments(prev => ({ ...prev, [productId]: [...(prev[productId] || []), data] }));
             setTextComment(prev => ({ ...prev, [productId]: "" }));
-
-
         } catch (error) {
             console.error("Error adding comment:", error);
         }
@@ -138,215 +105,150 @@ export default function Products({ uuid, products, setProducts, getProducts }: P
 
     return (
         <>
+            {/* wrap-product */}
+            <div className="mx-auto flex justify-center">
 
-
-
-
-
-            <div className="wrap-product">
-                <div className="product-container">
+                {/* product-container */}
+                <div className="grid gap-6 w-full max-w-200 my-10 mx-auto grid-cols-1">
 
                     {products.map(product => (
-                        <div key={product.id} style={{ marginBottom: "16px" }}>
-                            <div className="card-product">
+                        <div key={product.id} className="mb-4">
 
-                                <div className="product-image-container">
-                                    <img src={product.image} alt={product.title} className="product-image" />
+                            {/* card-product */}
+                            <div className="bg-white/[0.841] max-w-200 backdrop-blur-[10px] rounded-[30px] p-6 
+                            flex shadow-[0_10px_25px_rgba(0,0,0,0.06),0_4px_10px_rgba(0,0,0,0.04)] transition-all 
+                            duration-250 ease-in-out gap-3 hover:-translate-y-1 
+                            hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]">
+
+                                {/* product-image-container */}
+                                <div className="w-50 max-h-54.75 aspect-square rounded-xl overflow-hidden shrink-0">
+                                    <img src={product.image} alt={product.title} className="w-full h-full object-cover block" />
                                 </div>
 
-                                <div className="product-text">
-                                    <div className="product-title-price">
-                                        {/* <div className="product-title">{truncate(product.title, 60)}</div> */}
-                                        <div className="product-rating">
-                                            <div style={{ color: '#737791', display: "flex", alignItems: "center" }}>
+                                {/* product-text */}
+                                <div className="flex flex-col pl-5 text-left flex-1">
+
+                                    {/* product-title-price */}
+                                    <div className="flex justify-between items-start gap-5 pb-1.5">
+                                        <div className="flex text-sm text-[#555] gap-2.5 items-center">
+                                            <div className="flex items-center text-[#737791]">
                                                 <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
                                                 <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
                                                 <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
                                                 <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
                                                 <Star size={12} strokeWidth={1.5} />
                                             </div>
-
-                                            <div>
-                                                <div style={{ color: '#737791' }}><strong>{product.rating}</strong>
-                                                    {/* (2,345 reviews) */}
-                                                </div></div></div>
-                                        <div className="product-price">${product.price}</div>
+                                            <div className="text-[#737791]"><strong>{product.rating}</strong></div>
+                                        </div>
+                                        <div className="text-2xl font-extrabold text-[#737791] mb-2">${product.price}</div>
                                     </div>
-                                    <div className="product-title">{truncate(product.title)} <span className="tooltip">{product.title}</span></div>
-                                    <div className="rating">
 
-                                        <div className="products-link-comments">
+                                    {/* product-title: "group" activates the Tooltip on hover */}
+                                    <div className="group relative font-semibold text-[0.9rem] leading-[1.4]">
+                                        {truncate(product.title)}
+                                        <Tooltip text={product.title} />
+                                    </div>
 
-                                            <button onClick={() => window.open(product.link, "_blank")}
-                                                className="details-button"
-                                                style={{
-                                                    display: "flex",
-                                                    gap: 5,
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    color: "#737791",
+                                    {/* action buttons row */}
+                                    <div className="flex justify-start items-center gap-5 py-2.5">
+                                        <div className="flex gap-2.5 mt-2.5 justify-between">
 
-                                                }}>
-                                                <FileText size={14} strokeWidth={1.5} />
-                                                <span className="tooltip">Details</span>
+                                            {/* "group" on each button activates its own Tooltip independently */}
+                                            <button
+                                                onClick={() => window.open(product.link, "_blank")}
+                                                className="group relative flex-1 px-3 py-1.5 border border-[#737791] 
+                                                cursor-pointer whitespace-nowrap text-[#737791] bg-transparent text-[0.85rem] 
+                                                rounded-[20px] flex gap-1.5 justify-center items-center"
+                                            >
+                                                <FileText size={14} strokeWidth={2} />
+                                                <Tooltip text="Details" />
                                             </button>
 
-                                            <button className="details-button"
-                                                style={{
-                                                    display: "flex",
-                                                    gap: 5,
-                                                    justifyContent: "center",
-                                                    alignItems: "center"
-                                                }}
+                                            <button
+                                                className="group relative flex-1 px-3 py-1.5 border border-[#737791] 
+                                                cursor-pointer whitespace-nowrap text-[#737791] bg-transparent text-[0.85rem] 
+                                                rounded-[20px] flex gap-1.5 justify-center items-center"
                                                 onClick={(e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
-                                                    showComments(product.id)
-
+                                                    showComments(product.id);
                                                 }}
                                             >
-                                                <MessageCircle size={14} strokeWidth={1.5} /> ({product.comments})
-                                                <span className="tooltip">Comments</span>
+                                                <MessageCircle size={14} strokeWidth={2} /> {product.comments}
+                                                <Tooltip text="Comments" />
                                             </button>
+
                                             <button
-                                                style={{
-                                                    display: "flex",
-                                                    gap: 5,
-                                                    justifyContent: "center",
-                                                    alignItems: "center"
-                                                }}
                                                 onClick={() => handleDeleteProduct(String(product.id))}
-                                                className="details-button">
-                                                <Trash2 size={14} strokeWidth={1.5} />
-                                                <span className="tooltip">Delete Product</span>
+                                                className="group relative flex-1 px-3 py-1.5 border border-[#737791] 
+                                                cursor-pointer whitespace-nowrap text-[#737791] bg-transparent text-[0.85rem] 
+                                                rounded-[20px] flex gap-1.5 justify-center items-center"
+                                            >
+                                                <Trash2 size={14} strokeWidth={2} />
+                                                <Tooltip text="Delete Product" />
                                             </button>
                                         </div>
                                     </div>
 
+                                    {/* votes + percentage */}
+                                    <div className="flex text-sm text-[#555] gap-2.5 justify-between">
+                                        <div className="flex text-sm gap-2.5 items-center">
+                                            <ThumbsUp size={14} strokeWidth={2} className="text-[#F25E0D]" />
+                                            <div className="text-[#F25E0D]">
+                                                {product.votes === 1 ? <strong>{product.votes} vote</strong> : <strong>{product.votes} votes</strong>}
+                                            </div>
+                                        </div>
+                                        <div className="flex text-sm gap-2.5 items-center">
+                                            <div className="text-[#F25E0D] text-xl"><strong>43%</strong></div>
+                                        </div>
+                                    </div>
 
+                                    {/* progress bar */}
+                                    <div className="w-full h-3 bg-[#e5e7eb] rounded-full overflow-hidden my-1.5 mb-2.5">
+                                        <div className="h-full bg-linear-to-br from-[#ff6a00] to-[#ec4899] transition-[width] duration-300" style={{ width: "40%" }} />
+                                    </div>
 
-
-
-
-
-
-                                    {/* <div className="products-link-comments">
-
-                                        <button onClick={() => window.open(product.link, "_blank")} className="details-button"
-                                            style={{
-                                                display: "flex",
-                                                gap: 5,
-                                                justifyContent: "center",
-                                                alignItems: "center",
-                                                color: "#737791",
-
-                                            }}>
-                                            <FileText size={14} strokeWidth={1.5} />
-                                        </button>
-
-                                        <button className="details-button"
-                                            style={{
-                                                display: "flex",
-                                                gap: 5,
-                                                justifyContent: "center",
-                                                alignItems: "center"
-                                            }}
+                                    {/* vote button: "group" activates Tooltip on hover */}
+                                    <div>
+                                        <button
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
-                                                showComments(product.id)
-
+                                                handleVote(product.id, product.has_voted);
                                             }}
+                                            className={`group relative flex w-full rounded-md items-center justify-center 
+                                                gap-2.5 py-4 transition-colors duration-200 text-white "
+                                            ${!product.has_voted
+                                                    ? "bg-[#F25E0D] cursor-pointer"
+                                                    : "bg-[#B0B6CC] "}`}
                                         >
-                                            <MessageCircle size={14} strokeWidth={1.5} /> ({product.comments})</button>
-
-                                        <button
-                                            style={{
-                                                display: "flex",
-                                                gap: 5,
-                                                justifyContent: "center",
-                                                alignItems: "center"
-                                            }}
-                                            onClick={() => handleDeleteProduct(String(product.id))} className="details-button">
-                                            <Trash2 size={14} strokeWidth={1.5} /> </button>
-
-                                    </div> */}
-
-
-
-                                    <div className="product-votes-percent ">
-
-                                        <div className="product-rating">
-                                            <div style={{ display: "flex", alignItems: "center" }}><ThumbsUp size={14} strokeWidth={2} style={{ color: '#F25E0D' }} /></div>
-                                            <div style={{ color: '#F25E0D' }}><strong>{product.votes} votes</strong> </div>
-                                        </div>
-
-
-                                        <div className="product-rating">
-
-
-                                            <div>
-                                                <div style={{ color: '#F25E0D', fontSize: 20 }}><strong>43%</strong>
-                                                    {/* (2,345 reviews) */}
-                                                </div> </div> </div>
-
-                                    </div>
-
-                                    <div className="progress">
-                                        <div className="progress-bar" style={{ width: "40%" }}></div>
-                                    </div>
-
-                                    <div>
-
-                                        <button onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            handleVote(product.id, product.has_voted)
-                                        }} className="vote"
-                                            style={{
-                                                background: !product.has_voted ? "#F25E0D" : "#B0B6CC",
-                                                display: "flex",
-                                                gap: 10
-                                            }}
-                                        >
-                                            {!product.has_voted ? (
-                                                <ThumbsUp size={24} strokeWidth={2} />
-
-                                            ) : (
-                                                <CheckCircle size={24} strokeWidth={2} />)}
-
-                                            {/* {!product.has_voted ? "Vote!" : "Voted!"} */}
-
-                                            <span className="tooltip">{!product.has_voted ? "Vote for this Product!" : "Voted"}</span>
+                                            {!product.has_voted
+                                                ? <ThumbsUp size={24} strokeWidth={2} />
+                                                : <CheckCircle size={24} strokeWidth={2} />
+                                            }
+                                            <Tooltip text={!product.has_voted ? "Vote for this Product!" : "Voted"} />
                                         </button>
                                     </div>
 
+                                    {/* Comments section */}
                                     {openCommentsProductId === product.id && (
                                         <>
                                             {comments[product.id]?.map(comment => (
-                                                <div key={comment.id} className="comment" style={{
-                                                    display: "flex",
-                                                    gap: 5,
-                                                    justifyContent: "space-between",
-                                                    alignItems: "center"
-                                                }}>
-                                                    <p style={{ color: "#737791" }}>
+                                                <div key={comment.id} className="flex gap-1.5 justify-between items-center">
+                                                    <p className="text-[#737791] text-sm">
                                                         {comment.created_by}: "{comment.text}"
                                                     </p>
-                                                    <div
-                                                        style={{
-                                                            display: "flex",
-                                                            gap: 5,
-                                                            justifyContent: "center",
-                                                            alignItems: "center"
-                                                        }}
-                                                    >
-                                                        <Trash2 size={14} strokeWidth={1.5} onClick={() => handleDeleteProduct(String(product.id))} /> </div>
+                                                    <Trash2
+                                                        size={14}
+                                                        strokeWidth={1.5}
+                                                        onClick={() => handleDeleteProduct(String(product.id))}
+                                                        className="cursor-pointer text-[#737791] hover:text-[#F25E0D]"
+                                                    />
                                                 </div>
                                             ))}
 
                                             <form
-                                                className="comment-box"
+                                                className="flex flex-col gap-2.5 mt-4"
                                                 onSubmit={(e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
@@ -356,31 +258,28 @@ export default function Products({ uuid, products, setProducts, getProducts }: P
                                                 <textarea
                                                     value={textComment[product.id] || ""}
                                                     onChange={(e) =>
-                                                        setTextComment(prev => ({
-                                                            ...prev,
-                                                            [product.id]: e.target.value,
-                                                        }))
+                                                        setTextComment(prev => ({ ...prev, [product.id]: e.target.value }))
                                                     }
+                                                    className="p-3 rounded-xl border border-[#ddd] outline-none bg-white 
+                                                    text-[#737791] focus:border-[#F25E0D] focus:shadow-[0_0_0_3px_rgba(108,99,255,0.15)] 
+                                                    font-[inherit] transition-all duration-200"
                                                 />
-
-                                                <button type="submit">Add Comment</button>
+                                                <button
+                                                    type="submit"
+                                                    className="self-end px-4 py-2 rounded-full border-none bg-[#F25E0D]
+                                                     text-white cursor-pointer hover:bg-[#0096FF] transition-colors duration-200"
+                                                >
+                                                    Add Comment
+                                                </button>
                                             </form>
                                         </>
                                     )}
-
                                 </div>
-
                             </div>
-
                         </div>
                     ))}
-
                 </div>
             </div>
-
-
         </>
     );
 };
-
-

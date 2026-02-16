@@ -1,10 +1,13 @@
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../context/UserContext"
 
 export default function Home() {
   const navigate = useNavigate();
 
   const handleCreateEvent = () => {
-    if (localStorage.getItem("token")) {
+    const { user } = useUser();
+    
+    if (!user) {
       navigate("/login");
     } else {
       navigate("/add-poll");

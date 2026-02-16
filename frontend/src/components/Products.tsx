@@ -1,7 +1,8 @@
 import { useState } from "react";
 import type { ProductsProps, Product, Comment } from "../utils/types";
 import { authFetch } from "../utils/auth";
-import { FileText, ThumbsUp, CheckCircle, Star, StarIcon, MessageCircle, Trash2 } from "lucide-react"
+import { FileText, ThumbsUp, CheckCircle, Star, StarIcon, MessageCircle, Trash2 } from "lucide-react";
+import { useUser } from "../context/UserContext"
 
 
 const Tooltip = ({ text }: { text: string }) => (
@@ -14,6 +15,7 @@ const Tooltip = ({ text }: { text: string }) => (
 );
 
 export default function Products({ uuid, products, setProducts, getProducts }: ProductsProps) {
+    const { user } = useUser();
 
     const [comments, setComments] = useState<Record<number, Comment[]>>({});
     const [openCommentsProductId, setOpenCommentsProductId] = useState<number | null>(null);
@@ -178,15 +180,17 @@ export default function Products({ uuid, products, setProducts, getProducts }: P
                                                 <Tooltip text="Comments" />
                                             </button>
 
-                                            <button
-                                                onClick={() => handleDeleteProduct(String(product.id))}
-                                                className="group relative flex-1 px-3 py-1.5 border border-[#737791] 
+                                            {user && user.id === product.user_id && (
+                                                <button
+                                                    onClick={() => handleDeleteProduct(String(product.id))}
+                                                    className="group relative flex-1 px-3 py-1.5 border border-[#737791] 
                                                 cursor-pointer whitespace-nowrap text-[#737791] bg-transparent text-[0.85rem] 
                                                 rounded-[20px] flex gap-1.5 justify-center items-center"
-                                            >
-                                                <Trash2 size={14} strokeWidth={2} />
-                                                <Tooltip text="Delete Product" />
-                                            </button>
+                                                >
+                                                    <Trash2 size={14} strokeWidth={2} />
+                                                    <Tooltip text="Delete Product" />
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
 
@@ -238,12 +242,15 @@ export default function Products({ uuid, products, setProducts, getProducts }: P
                                                     <p className="text-[#737791] text-sm">
                                                         {comment.created_by}: "{comment.text}"
                                                     </p>
+
+                                                    {user && user.id === comment.user_id && (
                                                     <Trash2
                                                         size={14}
                                                         strokeWidth={1.5}
                                                         onClick={() => handleDeleteProduct(String(product.id))}
                                                         className="cursor-pointer text-[#737791] hover:text-[#F25E0D]"
-                                                    />
+                                                    />)}
+                                                    
                                                 </div>
                                             ))}
 

@@ -1,31 +1,9 @@
 import { Link } from "react-router-dom";
-import { authFetch } from "../utils/auth";
-import { useEffect, useState } from "react";
-import type { User } from "../utils/types";
 import { Plus, ChevronDown } from "lucide-react";
+import { useUser } from "../context/UserContext";
 
 export default function Navbar() {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const response = await authFetch("http://127.0.0.1:8000/me");
-        const data = await response.json();
-
-        if (!response.ok) {
-          alert(data.detail || "Unauthorized");
-          return;
-        }
-
-        setUser(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    getUser();
-  }, []);
+const { user } = useUser();
 
   // NOT LOGGED IN
   if (!user) {

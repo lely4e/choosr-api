@@ -12,6 +12,7 @@ class PollOut(BaseModel):
     title: str
     budget: float
     uuid: UUID
+    user_id: int
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)

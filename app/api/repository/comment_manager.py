@@ -56,7 +56,10 @@ class CommentManager:
         user_alias = aliased(User)
         comments = (
             self.db.query(
-                Comment.id, Comment.text, user_alias.username.label("created_by")
+                Comment.id,
+                Comment.text,
+                user_alias.username.label("created_by"),
+                Comment.user_id,
             )
             .join(user_alias, Comment.user_id == user_alias.id)
             .filter(Comment.product_id == product.id)
@@ -80,7 +83,10 @@ class CommentManager:
         user_alias = aliased(User)
         comment = (
             self.db.query(
-                Comment.id, Comment.text, user_alias.username.label("created_by")
+                Comment.id,
+                Comment.text,
+                user_alias.username.label("created_by"),
+                Comment.user_id,
             )
             .join(user_alias, Comment.user_id == user_alias.id)
             .filter(Comment.id == comment_id)

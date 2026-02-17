@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { ProductsProps, Product, Comment } from "../utils/types";
 import { authFetch } from "../utils/auth";
-import { FileText, ThumbsUp, CheckCircle, Star, StarIcon, MessageCircle, Trash2 } from "lucide-react";
+import { FileText, ThumbsUp, CheckCircle, Star, StarIcon, MessageCircle, Trash2, Dot, X } from "lucide-react";
 import { useUser } from "../context/UserContext"
 
 
@@ -26,10 +26,10 @@ export default function Products({ uuid, products, setProducts, getProducts }: P
         return text.slice(0, maxLength) + "...";
     };
 
-    const handleDeleteProduct = async (product_id: string) => {
-        if (!window.confirm("Are you sure you want to delete this poll?")) return;
+    const handleDeleteProduct = async (productId: string) => {
+        if (!window.confirm("Are you sure you want to delete this product?")) return;
         try {
-            const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${product_id}`, {
+            const response = await authFetch(`http://127.0.0.1:8000/${uuid}/products/${productId}`, {
                 method: "DELETE",
             });
             const data = await response.json();
@@ -38,7 +38,7 @@ export default function Products({ uuid, products, setProducts, getProducts }: P
                 console.error("Unauthorized:", data);
                 return;
             }
-            setProducts(prev => prev.filter((product: Product) => product.id !== Number(product_id)));
+            setProducts(prev => prev.filter((product: Product) => product.id !== Number(productId)));
             console.log("Product deleted:", data);
         } catch (error) {
             console.error(error);
@@ -105,6 +105,49 @@ export default function Products({ uuid, products, setProducts, getProducts }: P
         }
     };
 
+    const handleDeleteComment = async (productId: number, commentId: number) => {
+        if (!uuid) return;
+        if (!window.confirm("Are you sure you want to delete this comment?")) return;
+        try {
+            const response = await authFetch(
+                `http://127.0.0.1:8000/${uuid}/products/${productId}/comments/${commentId}`,
+                { method: "DELETE" }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(data.detail || data.error || "Deleting comment failed");
+                console.error("Error by deleting comment:", data);
+                return;
+            }
+
+            console.log("Comment deleted successfully:", data);
+
+            await getProducts();
+            setComments((prev: Record<number, Comment[]>) => ({
+                ...prev, [productId]: (prev[productId] || []).filter(
+                    comment => comment.id !== commentId)
+            }));
+
+        } catch (error) {
+            console.error("Error deleting comment:", error);
+        }
+    }
+
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+
+        return new Intl.DateTimeFormat("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        }).format(date);
+    };
+
+
     return (
         <>
             {/* wrap-product */}
@@ -123,7 +166,7 @@ export default function Products({ uuid, products, setProducts, getProducts }: P
                             hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]">
 
                                 {/* product-image-container */}
-                                <div className="w-50 max-h-54.75 aspect-square rounded-xl overflow-hidden shrink-0">
+                                <div className="w-50 max-h-57.5 aspect-square rounded-xl overflow-hidden shrink-0">
                                     <img src={product.image} alt={product.title} className="w-full h-full object-cover block" />
                                 </div>
 
@@ -131,7 +174,7 @@ export default function Products({ uuid, products, setProducts, getProducts }: P
                                 <div className="flex flex-col pl-5 text-left flex-1">
 
                                     {/* product-title-price */}
-                                    <div className="flex justify-between items-start gap-5 pb-1.5">
+                                    <div className="flex justify-between items-start gap-5">
                                         <div className="flex text-sm text-[#555] gap-2.5 items-center">
                                             <div className="flex items-center text-[#737791]">
                                                 <StarIcon size={12} fill="#737791" strokeWidth={1.5} />
@@ -153,7 +196,7 @@ export default function Products({ uuid, products, setProducts, getProducts }: P
 
                                     {/* action buttons row */}
                                     <div className="flex justify-start items-center gap-5 py-2.5">
-                                        <div className="flex gap-2.5 mt-2.5 justify-between">
+                                        <div className="flex gap-2.5 mt-1 justify-between">
 
                                             {/* "group" on each button activates its own Tooltip independently */}
                                             <button
@@ -237,20 +280,35 @@ export default function Products({ uuid, products, setProducts, getProducts }: P
                                     {/* Comments section */}
                                     {openCommentsProductId === product.id && (
                                         <>
+                                        <div className="flex justify-between items-center mt-6 mb-1">
+                                            <h3 className="font-medium text-xl">Comments</h3>
+                                            <X 
+                                            onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    showComments(product.id);
+                                                }}
+                                            className="cursor-pointer"></X>             
+                                            </div>          
                                             {comments[product.id]?.map(comment => (
-                                                <div key={comment.id} className="flex gap-1.5 justify-between items-center">
-                                                    <p className="text-[#737791] text-sm">
-                                                        {comment.created_by}: "{comment.text}"
+                                                <div key={comment.id} className="flex gap-2.5 justify-between items-center ">
+                                                    <p className="text-[#737791] text-sm p-4  bg-[#E6E9F2]  mt-3 rounded-3xl rounded-tl-none flex-1 flex items-center pl-4">
+                                                        <img src="../src/assets/profile.svg" alt="profile-foto" className="w-8 mr-3" />
+                                                        <div className="">
+                                                            <p className="mr-2 text-xs flex items-center">{comment.created_by} <Dot></Dot> {formatDate(String(comment.created_at))}</p>
+
+                                                            <p className="font-bold"> {comment.text} </p>
+                                                        </div>
                                                     </p>
 
                                                     {user && user.id === comment.user_id && (
-                                                    <Trash2
-                                                        size={14}
-                                                        strokeWidth={1.5}
-                                                        onClick={() => handleDeleteProduct(String(product.id))}
-                                                        className="cursor-pointer text-[#737791] hover:text-[#F25E0D]"
-                                                    />)}
-                                                    
+                                                        <Trash2
+                                                            size={14}
+                                                            strokeWidth={1.5}
+                                                            onClick={() => handleDeleteComment(product.id, comment.id)}
+                                                            className="cursor-pointer text-[#737791] hover:text-[#F25E0D] items-center"
+                                                        />)}
+
                                                 </div>
                                             ))}
 
@@ -267,7 +325,7 @@ export default function Products({ uuid, products, setProducts, getProducts }: P
                                                     onChange={(e) =>
                                                         setTextComment(prev => ({ ...prev, [product.id]: e.target.value }))
                                                     }
-                                                    className="p-3 rounded-xl border border-[#ddd] outline-none bg-white 
+                                                    className="p-2 rounded-xl border border-[#ddd] outline-none bg-white mt-1.5
                                                     text-[#737791] focus:border-[#F25E0D] focus:shadow-[0_0_0_3px_rgba(108,99,255,0.15)] 
                                                     font-[inherit] transition-all duration-200"
                                                 />

@@ -69,6 +69,7 @@ export interface Comment {
   text: string;
   created_by: string;
   user_id: number;
+  created_at: EpochTimeStamp
 }
 
 export interface Vote {

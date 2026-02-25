@@ -3,7 +3,7 @@ export interface UserContext {
   isAuthenticated: boolean;
   login: (token: string, userData?: User) => void;
   logout: () => void;
-  updateUser: (updateUser: User) => void
+  updateUser: (updateUser: User) => void;
   loading: boolean;
 }
 
@@ -11,7 +11,7 @@ export interface Poll {
   uuid: string;
   title: string;
   budget: number;
-  user_id: number
+  user_id: number;
 }
 
 export interface Product {
@@ -40,11 +40,10 @@ export interface IdeasProps {
 }
 
 export interface User {
-id: number;
+  id: number;
   username: string;
   email: string;
   created_at: string;
-
 }
 
 export interface ProductSearch {
@@ -69,11 +68,18 @@ export interface Comment {
   text: string;
   created_by: string;
   user_id: number;
-  created_at: EpochTimeStamp
+  created_at: EpochTimeStamp;
 }
 
 export interface Vote {
   user_id: number;
   product_id: number;
   has_voted: boolean;
+}
+
+export interface StarRatingProps {
+  rating: number | null;
+  totalStars?: number;
+  size?: number;
+  color?: string;
 }

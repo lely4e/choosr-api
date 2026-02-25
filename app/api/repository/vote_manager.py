@@ -1,7 +1,7 @@
 from app.db.models import Product, Poll, Vote, Comment
 from sqlalchemy.orm import Session, aliased
 from app.core.errors import UserNotFoundError, ProductNotFoundError, VoteNotFoundError
-from sqlalchemy import func, distinct, and_
+from sqlalchemy import func, distinct, and_, desc
 
 
 class VoteManager:
@@ -137,6 +137,7 @@ class VoteManager:
             .join(Poll, Poll.id == Product.poll_id)
             .where(Poll.uuid == uuid)
             .group_by(Product.id)
+            .order_by(desc("votes"))
             .all()
         )
         return votes

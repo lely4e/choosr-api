@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authFetch } from "../utils/auth";
+import toast from "react-hot-toast";
 
 export default function addPoll() {
   const [title, setTitle] = useState("");
@@ -23,20 +24,27 @@ export default function addPoll() {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.detail || data.error || "Poll creating failed");
-        console.error("Error by poll creating:", data);
+        console.error("Error to add poll:", data);
+        toast.error("Error to add poll");
         return;
       }
 
-      alert("Poll created successfully!");
       console.log("Poll created successfully:", data);
+      toast.success("Poll created successfully!", {
+        duration: 2000,
+      });
 
       setTimeout(() => {
         navigate("/my-polls");
       }, 1000);
-    } catch (error) {
-      alert("Server is unreachable");
-      console.error("Error adding poll:", error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`Error to add poll: ${error.message}`);
+        console.error(`Error to add poll: ${error.message}`);
+      } else {
+        toast.error("Error to add poll!");
+        console.error("Error to add poll!", error);
+      }
     }
   }
 
@@ -98,9 +106,11 @@ export default function addPoll() {
         </div> */}
 
             <div className="p-7.5 pt-5">
-              <button id="submitButton" 
-              type="submit" 
-              className="justify-center items-center gap-3 mx-auto w-75 h-11 bg-[#F25E0D] rounded-[10px] text-white cursor-pointer">
+              <button
+                id="submitButton"
+                type="submit"
+                className="justify-center items-center gap-3 mx-auto w-75 h-11 bg-[#F25E0D] rounded-[10px] text-white cursor-pointer"
+              >
                 Create Poll
               </button>
             </div>

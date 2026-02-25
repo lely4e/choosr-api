@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
@@ -26,20 +27,27 @@ export default function Signup() {
 
       if (!response.ok) {
         // "email already exists" message
-        alert(data.detail || data.error || "Signup failed");
+        toast.error(data.detail || data.error || "Signup failed");
         console.error("Signup error:", data);
         return;
       }
 
-      alert("User signed up successfully!");
-      console.log("Signup successful:", data);
+      toast.success("User created successfully!", {
+        duration: 2000,
+      });
+      console.log("User created successfully:", data);
 
       setTimeout(() => {
         navigate("/my-polls");
-      }, 1000);
-    } catch (error) {
-      alert("Server is unreachable");
-      console.error(error);
+      }, 2000);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`Error to sign up: ${error.message}`);
+        console.error(`Error to sign up: ${error.message}`);
+      } else {
+        toast.error("Error to sign up!");
+        console.error("Error to sign up!", error);
+      }
     }
   }
 
@@ -54,11 +62,16 @@ export default function Signup() {
             hover:translate-y-1
             hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
         >
-          <form onSubmit={handleSubmit} className="flex flex-col items-center gap-1.25 pb-0">
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col items-center gap-1.25 pb-0"
+          >
             <h1 className="text-center mb-3 mt-2 text-[#737791] font-black text-3xl">
               Create your account
             </h1>
-            <p className="flex flex-col items-center text-[12px] text-[#737791]">Get started in seconds</p>
+            <p className="flex flex-col items-center text-[12px] text-[#737791]">
+              Get started in seconds
+            </p>
 
             <label htmlFor="username" className="text-[#737791] pt-5">
               Username
@@ -106,7 +119,11 @@ export default function Signup() {
             />
 
             <div className="p-7.5 pt-5">
-              <button id="submitButton" type="submit" className="justify-center items-center gap-3 mx-auto w-75 h-11 bg-[#F25E0D] rounded-[10px] text-white cursor-pointer">
+              <button
+                id="submitButton"
+                type="submit"
+                className="justify-center items-center gap-3 mx-auto w-75 h-11 bg-[#F25E0D] rounded-[10px] text-white cursor-pointer"
+              >
                 Signup
               </button>
               <p className="flex flex-col items-center text-[12px] text-[#737791] pt-7.5">

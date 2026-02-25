@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { type UserContext, type User } from "../utils/types";
+import toast from 'react-hot-toast';
 
 
 // create context with default value
@@ -54,7 +55,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
             setLoading(false); // Always stop loading
         }
     };
-    
+
     // login
     const login = (token: string, userData?: User) => {
         sessionStorage.setItem("access_token", token);
@@ -65,7 +66,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const logout = () => {
         sessionStorage.removeItem("access_token");
         setUser(null);
-        window.location.href = "/login"
+
+        toast.success("User logged out successfully!", {
+            duration: 2000,
+        })
+        setTimeout(() => {
+            window.location.href = "/login";
+        }, 2000)
     }
 
     const value = {

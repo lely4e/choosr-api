@@ -11,10 +11,13 @@ import Profile from "./pages/Profile"
 import Search from "./components/Search"
 import Ideas from "./components/Ideas"
 import ProtectedRoute from "./components/ProtectedRoute";
+import { Toaster } from "react-hot-toast";
 
 
 export default function App() {
   return (
+    <>
+    <Toaster position="top-center" />
     <UserProvider>
     <Router>
     <Navbar />
@@ -31,6 +34,7 @@ export default function App() {
       </Routes>
     </Router>
     </UserProvider>
+    </>
   )
 }
 

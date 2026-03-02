@@ -4,17 +4,26 @@ import Search from "../components/Search";
 import type { GiftIdea } from "../utils/types";
 import type { IdeasProps } from "../utils/types";
 import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
+import AgeSlider from "./AgeSlider";
+import SearchIdea from "./SearchIdea";
+import { X } from "lucide-react";
 
-export default function Ideas({ getProducts }: IdeasProps) {
-    const [eventTitle, setEventTitle] = useState("");
+export default function Ideas({ getProducts, title, budget }: IdeasProps) {
+    // const [eventTitle, setEventTitle] = useState("");
     const [recipientRelation, setRecipientRelation] = useState("");
-    const [recipientAge, setRecipientAge] = useState("");
+    const [recipientAge, setRecipientAge] = useState<number>(25);
     const [recipientHobbies, setRecipientHobbies] = useState("");
     const [giftType, setGiftType] = useState("");
-    const [budgetRange, setBudgetRange] = useState("");
+    // const [budgetRange, setBudgetRange] = useState("");
     const [ideas, setIdeas] = useState<GiftIdea[]>([]);
     const [loading, setLoading] = useState(false);
     const GiftSuggest = useRef<HTMLHeadingElement | null>(null);
+
+    const [openIdeas, setOpenIdeas] = useState(false)
+
+    const buttonsStyle =
+        "w-full rounded-3xl border border-[#737791] px-3 py-2 text-[14px] hover:bg-[#F25E0D] hover:text-white hover:border-0 hover:cursor-pointer";
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -26,12 +35,12 @@ export default function Ideas({ getProducts }: IdeasProps) {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                        event_type: eventTitle,
+                        event_type: title,
                         recipient_relation: recipientRelation,
                         recipient_age: recipientAge,
                         recipient_hobbies: recipientHobbies,
                         gift_type: giftType,
-                        budget_range: budgetRange,
+                        budget_range: budget,
                     }),
                 },
             );
@@ -62,150 +71,196 @@ export default function Ideas({ getProducts }: IdeasProps) {
         }
     }, [ideas]);
 
+    useEffect(() => {
+  if (ideas.length > 0) {
+    setOpenIdeas(true);
+  }
+}, [ideas]);
+
     return (
         <>
             {/* wrap-poll */}
-            <div className="mx-auto flex px-4 justify-center">
-                <section>
-                    {/* add-poll-form */}
-                    <div className="flex flex-col items-center w-full px-4 pb-16 max-w-5xl mx-auto">
-                        <form
-                            onSubmit={handleSubmit}
-                            className="flex flex-col gap-4 bg-white/40 backdrop-blur-md rounded-2xl p-6 shadow-md"
-                        >
-                            <p className="text-gray-600 text-center font-medium mb-2">
-                                Get the best gift suggestions
-                            </p>
-
-                            <label htmlFor="event" className="text-gray-700 font-semibold">
-                                Event
-                            </label>
-                            <input
-                                id="event"
-                                type="text"
-                                placeholder="Mike's Birthday"
-                                value={eventTitle}
-                                onChange={(e) => setEventTitle(e.target.value)}
-                                className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                                required
-                            />
-
-                            <label htmlFor="relation" className="text-gray-700 font-semibold">
-                                Recipient Relation
-                            </label>
-                            <input
-                                id="relation"
-                                type="text"
-                                placeholder="Friend, Family, Colleague"
-                                value={recipientRelation}
-                                onChange={(e) => setRecipientRelation(e.target.value)}
-                                className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                                required
-                            />
-
-                            <label htmlFor="age" className="text-gray-700 font-semibold">
-                                Recipient Age
-                            </label>
-                            <input
-                                id="age"
-                                type="text"
-                                placeholder="23"
-                                value={recipientAge}
-                                onChange={(e) => setRecipientAge(e.target.value)}
-                                className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                                required
-                            />
-
-                            <label
-                                htmlFor="interests"
-                                className="text-gray-700 font-semibold"
+            <div className="">
+                <div>
+                    <section className="">
+                        {/* add-poll-form */}
+                        <div className="flex justify-center  pb-16 ">
+                            <form
+                                onSubmit={handleSubmit}
+                                className=" w-200 flex-col gap-4 bg-white/40 backdrop-blur-md rounded-[30px] p-6 shadow-md"
                             >
-                                Hobbies / Interests
-                            </label>
-                            <input
-                                id="interests"
-                                type="text"
-                                placeholder="Sports, Music, Art, etc."
-                                value={recipientHobbies}
-                                onChange={(e) => setRecipientHobbies(e.target.value)}
-                                className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                                required
-                            />
+                                <p className="text-[#737791] text-xl text-center font-bold mb-6">
+                                    Find the perfect gifts for {title}
+                                </p>
 
-                            <label
-                                htmlFor="gift-type"
-                                className="text-gray-700 font-semibold"
+                                <p className="text-[#737791] font-semibold text-center mt-4">
+                                    Who are they to you?
+                                </p>
+                                <div className="flex gap-2 mt-4">
+                                    {[
+                                        "Family",
+                                        "Friend",
+                                        "Partner",
+                                        "Colleague",
+                                        "Parent",
+                                        "Other",
+                                    ].map((relation) => (
+                                        <button
+                                            key={relation}
+                                            type="button"
+                                            onClick={() => setRecipientRelation(relation)}
+                                            className={`${buttonsStyle} ${recipientRelation === relation
+                                                ? "bg-[#F25E0D] text-white border-0"
+                                                : ""
+                                                }`}
+                                        >
+                                            {relation}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <AgeSlider value={recipientAge} onChange={setRecipientAge} />
+
+                                <p className="text-[#737791] font-semibold text-center mt-8">
+                                    Select hobbies & interests
+                                </p>
+
+                                <div className="flex gap-2 mt-4">
+                                    {[
+                                        "Sports",
+                                        "Music",
+                                        "Gaming",
+                                        "Books",
+                                        "Travel",
+                                        "Fitness",
+                                        "Fashion"
+                                    ].map((hobbies) => (
+                                        <button
+                                            key={hobbies}
+                                            type="button"
+                                            onClick={() => setRecipientHobbies(hobbies)}
+                                            className={`${buttonsStyle} ${recipientHobbies === hobbies
+                                                ? "bg-[#F25E0D] text-white border-0"
+                                                : ""
+                                                }`}
+                                        >
+                                            {hobbies}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="flex gap-2 mt-4">
+                                    {[
+                                        "Photography",
+                                        "Movies",
+                                        "Home decor",
+                                        "Technology",
+                                        "Art",
+                                        "Cooking"
+                                    ].map((hobbies) => (
+                                        <button
+                                            key={hobbies}
+                                            type="button"
+                                            onClick={() => setRecipientHobbies(hobbies)}
+                                            className={`${buttonsStyle} ${recipientHobbies === hobbies
+                                                ? "bg-[#F25E0D] text-white border-0"
+                                                : ""
+                                                }`}
+                                        >
+                                            {hobbies}
+                                        </button>
+                                    ))}
+
+                                </div>
+                                {/* <p>{title}</p>
+                            <p>{recipientRelation}</p>
+                            <p>{recipientAge}</p>
+                            <p>{recipientHobbies}</p>
+                            <p>{giftType}</p>
+                            <p>{budget}</p> */}
+
+                                <p className="text-[#737791] font-semibold text-center mt-8">
+                                    Select gift type
+                                </p>
+
+                                <div className="flex gap-2 mt-4">
+                                    {[
+                                        "Unique",
+                                        "Practical",
+                                        "Fun",
+                                        "Luxury",
+                                        "Handmade",
+                                        "Personalized",
+                                        "Experience"
+                                    ].map((gift) => (
+                                        <button
+                                            key={gift}
+                                            type="button"
+                                            onClick={() => setGiftType(gift)}
+                                            className={`${buttonsStyle} ${giftType === gift
+                                                ? "bg-[#F25E0D] text-white border-0"
+                                                : ""
+                                                }`}
+                                        >
+                                            {gift}
+                                        </button>
+                                    ))}
+                                </div>
+
+
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="mt-10 h-13.5 w-full bg-linear-to-r from-orange-500 to-pink-500 text-white font-medium py-2 rounded-xl hover:opacity-90 transition hover:cursor-pointer"
+                                >
+                                    {loading ? "Loading..." : "Get Ideas"}
+                                </button>
+                            </form>
+                        </div>
+                        
+                        {ideas.length > 0 && openIdeas && (
+                            <h1
+                                ref={GiftSuggest}
+                                className="text-[1.5em] text-center mb-8 text-[#737791] font-black"
                             >
-                                Gift Type
-                            </label>
-                            <input
-                                id="gift-type"
-                                type="text"
-                                placeholder="Unique, Practical, Fun, etc."
-                                value={giftType}
-                                onChange={(e) => setGiftType(e.target.value)}
-                                className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                                required
-                            />
+                                Gift Ideas
+                            </h1>
+                        )}
 
-                            <label
-                                htmlFor="budget-range"
-                                className="text-gray-700 font-semibold"
-                            >
-                                Budget Range
-                            </label>
-                            <input
-                                id="budget-range"
-                                type="text"
-                                placeholder="350-400"
-                                value={budgetRange}
-                                onChange={(e) => setBudgetRange(e.target.value)}
-                                className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                                required
-                            />
+                        {/* ideas-list */}
+                        {openIdeas && 
+                        <div className="max-w-300 mx-auto px-4 bg-[#fefefe] rounded-[30px] ">
+                            <div className="flex mr-6 pt-5 justify-end">
+                                <X size={30} strokeWidth={2} onClick={(e) => {
+                                                                        e.preventDefault();
+                                                                        e.stopPropagation();
+                                                                        setOpenIdeas(false);
+                                                                    }}
+                                                                    className="cursor-pointer"/>
+                            </div>
+                            {ideas.map((idea, index) => (<div key={index}
 
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="mt-4 w-full bg-linear-to-r from-orange-500 to-pink-500 text-white font-medium py-2 rounded-xl hover:opacity-90 transition"
-                            >
-                                {loading ? "Loading..." : "Get Ideas"}
-                            </button>
-                        </form>
-                    </div>
-                    {ideas.length > 0 && (
-                        // login
-                        <h1
-                            ref={GiftSuggest}
-                            className=" text-center mb-8 text-[#737791] text-[24px] "
-                        >
-                            Gift suggestions
-                        </h1>
-                    )}
-
-                    {/* ideas-list */}
-                    <div className="max-w-300 mx-auto px-4">
-                        {ideas.map((idea, index) => (
-                            <div key={index} className="mb-4">
+                                // className="box-content mb-4"
+                                >
                                 {/* card-product-ideas px] */}
-                                <div className="flex flex-col gap-3 w-full min-w-75 p-6 pt-3 bg-[#fefefe] rounded-[20px] shadow-[0_6px_15px_rgba(0,0,0,0.08)]">
-                                    {/* gift-idea-search-wrapper */}
-                                    <div className="w-full block font-bold">
-                                        <Search userSearch={idea.name} getProducts={getProducts} />
+                                <div 
+                                className="flex flex-col gap-3 w-full min-w-75 pl-6 pr-6 "
+                                >
 
-                                        {/* <p className="flex text-left">
-                                            {idea.description}
-                                        </p> */}
+                                    {/* gift-idea-search-wrapper */}
+                                    <div className="w-full block font-bold mb-4">
+                                        <SearchIdea userSearch={idea.name} getProducts={getProducts} />
+                                        {/* <p className="flex text-left"> {idea.description} </p> */}
                                         {/* product-description */}
-                                        <div className="flex text-left font-normal">
+                                        {/* <div className="flex text-left font-normal">
                                             {idea.description}
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                </section>
+                            ))}
+                        </div>}
+                    </section>
+                </div>
             </div>
         </>
     );

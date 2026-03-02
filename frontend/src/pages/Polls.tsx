@@ -76,10 +76,10 @@ const Polls: React.FC = () => {
       {/* wrap-title-poll */}
       <div className="flex justify-between items-center mr-5">
         <div>
-          <h1 className="text-left px-5 text-[1.5em] leading-[1.1]  mb-2 mt-16">
+          <h1 className="text-left px-5 text-[1.5em] leading-[1.1] font-black mb-2 mt-16">
             Your Polls
           </h1>
-          <span className="m-5 text-left text-[#737791]">
+          <span className="m-5 text-left text-[#737791] font-serif italic">
             View, manage, and collaborate on your polls.
           </span>
         </div>
@@ -110,10 +110,6 @@ const Polls: React.FC = () => {
                 e.stopPropagation();
               }}
             >
-              {/* poll-text */}
-              {/* <div className="flex justify-between items-start gap-5 m-0 text-[rgb(95,89,101)]"> */}
-
-              {/* alarm-text */}
               <div className="pb-2.5 flex justify-between items-start gap-5 m-0">
                 {/* active-button */}
                 <button
@@ -133,7 +129,7 @@ const Polls: React.FC = () => {
                   }}
                 />
               </div>
-              {/* </div> */}
+
               <div>
                 {share &&
                   ReactDOM.createPortal(
@@ -160,7 +156,6 @@ const Polls: React.FC = () => {
                             readOnly
                           />
 
-                          {/* <div className="flex mt-10 flex-1 gap-2 justify-between"> */}
                           <button
                             onClick={handleCopy}
                             className={` px-6  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors
@@ -189,26 +184,40 @@ const Polls: React.FC = () => {
                   )}
               </div>
 
-              <h3 className="text-left m-0 font-bold text-3xl text-black">
+              <h3 className="text-left m-0 font-bold text-3xl text-black ">
                 {poll.title}
               </h3>
               {/* poll-text */}
               <p className="flex justify-between items-start gap-5 mt-2.5 text-sm text-black">
-                Budget: {poll.budget}$
+                Budget: ${poll.budget}
               </p>
 
               {/* poll-description */}
-              <p className="flex text-left  mt-2.5 text-sm text-[#737791]">
-                Here will be a short description that you could add to your poll
-              </p>
+              {poll.description && (
+                <p className="flex text-left  mt-2.5 text-sm text-[#737791] font-serif italic">
+                  {poll.description}
+                </p>
+              )}
 
               {/* deadline */}
               <p className="flex items-center mt-auto mb-5 gap-2 ml-0 text-[12px] text-[#EA7317]">
-                <ShoppingBagIcon size={14} strokeWidth={1.5} /> 6 options
+                <ShoppingBagIcon size={14} strokeWidth={1.5} />{" "}
+                {poll.total_products}{" "}
+                {poll.total_products === 1 ? "item" : "items"}
                 <span>
                   <Dot className="mx-1" color="#F25E0D" size={14} />
                 </span>
-                <Clock size={14} strokeWidth={1.5} /> 2 days
+                {poll.deadline ? (
+                  <>
+                    <Clock size={14} strokeWidth={1.5} />
+                    <span>{poll.deadline}</span>
+                  </>
+                ) : (
+                  <>
+                    <Clock size={14} strokeWidth={1.5} />
+                    <span>No deadline</span>
+                  </>
+                )}
               </p>
             </div>
           ))}

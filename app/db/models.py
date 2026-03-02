@@ -1,9 +1,9 @@
-from sqlalchemy import String, Integer, Float, ForeignKey, DateTime, func, Boolean
+from sqlalchemy import String, Integer, Float, ForeignKey, DateTime, func, Boolean, Date
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.database import Base
 import uuid as uuid_module
 from sqlalchemy.dialects.postgresql import UUID
-from datetime import datetime
+from datetime import datetime, date
 
 
 class User(Base):
@@ -37,7 +37,9 @@ class Poll(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String(40), index=True)
+    description: Mapped[str] = mapped_column(String(140), nullable=True)
     budget: Mapped[float] = mapped_column(Float)
+    deadline: Mapped[date] = mapped_column(Date, nullable=True)
     uuid: Mapped[uuid_module.UUID] = mapped_column(
         UUID(as_uuid=True), unique=True, nullable=False, default=uuid_module.uuid4
     )
@@ -54,6 +56,14 @@ class Poll(Base):
 
     # Relationship to the user
     user: Mapped["User"] = relationship("User", back_populates="polls")
+
+    @property
+    def created_by(self) -> str | None:
+        return self.user.username if self.user else None
+
+    @property
+    def total_products(self) -> int:
+        return len(self.products)
 
 
 class Product(Base):

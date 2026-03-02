@@ -41,7 +41,7 @@ export default function Products({
     >(null);
     const [textComment, setTextComment] = useState<Record<number, string>>({});
 
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(0);
     const [openComment, setOpenComment] = useState(false);
 
     const truncate = (text: string, maxLength = 65) => {
@@ -70,7 +70,7 @@ export default function Products({
             toast.success("Product deleted successfully!", {
                 duration: 2000,
             });
-            setOpen(false);
+            setOpen(0);
 
             console.log("Product deleted:", data);
         } catch (error: unknown) {
@@ -287,7 +287,10 @@ hover:-translate-y-1
 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
                             >
                                 {/* product-image-container */}
-                                <div className="w-50 max-h-57.5 aspect-square rounded-xl overflow-hidden shrink-0">
+                                <div
+                                    className="w-50 max-h-57.5 aspect-square rounded-xl overflow-hidden shrink-0 hover:text-[#0096FF] hover:cursor-pointer"
+                                    onClick={() => window.open(product.link, "_blank")}
+                                >
                                     <img
                                         src={product.image}
                                         alt={product.title}
@@ -313,7 +316,14 @@ hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
                                     </div>
 
                                     {/* product-title: "group" activates the Tooltip on hover */}
-                                    <div className="group relative font-semibold text-[0.9rem] leading-[1.4]">
+                                    <div
+                                        className="group relative font-semibold text-[0.9rem] leading-[1.4] hover:text-[#0096FF] hover:cursor-pointer"
+                                        onClick={(e) => {
+                                            window.open(product.link, "_blank");
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                        }}
+                                    >
                                         {truncate(product.title)}
                                         <Tooltip text={product.title} />
                                     </div>
@@ -322,7 +332,7 @@ hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
                                     <div className="flex justify-start items-center gap-5 py-2.5">
                                         <div className="flex gap-2.5 mt-1 justify-between">
                                             {/* "group" on each button activates its own Tooltip independently */}
-                                            <button
+                                            {/* <button
                                                 onClick={() => window.open(product.link, "_blank")}
                                                 className="group relative flex-1 px-3 py-1.5 border border-[#737791] 
                                                 cursor-pointer whitespace-nowrap text-[#737791] bg-transparent text-[0.85rem] 
@@ -330,12 +340,14 @@ hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
                                             >
                                                 <FileText size={14} strokeWidth={2} />
                                                 <Tooltip text="Details" />
-                                            </button>
+                                            </button> */}
 
                                             <button
-                                                className="group relative flex-1 px-3 py-1.5 border border-[#737791] 
-                                                cursor-pointer whitespace-nowrap text-[#737791] bg-transparent text-[0.85rem] 
-                                                rounded-[20px] flex gap-1.5 justify-center items-center hover:text-[#F25E0D] hover:border-[#F25E0D]"
+                                                className={`group relative flex-1 px-3 py-1.5 border rounded-[20px] flex gap-1.5 justify-center items-center whitespace-nowrap text-[0.85rem] cursor-pointer
+    ${openCommentsProductId === product.id
+                                                        ? "bg-[#F25E0D] text-[#fefefe] border-[#F25E0D]" // active color
+                                                        : "bg-transparent text-[#737791] border-[#737791] hover:text-[#fefefe] hover:bg-[#F25E0D] hover:border-[#F25E0D]"
+                                                    }`}
                                                 onClick={(e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
@@ -349,7 +361,7 @@ hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
 
                                             {user && user.id === product.user_id && (
                                                 <button
-                                                    onClick={() => setOpen(true)}
+                                                    onClick={() => setOpen(product.id)}
                                                     className="group relative flex-1 px-3 py-1.5 border border-[#737791] 
                                                 cursor-pointer whitespace-nowrap text-[#737791] bg-transparent text-[0.85rem] 
                                                 rounded-[20px] flex gap-1.5 justify-center items-center hover:text-[#F25E0D] hover:border-[#F25E0D]"
@@ -359,7 +371,7 @@ hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
                                                 </button>
                                             )}
                                             <div>
-                                                {open &&
+                                                {open === product.id &&
                                                     ReactDOM.createPortal(
                                                         <div className="fixed inset-0 bg-black/15 flex items-center justify-center z-9999">
                                                             <div className="bg-white p-10 rounded-2xl z-50">
@@ -370,7 +382,7 @@ hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
                                                                 <div className="flex mt-10 flex-1 gap-2 justify-between">
                                                                     <button
                                                                         className="flex-1 border  rounded-xl px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
-                                                                        onClick={() => setOpen(false)}
+                                                                        onClick={() => setOpen(0)}
                                                                     >
                                                                         Cancel
                                                                     </button>
@@ -419,7 +431,11 @@ hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
                                     {/* progress bar */}
                                     <div className="w-full h-3 bg-[#e5e7eb] rounded-full overflow-hidden my-1.5 mb-2.5">
                                         <div
-                                            className="h-full bg-linear-to-br from-[#ff6a00] to-[#ec4899] transition-[width] duration-300"
+                                            className={`h-full 
+                                                    ${totalVotes === 0
+                                                    ? "bg-[#e5e7eb]"
+                                                    : "bg-linear-to-br from-[#ff6a00] to-[#ec4899] transition-[width] duration-300"
+                                                }`}
                                             style={{
                                                 width: `${(product.votes / totalVotes) * 100}%`,
                                             }}
@@ -435,7 +451,7 @@ hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
                                                 handleVote(product.id, product.has_voted, e);
                                             }}
                                             className={`group relative flex w-full rounded-xl items-center justify-center 
-                                                gap-2.5 py-4 transition-colors duration-200 text-white "
+                                                gap-2.5 py-4 transition-colors duration-200 text-white 
                                             ${!product.has_voted
                                                     ? "bg-[#F25E0D] cursor-pointer"
                                                     : "bg-[#B0B6CC] "

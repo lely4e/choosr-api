@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 from httpx import AsyncClient, ASGITransport
-from backend.main import app
+from main import app
 from app.db.database import Base, get_db
 import pytest_asyncio
 from app.db.models import User, Poll, Product, Comment, Vote

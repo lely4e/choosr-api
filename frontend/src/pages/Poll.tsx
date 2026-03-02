@@ -14,8 +14,6 @@ import {
     Clock,
     Edit,
     Trash2,
-    Bell,
-    MoreHorizontal,
     Gift,
     Dot,
     MoveLeft,
@@ -23,6 +21,8 @@ import {
     Copy,
     Check,
     X,
+    User2Icon,
+    ChevronUp,
 } from "lucide-react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -43,6 +43,8 @@ export default function PollPage() {
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [editedTitle, setEditedTitle] = useState<string>("");
     const [editedBudget, setEditedBudget] = useState<number>(0);
+    const [editedDescription, setEditedDescription] = useState<string>("");
+    const [editedDeadline, setEditedDeadline] = useState<string>("");
 
     const [showGiftIdeas, setShowGiftIdeas] = useState(false);
     const [showProducts, setShowProducts] = useState(true);
@@ -124,7 +126,6 @@ export default function PollPage() {
     // delete poll
     const handleDeletePoll = async (e: React.MouseEvent, uuid: string) => {
         e.stopPropagation();
-        // if (!window.confirm("Are you sure you want to delete this poll?")) return;
         try {
             await deletePoll(uuid);
             toast.success("Poll deleted successfully!", {
@@ -152,6 +153,8 @@ export default function PollPage() {
         setIsEditing(true);
         setEditedTitle(poll.title);
         setEditedBudget(poll.budget);
+        setEditedDescription(poll.description || "");
+        setEditedDeadline(poll.deadline || "");
     };
 
     const cancelEditing = () => setIsEditing(false);
@@ -159,13 +162,23 @@ export default function PollPage() {
     const handleApply = async () => {
         if (!uuid) return;
         try {
-            await updatePoll(uuid!, editedTitle, editedBudget);
-            setPoll({ ...poll!, title: editedTitle, budget: editedBudget });
+            const updatedPoll = await updatePoll(
+                uuid!,
+                editedTitle,
+                editedBudget,
+                editedDescription || undefined,
+                editedDeadline || undefined,
+            );
+
+            console.log("Server response:", updatedPoll);
+            console.log("Deadline in response:", updatedPoll.deadline);
+
+            setPoll(updatedPoll);
             setIsEditing(false);
             toast.success("Poll updated successfully!", {
                 duration: 2000,
             });
-            console.log("Poll updated");
+            console.log("Poll updated", poll);
         } catch (error: unknown) {
             if (error instanceof Error) {
                 toast.error(`Failed to update poll: ${error.message}`);
@@ -220,35 +233,19 @@ export default function PollPage() {
                         {/* poll-text */}
                         <div className="flex justify-between items-start m-0">
                             {/* poll-title-container */}
-                            <div className="min-h-6 flex">
-                                <h3 className="text-left m-0 font-bold text-3xl text-black">
+                            <div className="min-h-6 flex-1">
+                                <h3 className="text-left m-0 font-bold text-3xl text-black ">
                                     {!isEditing ? (
                                         poll.title
                                     ) : (
+                                        // edit mode
                                         <div className="flex justify-between gap-2.5">
-                                            <p className="flex justify-between items-start gap-5 mt-2.5 text-sm text-black font-normal text-[15px] mr-7.5">
-                                                Title:
-                                            </p>
                                             <input
                                                 type="text"
                                                 value={editedTitle}
                                                 onChange={(e) => setEditedTitle(e.target.value)}
-                                                className="rounded-lg border border-[#3bb5f6] bg-transparent text-[#737791] pl-2.5 h-8.75 text-base font-normal w-75"
+                                                className=" w-full border-b border-gray-300 border-0 focus:border-blue-500 focus:outline-none text-left font-bold text-3xl text-black"
                                             />
-
-                                            <button
-                                                onClick={handleApply}
-                                                className="h-8.75 w-25 flex items-center text-base justify-center bg-[#0096FF] text-white font-normal rounded-xl cursor-pointer"
-                                            >
-                                                Apply
-                                            </button>
-
-                                            <button
-                                                onClick={cancelEditing}
-                                                className="h-8.75 w-25 flex items-center text-base justify-center bg-[#0096FF] text-white font-normal rounded-xl cursor-pointer"
-                                            >
-                                                Cancel
-                                            </button>
                                         </div>
                                     )}
                                 </h3>
@@ -257,6 +254,7 @@ export default function PollPage() {
                             <div className="pt-1.5 flex justify-between m-0">
                                 {!isEditing ? (
                                     <>
+                                        {/* view mode */}
                                         {/* add poll from other creators to vote  */}
                                         {user && user.id !== poll.user_id && (
                                             <div
@@ -346,6 +344,7 @@ export default function PollPage() {
                                             />
                                         </p>
 
+                                        {/* share button */}
                                         <div>
                                             {share &&
                                                 ReactDOM.createPortal(
@@ -366,16 +365,15 @@ export default function PollPage() {
                                                             </div>
                                                             <div className="flex">
                                                                 <input
-                                                                    className="border border-[#F25E0D] bg-transparent text-[#737791] pl-2.5 text-base w-125 h-12 "
+                                                                    className="border-0 border-b border-[#F25E0D] bg-transparent  text-[#737791] pl-2.5 text-base w-125 h-12  focus:outline-none"
                                                                     id={uuid}
                                                                     value={`https://choosr/polls/${uuid}`}
                                                                     readOnly
                                                                 />
 
-                                                                {/* <div className="flex mt-10 flex-1 gap-2 justify-between"> */}
                                                                 <button
                                                                     onClick={handleCopy}
-                                                                    className={` px-6  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors
+                                                                    className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-xl
                                                                     ${!copied
                                                                             ? "bg-[#F25E0D] text-white cursor-pointer"
                                                                             : "bg-[#B0B6CC]"
@@ -392,8 +390,6 @@ export default function PollPage() {
                                                                         />
                                                                     )}
                                                                 </button>
-
-                                                                {/* </div> */}
                                                             </div>
                                                         </div>
                                                     </div>,
@@ -415,59 +411,126 @@ export default function PollPage() {
                         </div>
 
                         <div className="min-h-6 flex">
-                            <p className="flex justify-between items-start gap-5 mt-2.5 text-sm text-black">
-                                Budget:&nbsp;
+                            <p className="flex justify-between items-start mt-2.5 text-sm text-black">
+                                Budget: $
                                 {!isEditing ? (
-                                    `${poll.budget}$`
+                                    `${poll.budget}`
                                 ) : (
                                     <input
                                         type="number"
                                         value={editedBudget}
                                         onChange={(e) => setEditedBudget(Number(e.target.value))}
-                                        className="rounded-lg border border-[#3bb5f6] bg-transparent text-[#737791] pl-2.5 h-8.75 text-base w-75"
+                                        className=" border-b border-gray-300 border-0 focus:border-blue-500 focus:outline-none flex justify-between items-start text-sm text-black"
                                     />
                                 )}
                             </p>
                         </div>
-                        <p className="flex text-left  mt-2.5 text-sm text-[#737791]">
-                            Here will be a short description that you could add to your poll
-                        </p>
 
-                        <div className="flex items-bottom  mb-2 gap-2 ml-0 text-[14px] text-[#EA7317] justify-between">
-                            <div className="flex items-center mt-10 mb-10 gap-2 ml-0 text-[14px] text-[#EA7317]">
-                                <ShoppingBagIcon size={14} strokeWidth={1.5} />{" "}
-                                {products.length} options
-                                <span>
-                                    <Dot className="mx-1" color="#F25E0D" size={14} />
-                                </span>
-                                <Clock size={14} strokeWidth={1.5} /> 2 days
-                            </div>
-                            <div>
-                                <button
-                                    onClick={handleShowIdeas}
-                                    className="flex items-center font-medium text-[16px] text-white bg-linear-to-r from-[#9900ff] to-pink-500 
+                        {!isEditing ? (
+                            <>
+                                {/* view mode */}
+                                {poll.description && (
+                                    <p className="flex text-left  mt-2.5 text-sm text-[#737791] font-serif italic">
+                                        {poll.description}
+                                    </p>
+                                )}
+
+                                <div className="flex items-bottom  mb-2 gap-2 ml-0 text-[14px] text-[#EA7317] justify-between">
+                                    <div className="flex items-center mt-10 mb-10 gap-2 ml-0 text-[14px] text-[#EA7317]">
+                                        <ShoppingBagIcon size={14} strokeWidth={2} />
+                                        {products.length} {products.length === 1 ? "item" : "items"}
+                                        <span>
+                                            <Dot className="mx-1" color="#F25E0D" size={14} />
+                                        </span>
+                                        {poll.deadline ? (
+                                            <>
+                                                <Clock size={14} strokeWidth={1.5} />
+                                                <span>{poll.deadline}</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Clock size={14} strokeWidth={1.5} />
+                                                <span>No deadline</span>
+                                            </>
+                                        )}
+                                        <span>
+                                            <Dot className="mx-1" color="#F25E0D" size={14} />
+                                        </span>
+                                        <User2Icon size={14} strokeWidth={2} /> created by{" "}
+                                        {user && poll.user_id !== user.id ? poll.created_by : "me"}
+                                    </div>
+                                    <div>
+                                        <button
+                                            onClick={handleShowIdeas}
+                                            className="flex items-center font-medium text-[16px] text-white bg-linear-to-r from-[#9900ff] to-pink-500 
                                     rounded-[30px] px-4 py-2 h-14 cursor-pointer
                                     transform transition duration-300 ease-in-out
-                                    hover:scale-105"
-                                >
-                                    <Gift size={30} strokeWidth={1.5} />
-                                    {!showGiftIdeas ? "" : "Hide Gift Ideas"}
-                                </button>
-                            </div>
-                        </div>
+                                    hover:scale-105 gap-2"
+                                        >
+                                            {!showGiftIdeas ? (
+                                                <Gift size={30} strokeWidth={1.5} />
+                                            ) : (
+                                                <ChevronUp size={30} strokeWidth={2} />
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                {/* edit mode */}
+                                <input
+                                    type="text"
+                                    value={editedDescription}
+                                    onChange={(e) => setEditedDescription(e.target.value)}
+                                    className="border-b border-gray-300 border-0 focus:border-blue-500 focus:outline-none flex text-left  mt-2.5 text-sm text-[#737791] font-serif italic"
+                                />
+                                <div className="flex items-bottom  mb-2 text-[14px] text-[#EA7317] justify-between">
+                                    <div className="flex w-full items-center mt-10 mb-10 gap-2 text-[14px] text-[#EA7317] ">
+                                        <Clock size={14} strokeWidth={2} />
+                                        <input
+                                            type="date"
+                                            placeholder="Date"
+                                            value={editedDeadline || ""}
+                                            onChange={(e) => setEditedDeadline(e.target.value)}
+                                            className="bg-[#F25E0D] text-white p-2 rounded-xl"
+                                        />
+
+                                        <button
+                                            onClick={cancelEditing}
+                                            className="ml-40 h-8.75 w-full flex-1 items-center text-base justify-center border border-[#737791] text-[#737791] hover:bg-[#B0B6CC] hover:border-[#B0B6CC] hover:text-white transition-colors font-normal rounded-xl cursor-pointer"
+                                        >
+                                            Cancel
+                                        </button>
+
+                                        <button
+                                            onClick={handleApply}
+                                            className="h-8.75 w-full flex-1 items-center text-base justify-center text-white bg-[#0096FF] hover:bg-[#0072c4]  hover:text-white transition-colors font-normal rounded-xl cursor-pointer"
+                                        >
+                                            Apply
+                                        </button>
+                                    </div>
+
+                                    <div></div>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
 
             <div className="flex flex-col items-center ">
-                {showGiftIdeas && <Ideas getProducts={getProducts} />}
-
-                <p className="flex flex-col items-center text-[14px] text-[#737791]">
-                    Search and add products to compare and vote.
-                </p>
-
+                {showGiftIdeas && (
+                    <Ideas
+                        getProducts={getProducts}
+                        title={poll.title}
+                        budget={poll.budget}
+                    />
+                )}
+                <h1 className="text-[1.5em]  leading-tight pt-10 font-black">
+                    Products
+                </h1>
                 <Search getProducts={getProducts} />
-                <h1 className="text-left text-[2.0em] leading-tight pt-10">Products</h1>
             </div>
 
             {showProducts ? (

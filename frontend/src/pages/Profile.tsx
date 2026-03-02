@@ -93,6 +93,16 @@ export default function Profile() {
                       <Edit size={20} strokeWidth={1.5} />
                     </a>
                   </div>
+                  <div className="flex items-center text-left gap-2.5">
+                    <strong>Email address:</strong> {user.email}
+                  </div>
+
+                  <button
+                    onClick={logout}
+                    className="cursor-pointer pt-4 hover:text-[#0072c4]"
+                  >
+                    <LogOut size={20} strokeWidth={1.5} />
+                  </button>
                 </>
               ) : (
                 <>
@@ -101,7 +111,7 @@ export default function Profile() {
                     <strong>New username:</strong>
                   </label>
                   <input
-                    className="rounded-xl border border-[#3bb5f6] bg-transparent text-[#737791] pl-2.5 px-6 py-2 text-base w-75"
+                    className="border-b border-gray-300 border-0 focus:border-blue-500 focus:outline-none  bg-transparent text-[#737791]  py-2 text-base w-75"
                     type="text"
                     id="username"
                     value={newUsername}
@@ -117,7 +127,6 @@ export default function Profile() {
                     </button>
 
                     <button
-                      // className="h-8.75 flex items-center flex-1 text-base justify-center bg-[#0096FF] text-white font-normal rounded-xl cursor-pointer"
                       className="flex-1  bg-[#0096FF]  text-white rounded-xl px-6 py-2  hover:bg-[#0072c4]  hover:text-white transition-colors"
                       onClick={async () => {
                         await handleUpdateUser();
@@ -129,17 +138,6 @@ export default function Profile() {
                   </div>
                 </>
               )}
-
-              <div className="flex items-center text-left gap-2.5">
-                <strong>Email address:</strong> {user.email}
-              </div>
-
-              <button
-                onClick={logout}
-                className="cursor-pointer pt-4 hover:text-[#0072c4]"
-              >
-                <LogOut size={20} strokeWidth={1.5} />
-              </button>
             </div>
           </div>
         </div>

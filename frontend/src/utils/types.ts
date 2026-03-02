@@ -11,7 +11,11 @@ export interface Poll {
   uuid: string;
   title: string;
   budget: number;
+  description?: string;
+  deadline?: string;
   user_id: number;
+  total_products: number;
+  created_by: string
 }
 
 export interface Product {
@@ -37,6 +41,8 @@ export interface ProductsProps {
 
 export interface IdeasProps {
   getProducts?: () => Promise<void>;
+  title: string;
+  budget: number;
 }
 
 export interface User {
@@ -82,4 +88,17 @@ export interface StarRatingProps {
   totalStars?: number;
   size?: number;
   color?: string;
+}
+
+export interface AgeSliderProps {
+  value: number;
+  onChange: (value: number) => void;
+};
+
+export interface SearchBarProps {
+  userInput: string;
+  setUserInput: (value: string) => void;
+  loading: boolean;
+  showProducts: boolean;
+  handleSearch: () => void;
 }

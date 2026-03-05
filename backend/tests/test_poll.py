@@ -69,7 +69,7 @@ async def test_get_poll_success(client, create_poll_and_user):
 @pytest.mark.asyncio
 async def test_get_poll_uuid_success(client, create_poll_and_user):
     user, headers, poll = create_poll_and_user
-    response = await client.get(f"/{poll.uuid}", headers=headers)
+    response = await client.get(f"/polls/{poll.uuid}", headers=headers)
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
@@ -84,7 +84,7 @@ async def test_update_poll_uuid_success(client, create_poll_and_user):
     user, headers, poll = create_poll_and_user
 
     payload = {"title": "John Home Party", "budget": 560}
-    response = await client.put(f"/{poll.uuid}", headers=headers, json=payload)
+    response = await client.put(f"/polls/{poll.uuid}", headers=headers, json=payload)
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
@@ -103,7 +103,7 @@ async def test_update_poll_uuid_failed_empty_fields(client, create_poll_and_user
     user, headers, poll = create_poll_and_user
 
     payload = {"title": "", "budget": 560}
-    response = await client.put(f"/{poll.uuid}", headers=headers, json=payload)
+    response = await client.put(f"/polls/{poll.uuid}", headers=headers, json=payload)
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
 
@@ -116,7 +116,7 @@ async def test_update_poll_uuid_failed_not_correct_fields(client, create_poll_an
         "titled": "Bla",
         "budget": 560,
     }
-    response = await client.put(f"/{poll.uuid}", headers=headers, json=payload)
+    response = await client.put(f"/polls/{poll.uuid}", headers=headers, json=payload)
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
     assert response.json() == {
@@ -135,7 +135,7 @@ async def test_update_poll_uuid_failed_not_correct_fields(client, create_poll_an
 @pytest.mark.asyncio
 async def test_delete_poll_uuid_success(client, create_poll_and_user):
     user, headers, poll = create_poll_and_user
-    response = await client.delete(f"/{poll.uuid}", headers=headers)
+    response = await client.delete(f"/polls/{poll.uuid}", headers=headers)
 
     assert response.status_code == status.HTTP_200_OK
 

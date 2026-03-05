@@ -13,7 +13,9 @@ async def test_add_comment_success(client, add_user_poll_and_product):
     }
 
     response = await client.post(
-        f"/{poll.uuid}/products/{product.id}/comments", headers=headers, json=payload
+        f"/polls/{poll.uuid}/products/{product.id}/comments",
+        headers=headers,
+        json=payload,
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -38,7 +40,9 @@ async def test_add_comment_failed_empty_text(client, add_user_poll_and_product):
     }
 
     response = await client.post(
-        f"/{poll.uuid}/products/{product.id}/comments", headers=headers, json=payload
+        f"/polls/{poll.uuid}/products/{product.id}/comments",
+        headers=headers,
+        json=payload,
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
@@ -66,7 +70,9 @@ async def test_add_comment_failed_no_product(client, add_user_poll_and_product):
     }
 
     response = await client.post(
-        f"/{poll.uuid}/products/{product.id}/comments", headers=headers, json=payload
+        f"/polls/{poll.uuid}/products/{product.id}/comments",
+        headers=headers,
+        json=payload,
     )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -83,7 +89,7 @@ async def test_add_comment_failed_no_user(client, add_user_poll_and_product):
     }
 
     response = await client.post(
-        f"/{poll.uuid}/products/{product.id}/comments", json=payload
+        f"/polls/{poll.uuid}/products/{product.id}/comments", json=payload
     )
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
@@ -94,7 +100,7 @@ async def test_add_comment_failed_no_user(client, add_user_poll_and_product):
 async def test_get_comments_success(client, add_user_poll_product_and_comment):
     product, headers, poll, comment = add_user_poll_product_and_comment
     response = await client.get(
-        f"/{poll.uuid}/products/{product.id}/comments", headers=headers
+        f"/polls/{poll.uuid}/products/{product.id}/comments", headers=headers
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -106,7 +112,8 @@ async def test_get_comments_success(client, add_user_poll_product_and_comment):
 async def test_get_comment_by_id_success(client, add_user_poll_product_and_comment):
     product, headers, poll, comment = add_user_poll_product_and_comment
     response = await client.get(
-        f"/{poll.uuid}/products/{product.id}/comments/{comment.id}", headers=headers
+        f"/polls/{poll.uuid}/products/{product.id}/comments/{comment.id}",
+        headers=headers,
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -118,7 +125,8 @@ async def test_get_comment_by_id_success(client, add_user_poll_product_and_comme
 async def test_delete_comment_by_id_success(client, add_user_poll_product_and_comment):
     product, headers, poll, comment = add_user_poll_product_and_comment
     response = await client.delete(
-        f"/{poll.uuid}/products/{product.id}/comments/{comment.id}", headers=headers
+        f"/polls/{poll.uuid}/products/{product.id}/comments/{comment.id}",
+        headers=headers,
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -131,7 +139,8 @@ async def test_delete_comment_by_id_failed(client, add_user_poll_product_and_com
     product, headers, poll, comment = add_user_poll_product_and_comment
     comment.id += 1
     response = await client.delete(
-        f"/{poll.uuid}/products/{product.id}/comments/{comment.id}", headers=headers
+        f"/polls/{poll.uuid}/products/{product.id}/comments/{comment.id}",
+        headers=headers,
     )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
@@ -146,7 +155,8 @@ async def test_delete_comment_by_id_failed_no_product(
     product, headers, poll, comment = add_user_poll_product_and_comment
     product.id += 1
     response = await client.delete(
-        f"/{poll.uuid}/products/{product.id}/comments/{comment.id}", headers=headers
+        f"/polls/{poll.uuid}/products/{product.id}/comments/{comment.id}",
+        headers=headers,
     )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND

@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import ReactDOM from "react-dom";
 import confetti from "canvas-confetti";
 import StarRating from "./Stars";
+import { API_URL } from "../config";
 
 const Tooltip = ({ text }: { text: string }) => (
     <span
@@ -50,7 +51,7 @@ export default function Products({
         // if (!window.confirm("Are you sure you want to delete this product?")) return;
         try {
             const response = await authFetch(
-                `http://127.0.0.1:8000/polls/${uuid}/products/${productId}`,
+                `${API_URL}/polls/${uuid}/products/${productId}`,
                 {
                     method: "DELETE",
                 },
@@ -88,7 +89,7 @@ export default function Products({
         }
         try {
             const response = await authFetch(
-                `http://127.0.0.1:8000/polls/${uuid}/products/${productId}/comments`,
+                `${API_URL}/polls/${uuid}/products/${productId}/comments`,
             );
             if (!response.ok) {
                 const data = await response.json().catch(() => ({}));
@@ -128,7 +129,7 @@ export default function Products({
         try {
             if (hasVoted) {
                 await authFetch(
-                    `http://127.0.0.1:8000/polls/${uuid}/products/${productId}/vote`,
+                    `${API_URL}/polls/${uuid}/products/${productId}/vote`,
                     { method: "DELETE" },
                 );
                 toast.success("You unvoted!", {
@@ -137,7 +138,7 @@ export default function Products({
                 console.log("hasVoted ->", hasVoted, "deleting vote");
             } else {
                 await authFetch(
-                    `http://127.0.0.1:8000/polls/${uuid}/products/${productId}/vote`,
+                    `${API_URL}/polls/${uuid}/products/${productId}/vote`,
                     { method: "POST" },
                 );
                 confetti({
@@ -173,7 +174,7 @@ export default function Products({
         }
         try {
             const response = await authFetch(
-                `http://127.0.0.1:8000/polls/${uuid}/products/${productId}/comments`,
+                `${API_URL}/polls/${uuid}/products/${productId}/comments`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -212,7 +213,7 @@ export default function Products({
         // if (!window.confirm("Are you sure you want to delete this comment?")) return;
         try {
             const response = await authFetch(
-                `http://127.0.0.1:8000/polls/${uuid}/products/${productId}/comments/${commentId}`,
+                `${API_URL}/polls/${uuid}/products/${productId}/comments/${commentId}`,
                 { method: "DELETE" },
             );
 

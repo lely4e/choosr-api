@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import toast from "react-hot-toast";
+import { API_URL } from "../config";
 
 export default function Login() {
   const { login } = useUser();
@@ -23,7 +24,7 @@ export default function Login() {
 
     try {
       // login and get token
-      const response = await fetch("http://127.0.0.1:8000/auth", {
+      const response = await fetch(`${API_URL}/auth`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: body.toString(),
@@ -39,7 +40,7 @@ export default function Login() {
 
       console.log("Token recieved:", data.access_token);
 
-      const userResponse = await fetch("http://127.0.0.1:8000/me", {
+      const userResponse = await fetch(`${API_URL}/me`, {
         headers: {
           Authorization: `Bearer ${data.access_token}`,
         },

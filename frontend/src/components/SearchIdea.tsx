@@ -8,6 +8,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import toast from "react-hot-toast";
 import StarRating from "./Stars";
+import { API_URL } from "../config";
 
 type Layout = "poll" | "gift";
 
@@ -97,7 +98,7 @@ export default function SearchIdea({
 
         try {
             const response = await authFetch(
-                `http://127.0.0.1:8000/products/search?search=${encodeURIComponent(value)}`,
+                `${API_URL}/products/search?search=${encodeURIComponent(value)}`,
             );
             const data = await response.json();
 
@@ -131,7 +132,7 @@ export default function SearchIdea({
     const handleAddProduct = async (product: ProductSearch) => {
         try {
             const response = await authFetch(
-                `http://127.0.0.1:8000/polls/${uuid}/products`,
+                `${API_URL}/polls/${uuid}/products`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },

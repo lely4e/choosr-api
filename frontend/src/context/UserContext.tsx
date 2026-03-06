@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { type UserContext, type User } from "../utils/types";
 import toast from 'react-hot-toast';
+import { API_URL } from "../config";
 
 
 // create context with default value
@@ -33,7 +34,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     // verify token
     const verifyToken = async (token: string) => {
         try {
-            const response = await fetch("http://127.0.0.1:8000/me", {
+            const response = await fetch(`${API_URL}/me`, {
                 headers: {
                     "Authorization": `Bearer ${token}`
                 }

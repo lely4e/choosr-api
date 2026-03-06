@@ -31,6 +31,7 @@ import type { Product } from "../utils/types";
 import { useUser } from "../context/UserContext";
 import toast from "react-hot-toast";
 import ReactDOM from "react-dom";
+import { API_URL } from "../config";
 
 export default function PollPage() {
     const { user } = useUser();
@@ -70,7 +71,7 @@ export default function PollPage() {
     useEffect(() => {
         const getActivities = async () => {
             try {
-                const response = await authFetch("http://127.0.0.1:8000/activities");
+                const response = await authFetch(`${API_URL}/activities`);
                 const data = await response.json();
                 setActivities(data);
             } catch (error) {
@@ -85,7 +86,7 @@ export default function PollPage() {
         if (!uuid) return;
         try {
             const response = await authFetch(
-                `http://127.0.0.1:8000/polls/${uuid}/products`,
+                `${API_URL}/polls/${uuid}/products`,
             );
             const data = await response.json();
             setProducts(data);
@@ -111,7 +112,7 @@ export default function PollPage() {
         const getPoll = async () => {
             if (!uuid) return;
             try {
-                const response = await authFetch(`http://127.0.0.1:8000/polls/${uuid}`);
+                const response = await authFetch(`${API_URL}/polls/${uuid}`);
                 const data = await response.json();
                 if (!response.ok) {
                     alert(data.detail || "Unauthorized");
@@ -168,7 +169,7 @@ export default function PollPage() {
 
     const handleAddSharedPoll = async (uuid: string) => {
         try {
-            const response = await authFetch("http://127.0.0.1:8000/activities", {
+            const response = await authFetch(`${API_URL}/activities`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -183,7 +184,7 @@ export default function PollPage() {
                 throw new Error(data.error || "Unknown error");
             }
 
-            const updated = await authFetch("http://127.0.0.1:8000/activities");
+            const updated = await authFetch(`${API_URL}/activities`);
             setActivities(await updated.json());
 
             console.log("Shared Poll added successfully:", data);
@@ -208,7 +209,7 @@ export default function PollPage() {
     const handleDeleteSharedPoll = async (uuid: string) => {
         try {
             const response = await authFetch(
-                `http://127.0.0.1:8000/activities/${uuid}`,
+                `${API_URL}/activities/${uuid}`,
                 {
                     method: "DELETE",
                 },

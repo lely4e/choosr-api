@@ -1,3 +1,4 @@
+import { API_URL } from "../config";
 import { authFetch } from "./auth";
 import type { Poll } from "./types";
 
@@ -15,7 +16,7 @@ export const updatePoll = async (
   console.log("Sending body:", JSON.stringify(body));
   console.log("Deadline value:", deadline);
 
-  const response = await authFetch(`http://127.0.0.1:8000/polls/${uuid}`, {
+  const response = await authFetch(`${API_URL}/polls/${uuid}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

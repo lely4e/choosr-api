@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import ReactDOM from "react-dom";
+import { API_URL } from "../config";
 
 const Polls: React.FC = () => {
   const [polls, setPolls] = useState<Poll[]>([]);
@@ -31,7 +32,7 @@ const Polls: React.FC = () => {
   useEffect(() => {
     const getPolls = async () => {
       try {
-        const response = await authFetch("http://127.0.0.1:8000/polls");
+        const response = await authFetch(`${API_URL}/polls`);
         const data = await response.json();
 
         if (!response.ok) {
@@ -59,7 +60,7 @@ const Polls: React.FC = () => {
   useEffect(() => {
     const getSharedPolls = async () => {
       try {
-        const response = await authFetch("http://127.0.0.1:8000/activities");
+        const response = await authFetch(`${API_URL}/activities`);
         const data = await response.json();
 
         if (!response.ok) {

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { authFetch } from "../utils/auth";
 import toast from "react-hot-toast";
 import { Clock, Dot, Share2, ShoppingBagIcon } from "lucide-react";
+import { API_URL } from "../config";
 
 export default function addPoll() {
   const [title, setTitle] = useState("");
@@ -15,7 +16,7 @@ export default function addPoll() {
     event.preventDefault(); // prevent refreshing page
 
     try {
-      const response = await authFetch("http://127.0.0.1:8000/polls", {
+      const response = await authFetch(`${API_URL}/polls`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

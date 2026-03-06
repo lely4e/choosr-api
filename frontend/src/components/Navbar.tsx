@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
-import { Plus, ChevronDown } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useUser } from "../context/UserContext";
+import profileImg from "../assets/profile.svg"
+import logoImg from "../assets/logo_orange.svg"
 
 export default function Navbar() {
 const { user } = useUser();
@@ -16,7 +18,7 @@ const { user } = useUser();
           {/* LOGO */}
           <Link to="/" className="flex items-center">
             <img
-              src="../src/assets/logo_orange.svg"
+              src={logoImg}
               alt="logo"
               className="w-30"
             />
@@ -46,7 +48,7 @@ const { user } = useUser();
         {/* LOGO */}
         <Link to="/" className="flex items-center">
           <img
-            src="../src/assets/logo_orange.svg"
+            src={profileImg}
             alt="logo"
             className="w-30"
           />
@@ -79,7 +81,7 @@ const { user } = useUser();
           <div className="flex items-center gap-2 cursor-pointer group">
             <Link to="/profile">
               <img
-                src="../src/assets/profile.svg"
+                src={profileImg}
                 alt="Profile"
                 className="w-8 h-8 rounded-full
                            border border-gray-300

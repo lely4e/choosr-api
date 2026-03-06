@@ -15,9 +15,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    if: |
-      contains(toJson(github.event.commits.*.modified), 'backend/') ||
-      github.event_name == 'pull_request'
 
     defaults:
       run:
@@ -73,9 +70,6 @@ jobs:
 
   deploy-frontend:
     runs-on: ubuntu-latest
-    if: |
-      contains(toJson(github.event.commits.*.modified), 'frontend/') ||
-      github.event_name == 'pull_request'
 
     defaults:
       run:

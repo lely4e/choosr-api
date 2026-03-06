@@ -47,7 +47,7 @@ export default function Home() {
       </div>
 
       {/* Use Cases */}
-      <div className="w-full max-w-3xl space-y-4 text-left">
+      {/* <div className="w-full max-w-3xl space-y-4 text-left">
         <h2 className="text-2xl font-bold text-gray-700">Use cases</h2>
         <h3 className="text-lg text-gray-600 space-y-2 flex flex-col">
           <span>🎉 Event planning</span>
@@ -55,7 +55,7 @@ export default function Home() {
           <span>🛍️ Shared purchases</span>
           <span>👥 Team decisions</span>
         </h3>
-      </div>
+      </div> */}
     </div>
   );
 }

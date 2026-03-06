@@ -23,6 +23,8 @@ from app.core.errors import DataError, data_error_handler
 from app.core.errors import IntegrityError, integrity_error_handler
 from fastapi.middleware.cors import CORSMiddleware
 
+from backend.app.db.database import Base, engine
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version="0.1.0",
@@ -52,7 +54,7 @@ app.add_middleware(
         "http://localhost:5174",
         "http://localhost:5175",
         "https://choosr-api.onrender.com",
-        "https://choosr-pied.vercel.app",
+        "https://choosr-pied.vercel.app/",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -95,7 +97,7 @@ async def auth_middleware(request: Request, call_next):
     return response
 
 
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", reload=True)

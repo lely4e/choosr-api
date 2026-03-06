@@ -35,7 +35,7 @@ export default function Home() {
       </button>
 
       {/* How it Works */}
-      <div className="w-full max-w-3xl space-y-4 text-left">
+      {/* <div className="w-full max-w-3xl space-y-4 text-left">
         <h2 className="text-2xl font-bold text-gray-700">How it works</h2>
         <h3 className="text-lg font-medium text-gray-600">
           Create a poll - Share with others - Decide together
@@ -44,7 +44,7 @@ export default function Home() {
           Add options or products in seconds - Invite friends or teammates to
           vote - See results and comments in real time
         </p>
-      </div>
+      </div> */}
 
       {/* Use Cases */}
       {/* <div className="w-full max-w-3xl space-y-4 text-left">

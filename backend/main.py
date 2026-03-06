@@ -97,7 +97,7 @@ async def auth_middleware(request: Request, call_next):
     return response
 
 
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", reload=True)

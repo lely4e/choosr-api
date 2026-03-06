@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
     paths:
       - "backend/**"
+      - "frontend/**"
   pull_request:
     branches: [ "main" ]
     paths:
@@ -50,29 +51,27 @@ jobs:
       GEMINI_API_KEY: "testapikey"
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.12'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pytest python-dotenv
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest python-dotenv
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Wait for Postgres
-      run: sleep 10  # Ensure Postgres is ready
+      - name: Wait for Postgres
+        run: sleep 10
 
-    - name: Run tests
-      run: |
-        pytest -v
+      - name: Run tests
+        run: pytest -v
 
-
-deploy-frontend:
+  deploy-frontend:
     runs-on: ubuntu-latest
     if: |
       contains(toJson(github.event.commits.*.modified), 'frontend/') ||

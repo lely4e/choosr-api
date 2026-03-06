@@ -30,6 +30,22 @@ app = FastAPI(
     version="0.1.0",
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "https://choosr-api.onrender.com",
+        "https://choosr-pied.vercel.app",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 app.include_router(router)
 
@@ -45,21 +61,6 @@ app.add_exception_handler(VoteNotFoundError, vote_not_found_handler)
 app.add_exception_handler(CommentsNotFoundError, comments_not_found_handler)
 app.add_exception_handler(IntegrityError, integrity_error_handler)
 app.add_exception_handler(PollAlreadyExist, poll_already_exist_handler)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:5500",
-        "http://localhost:5500",
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:5175",
-        "https://choosr-api.onrender.com",
-        "https://choosr-pied.vercel.app/",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 @app.middleware("http")

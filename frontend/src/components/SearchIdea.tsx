@@ -76,7 +76,7 @@ export default function SearchIdea({
 }: ExtendedSearchProps) {
     const { uuid } = useParams<{ uuid: string }>();
 
-    const [ideaTitle, setIdeaTitle] = useState(userSearch ?? "");
+    const [ideaTitle] = useState(userSearch ?? "");
     const [searchResults, setSearchResults] = useState<ProductSearch[]>([]);
     const [loading, setLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);

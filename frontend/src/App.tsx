@@ -30,7 +30,7 @@ export default function App() {
         <Route path="/add-poll" element={<ProtectedRoute><PollAdd /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/polls/:uuid/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
-        <Route path="/polls/:uuid/ideas" element={<ProtectedRoute><Ideas /></ProtectedRoute>} />
+        <Route path="/polls/:uuid/ideas" element={<ProtectedRoute><Ideas title={""} budget={0} /></ProtectedRoute>} />
       </Routes>
     </Router>
     </UserProvider>

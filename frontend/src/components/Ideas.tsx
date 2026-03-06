@@ -1,10 +1,8 @@
 import { useRef, useState, useEffect } from "react";
 import { authFetch } from "../utils/auth";
-import Search from "../components/Search";
 import type { GiftIdea } from "../utils/types";
 import type { IdeasProps } from "../utils/types";
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
 import AgeSlider from "./AgeSlider";
 import SearchIdea from "./SearchIdea";
 import { X } from "lucide-react";

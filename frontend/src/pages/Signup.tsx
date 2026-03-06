@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import { API_URL } from "../config";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
@@ -13,7 +14,7 @@ export default function Signup() {
     event.preventDefault();
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/signup", {
+      const response = await fetch(`${API_URL}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

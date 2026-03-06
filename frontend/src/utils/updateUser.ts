@@ -1,8 +1,9 @@
+import { API_URL } from "../config";
 import { authFetch } from "./auth";
 
 export const updateUsername = async (newUsername: string): Promise<void> => {
   const response = await authFetch(
-    `http://127.0.0.1:8000/me`,
+    `${API_URL}/me`,
     {
       method: "PUT",
       headers: {

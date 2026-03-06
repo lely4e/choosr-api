@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import AgeSlider from "./AgeSlider";
 import SearchIdea from "./SearchIdea";
 import { X } from "lucide-react";
+import { API_URL } from "../config";
 
 export default function Ideas({ getProducts, title, budget }: IdeasProps) {
     // const [eventTitle, setEventTitle] = useState("");
@@ -28,7 +29,7 @@ export default function Ideas({ getProducts, title, budget }: IdeasProps) {
         setLoading(true);
         try {
             const response = await authFetch(
-                "http://127.0.0.1:8000/products/suggestion",
+                `${API_URL}/products/suggestion`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },

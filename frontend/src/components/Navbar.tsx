@@ -87,11 +87,11 @@ const { user } = useUser();
                            transition"
               />
             </Link>
-            <ChevronDown
+            {/* <ChevronDown
               size={16}
               strokeWidth={2}
               className="text-[#737791] group-hover:text-[#F25E0D] transition"
-            />
+            /> */}
           </div>
 
         </div>

@@ -16,7 +16,7 @@ async def test_add_product_success(client, create_poll_and_user):
         "price": 99.99,
     }
     response = await client.post(
-        f"/{poll.uuid}/products", headers=headers, json=payload
+        f"/polls/{poll.uuid}/products", headers=headers, json=payload
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -38,7 +38,7 @@ async def test_add_product_failed_empty_data(client, create_poll_and_user):
 
     payload = {}
     response = await client.post(
-        f"/{poll.uuid}/products", headers=headers, json=payload
+        f"/polls/{poll.uuid}/products", headers=headers, json=payload
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
@@ -56,7 +56,7 @@ async def test_add_product_failed_empty_title(client, create_poll_and_user):
         "price": 99.99,
     }
     response = await client.post(
-        f"/{poll.uuid}/products", headers=headers, json=payload
+        f"/polls/{poll.uuid}/products", headers=headers, json=payload
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
@@ -74,7 +74,7 @@ async def test_add_product_failed_empty_price(client, create_poll_and_user):
         "price": None,
     }
     response = await client.post(
-        f"/{poll.uuid}/products", headers=headers, json=payload
+        f"/polls/{poll.uuid}/products", headers=headers, json=payload
     )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
@@ -84,7 +84,9 @@ async def test_add_product_failed_empty_price(client, create_poll_and_user):
 async def test_get_product_success(client, add_user_poll_and_product):
     user, product, headers, poll = add_user_poll_and_product
 
-    response = await client.get(f"/{poll.uuid}/products/{product.id}", headers=headers)
+    response = await client.get(
+        f"/polls/{poll.uuid}/products/{product.id}", headers=headers
+    )
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
@@ -103,7 +105,7 @@ async def test_get_product_success(client, add_user_poll_and_product):
 async def test_get_products_success(client, add_user_poll_and_product):
     user, product, headers, poll = add_user_poll_and_product
 
-    response = await client.get(f"/{poll.uuid}/products", headers=headers)
+    response = await client.get(f"/polls/{poll.uuid}/products", headers=headers)
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
@@ -123,7 +125,7 @@ async def test_delete_product_success(client, add_user_poll_and_product):
     user, product, headers, poll = add_user_poll_and_product
 
     response = await client.delete(
-        f"/{poll.uuid}/products/{product.id}", headers=headers
+        f"/polls/{poll.uuid}/products/{product.id}", headers=headers
     )
 
     assert response.status_code == status.HTTP_200_OK

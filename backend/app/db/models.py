@@ -1,4 +1,14 @@
-from sqlalchemy import String, Integer, Float, ForeignKey, DateTime, func, Boolean, Date
+from sqlalchemy import (
+    String,
+    Integer,
+    Float,
+    ForeignKey,
+    DateTime,
+    func,
+    Boolean,
+    Date,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.database import Base
 import uuid as uuid_module
@@ -30,6 +40,9 @@ class User(Base):
     comments: Mapped[list["Comment"]] = relationship(
         "Comment", back_populates="user", cascade="all, delete-orphan"
     )
+    activities: Mapped[list["Activity"]] = relationship(
+        "Activity", back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class Poll(Base):
@@ -56,6 +69,9 @@ class Poll(Base):
 
     # Relationship to the user
     user: Mapped["User"] = relationship("User", back_populates="polls")
+    activities: Mapped[list["Activity"]] = relationship(
+        "Activity", back_populates="poll", cascade="all, delete-orphan"
+    )
 
     @property
     def created_by(self) -> str | None:
@@ -126,3 +142,27 @@ class Comment(Base):
     # Relationship to the user and product
     user: Mapped["User"] = relationship("User", back_populates="comments")
     product: Mapped["Product"] = relationship("Product", back_populates="comments")
+
+
+class Activity(Base):
+    __tablename__ = "activities"
+
+    # Ensure a user cannot add the same poll multiple times
+    __table_args__ = (UniqueConstraint("user_id", "poll_id", name="uq_user_poll"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    # Foreign Key link to user id, product id
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"), index=True, nullable=False
+    )
+    poll_id: Mapped[int] = mapped_column(
+        ForeignKey("polls.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+
+    # Relationship
+    user: Mapped["User"] = relationship("User", back_populates="activities")
+    poll: Mapped["Poll"] = relationship("Poll", back_populates="activities")

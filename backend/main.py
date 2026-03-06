@@ -18,6 +18,7 @@ from app.core.errors import ProductNotFoundError, product_not_found_handler
 from app.core.errors import VoteNotFoundError, vote_not_found_handler
 from app.core.errors import CommentsNotFoundError, comments_not_found_handler
 from app.core.errors import UserAlreadyExistsError, user_exists_handler
+from app.core.errors import PollAlreadyExist, poll_already_exist_handler
 from app.core.errors import DataError, data_error_handler
 from app.core.errors import IntegrityError, integrity_error_handler
 from fastapi.middleware.cors import CORSMiddleware
@@ -41,6 +42,7 @@ app.add_exception_handler(ProductNotFoundError, product_not_found_handler)
 app.add_exception_handler(VoteNotFoundError, vote_not_found_handler)
 app.add_exception_handler(CommentsNotFoundError, comments_not_found_handler)
 app.add_exception_handler(IntegrityError, integrity_error_handler)
+app.add_exception_handler(PollAlreadyExist, poll_already_exist_handler)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

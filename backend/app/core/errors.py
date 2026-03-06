@@ -72,6 +72,18 @@ async def poll_not_found_handler(request: Request, exc: PollNotFoundError):
     return JSONResponse(status_code=404, content={"error": exc.message})
 
 
+class PollAlreadyExist(Exception):
+    """Custom exception if poll not found."""
+
+    def __init__(self, message="Poll already added to your page"):
+        self.message = message
+        super().__init__(self.message)
+
+
+async def poll_already_exist_handler(request: Request, exc: PollAlreadyExist):
+    return JSONResponse(status_code=400, content={"error": exc.message})
+
+
 class UserAlreadyExistsError(Exception):
     """Custom exception if user already exists."""
 

@@ -9,7 +9,7 @@ async def test_add_vote_success(client, add_user_poll_and_product):
     user, product, headers, poll = add_user_poll_and_product
 
     response = await client.post(
-        f"/{poll.uuid}/products/{product.id}/vote", headers=headers
+        f"/polls/{poll.uuid}/products/{product.id}/vote", headers=headers
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -23,11 +23,11 @@ async def test_add_vote_failed_vote_only_once(client, add_user_poll_and_product)
     user, product, headers, poll = add_user_poll_and_product
 
     response1 = await client.post(
-        f"/{poll.uuid}/products/{product.id}/vote", headers=headers
+        f"/polls/{poll.uuid}/products/{product.id}/vote", headers=headers
     )
 
     response2 = await client.post(
-        f"/{poll.uuid}/products/{product.id}/vote", headers=headers
+        f"/polls/{poll.uuid}/products/{product.id}/vote", headers=headers
     )
 
     assert response2.status_code == status.HTTP_200_OK
@@ -40,7 +40,7 @@ async def test_add_vote_failed_vote_only_once(client, add_user_poll_and_product)
 async def test_add_vote_failed_missing_token(client, add_user_poll_and_product):
     _, product, _, poll = add_user_poll_and_product
 
-    response = await client.post(f"/{poll.uuid}/products/{product.id}/vote")
+    response = await client.post(f"/polls/{poll.uuid}/products/{product.id}/vote")
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     assert response.json() == {"detail": "Missing token"}
@@ -61,7 +61,7 @@ async def test_get_vote_success(client, add_user_poll_and_product):
     db.close()
 
     response = await client.get(
-        f"/{poll.uuid}/products/{product.id}/vote", headers=headers
+        f"/polls/{poll.uuid}/products/{product.id}/vote", headers=headers
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -85,7 +85,7 @@ async def test_delete_vote_success(client, add_user_poll_and_product):
     db.close()
 
     response = await client.delete(
-        f"/{poll.uuid}/products/{product.id}/vote", headers=headers
+        f"/polls/{poll.uuid}/products/{product.id}/vote", headers=headers
     )
 
     assert response.status_code == status.HTTP_200_OK
@@ -99,7 +99,7 @@ async def test_delete_vote_failed(client, add_user_poll_and_product):
     product.id += 1
 
     response = await client.delete(
-        f"/{poll.uuid}/products/{product.id}/vote", headers=headers
+        f"/polls/{poll.uuid}/products/{product.id}/vote", headers=headers
     )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND

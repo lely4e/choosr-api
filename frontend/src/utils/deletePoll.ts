@@ -2,7 +2,7 @@ import { authFetch } from "./auth";
 
 export const deletePoll = async (uuid: string): Promise<void> => {
   const response = await authFetch(
-    `http://127.0.0.1:8000/${uuid}`,
+    `http://127.0.0.1:8000/polls/${uuid}`,
     { method: "DELETE" }
   );
 

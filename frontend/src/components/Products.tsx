@@ -2,7 +2,6 @@ import { useState } from "react";
 import type { ProductsProps, Product, Comment } from "../utils/types";
 import { authFetch } from "../utils/auth";
 import {
-    FileText,
     ThumbsUp,
     CheckCircle,
     MessageCircle,
@@ -36,9 +35,7 @@ export default function Products({
     const { user } = useUser();
 
     const [comments, setComments] = useState<Record<number, Comment[]>>({});
-    const [openCommentsProductId, setOpenCommentsProductId] = useState<
-        number | null
-    >(null);
+    const [openCommentsProductId, setOpenCommentsProductId] = useState<number | null>(null);
     const [textComment, setTextComment] = useState<Record<number, string>>({});
 
     const [open, setOpen] = useState(0);
@@ -53,7 +50,7 @@ export default function Products({
         // if (!window.confirm("Are you sure you want to delete this product?")) return;
         try {
             const response = await authFetch(
-                `http://127.0.0.1:8000/${uuid}/products/${productId}`,
+                `http://127.0.0.1:8000/polls/${uuid}/products/${productId}`,
                 {
                     method: "DELETE",
                 },
@@ -91,7 +88,7 @@ export default function Products({
         }
         try {
             const response = await authFetch(
-                `http://127.0.0.1:8000/${uuid}/products/${productId}/comments`,
+                `http://127.0.0.1:8000/polls/${uuid}/products/${productId}/comments`,
             );
             if (!response.ok) {
                 const data = await response.json().catch(() => ({}));
@@ -131,7 +128,7 @@ export default function Products({
         try {
             if (hasVoted) {
                 await authFetch(
-                    `http://127.0.0.1:8000/${uuid}/products/${productId}/vote`,
+                    `http://127.0.0.1:8000/polls/${uuid}/products/${productId}/vote`,
                     { method: "DELETE" },
                 );
                 toast.success("You unvoted!", {
@@ -140,7 +137,7 @@ export default function Products({
                 console.log("hasVoted ->", hasVoted, "deleting vote");
             } else {
                 await authFetch(
-                    `http://127.0.0.1:8000/${uuid}/products/${productId}/vote`,
+                    `http://127.0.0.1:8000/polls/${uuid}/products/${productId}/vote`,
                     { method: "POST" },
                 );
                 confetti({
@@ -176,7 +173,7 @@ export default function Products({
         }
         try {
             const response = await authFetch(
-                `http://127.0.0.1:8000/${uuid}/products/${productId}/comments`,
+                `http://127.0.0.1:8000/polls/${uuid}/products/${productId}/comments`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -215,7 +212,7 @@ export default function Products({
         // if (!window.confirm("Are you sure you want to delete this comment?")) return;
         try {
             const response = await authFetch(
-                `http://127.0.0.1:8000/${uuid}/products/${productId}/comments/${commentId}`,
+                `http://127.0.0.1:8000/polls/${uuid}/products/${productId}/comments/${commentId}`,
                 { method: "DELETE" },
             );
 
@@ -279,12 +276,12 @@ export default function Products({
                             {/* card-product */}
                             <div
                                 className="relative 
-  bg-white/[0.841]
-max-w-200 backdrop-blur-[10px] rounded-[30px] p-6 
-flex shadow-[0_10px_25px_rgba(0,0,0,0.06),0_4px_10px_rgba(0,0,0,0.04)] 
-transition-all duration-250 ease-in-out gap-3 
-hover:-translate-y-1 
-hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
+                                bg-white/[0.841]
+                                max-w-200 backdrop-blur-[10px] rounded-[30px] p-6 
+                                flex shadow-[0_10px_25px_rgba(0,0,0,0.06),0_4px_10px_rgba(0,0,0,0.04)] 
+                                transition-all duration-250 ease-in-out gap-3 
+                                hover:-translate-y-1 
+                                hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
                             >
                                 {/* product-image-container */}
                                 <div
@@ -344,7 +341,7 @@ hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
 
                                             <button
                                                 className={`group relative flex-1 px-3 py-1.5 border rounded-[20px] flex gap-1.5 justify-center items-center whitespace-nowrap text-[0.85rem] cursor-pointer
-    ${openCommentsProductId === product.id
+                                                ${openCommentsProductId === product.id
                                                         ? "bg-[#F25E0D] text-[#fefefe] border-[#F25E0D]" // active color
                                                         : "bg-transparent text-[#737791] border-[#737791] hover:text-[#fefefe] hover:bg-[#F25E0D] hover:border-[#F25E0D]"
                                                     }`}

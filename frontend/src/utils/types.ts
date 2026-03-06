@@ -8,6 +8,7 @@ export interface UserContext {
 }
 
 export interface Poll {
+  id: number;
   uuid: string;
   title: string;
   budget: number;
@@ -16,6 +17,11 @@ export interface Poll {
   user_id: number;
   total_products: number;
   created_by: string
+}
+
+export interface Activities {
+  uuid: string;
+  user_id: number;
 }
 
 export interface Product {

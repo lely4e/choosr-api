@@ -23,7 +23,7 @@ from app.core.errors import DataError, data_error_handler
 from app.core.errors import IntegrityError, integrity_error_handler
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.app.db.database import Base, engine
+from app.db.database import Base, engine
 
 app = FastAPI(
     title=settings.PROJECT_NAME,

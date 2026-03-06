@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, Request, HTTPException, status
 from app.api import router
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 import jwt
 from jwt import InvalidTokenError
 from app.core.config import settings
@@ -65,7 +65,7 @@ app.add_middleware(
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
     if request.method == "OPTIONS":
-        return await call_next(request)
+        return Response(status_code=200)
 
     if (
         request.url.path.startswith("/docs")

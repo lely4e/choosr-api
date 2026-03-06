@@ -48,7 +48,7 @@ const { user } = useUser();
         {/* LOGO */}
         <Link to="/" className="flex items-center">
           <img
-            src={profileImg}
+            src={logoImg}
             alt="logo"
             className="w-30"
           />

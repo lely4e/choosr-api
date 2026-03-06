@@ -136,7 +136,7 @@ export default function Search({
   const handleAddProduct = async (product: ProductSearch) => {
     try {
       const response = await authFetch(
-        `http://127.0.0.1:8000/${uuid}/products`,
+        `http://127.0.0.1:8000/polls/${uuid}/products`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

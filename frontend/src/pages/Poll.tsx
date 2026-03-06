@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import type { Poll } from "../utils/types";
+import { type Activities, type Poll } from "../utils/types";
 import { authFetch } from "../utils/auth";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -17,12 +17,13 @@ import {
     Gift,
     Dot,
     MoveLeft,
-    Plus,
     Copy,
     Check,
     X,
     User2Icon,
     ChevronUp,
+    MinusCircle,
+    PlusCircle,
 } from "lucide-react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -40,6 +41,8 @@ export default function PollPage() {
 
     const [poll, setPoll] = useState<Poll | null>(null);
 
+    const [activities, setActivities] = useState<Activities[]>([]);
+
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [editedTitle, setEditedTitle] = useState<string>("");
     const [editedBudget, setEditedBudget] = useState<number>(0);
@@ -52,6 +55,7 @@ export default function PollPage() {
     const [products, setProducts] = useState<Product[]>([]);
 
     const [open, setOpen] = useState(false);
+    const [openPoll, setOpenPoll] = useState(false);
     const [share, setShare] = useState(false);
     const [copied, setCopied] = useState(false);
 
@@ -62,12 +66,26 @@ export default function PollPage() {
         setShowProducts(true);
     };
 
+    // fetch activities
+    useEffect(() => {
+        const getActivities = async () => {
+            try {
+                const response = await authFetch("http://127.0.0.1:8000/activities");
+                const data = await response.json();
+                setActivities(data);
+            } catch (error) {
+                console.error("Failed to fetch activities", error);
+            }
+        };
+        getActivities();
+    }, []);
+
     // fetch products
     const getProducts = async () => {
         if (!uuid) return;
         try {
             const response = await authFetch(
-                `http://127.0.0.1:8000/${uuid}/products`,
+                `http://127.0.0.1:8000/polls/${uuid}/products`,
             );
             const data = await response.json();
             setProducts(data);
@@ -93,7 +111,7 @@ export default function PollPage() {
         const getPoll = async () => {
             if (!uuid) return;
             try {
-                const response = await authFetch(`http://127.0.0.1:8000/${uuid}`);
+                const response = await authFetch(`http://127.0.0.1:8000/polls/${uuid}`);
                 const data = await response.json();
                 if (!response.ok) {
                     alert(data.detail || "Unauthorized");
@@ -144,6 +162,81 @@ export default function PollPage() {
             } else {
                 toast.error("Failed to delete poll!");
                 console.error("Failed to delete poll!", error);
+            }
+        }
+    };
+
+    const handleAddSharedPoll = async (uuid: string) => {
+        try {
+            const response = await authFetch("http://127.0.0.1:8000/activities", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    uuid: uuid,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error("Error to add shared poll:", data);
+                throw new Error(data.error || "Unknown error");
+            }
+
+            const updated = await authFetch("http://127.0.0.1:8000/activities");
+            setActivities(await updated.json());
+
+            console.log("Shared Poll added successfully:", data);
+            toast.success("Shared Poll added successfully!", {
+                duration: 2000,
+            });
+
+            setTimeout(() => {
+                navigate("/my-polls");
+            }, 1000);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                toast.error(`Error to add poll: ${error.message}`);
+                console.error(`Error to add poll: ${error.message}`);
+            } else {
+                toast.error("Error to add poll!");
+                console.error("Error to add poll!", error);
+            }
+        }
+    };
+
+    const handleDeleteSharedPoll = async (uuid: string) => {
+        try {
+            const response = await authFetch(
+                `http://127.0.0.1:8000/activities/${uuid}`,
+                {
+                    method: "DELETE",
+                },
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.error("Error to delete shared poll:", data);
+                throw new Error(data.error || "Unknown error");
+            }
+
+            toast.success("Shared Poll deleted successfully!", {
+                duration: 2000,
+            });
+            setOpen(false);
+
+            setTimeout(() => {
+                navigate("/my-polls");
+            }, 2000);
+            console.log("Shared Poll deleted");
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                toast.error(`Failed to delete shared poll: ${error.message}`);
+                console.error(`Failed to delete shared poll: ${error.message}`);
+            } else {
+                toast.error("Failed to delete shared poll!");
+                console.error("Failed to delete shared poll!", error);
             }
         }
     };
@@ -210,6 +303,7 @@ export default function PollPage() {
         }
     };
 
+
     return (
         <>
             {/* Poll card section */}
@@ -256,18 +350,55 @@ export default function PollPage() {
                                     <>
                                         {/* view mode */}
                                         {/* add poll from other creators to vote  */}
-                                        {user && user.id !== poll.user_id && (
-                                            <div
-                                                className="flex  mr-4 cursor-pointer"
-                                                onClick={startEditing}
-                                            >
-                                                <Plus
-                                                    size={20}
-                                                    strokeWidth={1.5}
-                                                    className="hover:text-[#F25E0D]"
-                                                />
+                                        {user && user.id !== poll.user_id && activities && (
+                                            <div className="flex mr-4 cursor-pointer">
+                                                {!activities.some(
+                                                    (activity) => activity.uuid === poll.uuid,
+                                                ) ? (
+                                                    <PlusCircle
+                                                        size={20}
+                                                        strokeWidth={1.5}
+                                                        className="hover:text-[#F25E0D]"
+                                                        onClick={() => handleAddSharedPoll(poll.uuid)}
+                                                    />
+                                                ) : (
+                                                    <MinusCircle
+                                                        size={20}
+                                                        strokeWidth={1.5}
+                                                        className="hover:text-[#F25E0D]"
+                                                        onClick={() => setOpenPoll(true)}
+                                                    />
+                                                )}
                                             </div>
                                         )}
+                                        {openPoll &&
+                                            ReactDOM.createPortal(
+                                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                                                    <div className="bg-white p-10 rounded-2xl">
+                                                        <h3 className="font-bold text-lg ">
+                                                            Are you sure you want to delete this shared poll?
+                                                        </h3>
+
+                                                        <div className="flex mt-10 flex-1 gap-2 justify-between">
+                                                            <button
+                                                                className="flex-1 border  rounded-xl px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
+                                                                onClick={() => setOpenPoll(false)}
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                            <button
+                                                                className="flex-1  bg-red-600 text-white rounded-xl px-6 py-2 hover:bg-red-700 hover:text-white transition-colors"
+                                                                onClick={() =>
+                                                                    handleDeleteSharedPoll(poll.uuid)
+                                                                }
+                                                            >
+                                                                Yes, Delete
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>,
+                                                document.body,
+                                            )}
 
                                         {user && user.id === poll.user_id && (
                                             <>
@@ -352,7 +483,7 @@ export default function PollPage() {
                                                         <div className="bg-white p-10 rounded-2xl z-50 justify-between g-3">
                                                             <div className="flex justify-between">
                                                                 <h3 className="font-bold text-lg mb-4.5 text-center ">
-                                                                    Your event link is ready to share! 🎉
+                                                                    Your event link for <span className="text-[#F25E0D]">{poll.title}</span> is ready to share! 🎉
                                                                 </h3>
                                                                 <X
                                                                     onClick={(e) => {

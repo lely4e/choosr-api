@@ -3,6 +3,7 @@ from .repository.poll_manager import PollManager
 from .repository.product_manager import ProductManager
 from .repository.vote_manager import VoteManager
 from .repository.comment_manager import CommentManager
+from .repository.activity_manager import ActivityManager
 from app.db.database import get_db
 from sqlalchemy.orm import Session
 from fastapi import Depends
@@ -26,3 +27,7 @@ def get_vote_manager(db: Session = Depends(get_db)) -> VoteManager:
 
 def get_comment_manager(db: Session = Depends(get_db)) -> CommentManager:
     return CommentManager(db)
+
+
+def get_activity_manager(db: Session = Depends(get_db)) -> ActivityManager:
+    return ActivityManager(db)

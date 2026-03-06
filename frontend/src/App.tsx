@@ -26,11 +26,11 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/my-polls" element={<ProtectedRoute><Polls /></ProtectedRoute>} />
-        <Route path="/:uuid" element={<ProtectedRoute><PollPage /></ProtectedRoute>} />
+        <Route path="/polls/:uuid" element={<ProtectedRoute><PollPage /></ProtectedRoute>} />
         <Route path="/add-poll" element={<ProtectedRoute><PollAdd /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/:uuid/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
-        <Route path="/:uuid/ideas" element={<ProtectedRoute><Ideas /></ProtectedRoute>} />
+        <Route path="/polls/:uuid/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
+        <Route path="/polls/:uuid/ideas" element={<ProtectedRoute><Ideas /></ProtectedRoute>} />
       </Routes>
     </Router>
     </UserProvider>

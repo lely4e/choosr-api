@@ -10,7 +10,7 @@ from uuid import UUID
 poll_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
-@poll_router.get("/polls", response_model=List[PollOut])
+@poll_router.get("", response_model=List[PollOut])
 async def read_own_items(
     request: Request,
     poll_manager: PollManager = Depends(get_poll_manager),
@@ -21,7 +21,7 @@ async def read_own_items(
     return poll_manager.get_polls_by_user_id(user_id=user.id)
 
 
-@poll_router.post("/polls", response_model=PollOut)
+@poll_router.post("", response_model=PollOut)
 async def create_poll(
     request: Request,
     poll_in: PollIn,

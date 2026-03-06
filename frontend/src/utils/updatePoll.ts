@@ -15,7 +15,7 @@ export const updatePoll = async (
   console.log("Sending body:", JSON.stringify(body));
   console.log("Deadline value:", deadline);
 
-  const response = await authFetch(`http://127.0.0.1:8000/${uuid}`, {
+  const response = await authFetch(`http://127.0.0.1:8000/polls/${uuid}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

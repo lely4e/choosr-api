@@ -52,6 +52,7 @@ app.add_middleware(
         "http://localhost:5174",
         "http://localhost:5175",
         "https://choosr-api.onrender.com",
+        "https://choosr-pied.vercel.app/",
     ],
     allow_credentials=True,
     allow_methods=["*"],

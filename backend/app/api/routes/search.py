@@ -8,22 +8,22 @@ from fastapi.concurrency import run_in_threadpool
 search_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
-# @search_router.get("/products/search", response_model=list[ProductSearchOut])
-# async def read_products_query(
-#     search: str = Query(..., min_length=2)
-# ) -> ProductSearchOut:
-#     """Searching product using Amazon Search API"""
-#     products = await run_in_threadpool(get_items_from_API, search)
-#     return products
-
-
 @search_router.get("/products/search", response_model=list[ProductSearchOut])
 async def read_products_query(
     search: str = Query(..., min_length=2)
 ) -> ProductSearchOut:
     """Searching product using Amazon Search API"""
-    products = await run_in_threadpool(get_items_test, search)
+    products = await run_in_threadpool(get_items_from_API, search)
     return products
+
+
+# @search_router.get("/products/search", response_model=list[ProductSearchOut])
+# async def read_products_query(
+#     search: str = Query(..., min_length=2)
+# ) -> ProductSearchOut:
+#     """Searching product using Amazon Search API"""
+#     products = await run_in_threadpool(get_items_test, search)
+#     return products
 
 
 # @search_router.get("/search/products")

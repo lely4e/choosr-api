@@ -346,7 +346,7 @@ export default function PollPage() {
                                 </h3>
                             </div>
 
-                            <div className="pt-1.5 flex justify-between m-0">
+                            <div className="pt-1.5 flex justify-between items-center">
                                 {!isEditing ? (
                                     <>
                                         {/* view mode */}
@@ -463,13 +463,18 @@ export default function PollPage() {
                                             />
                                         </p> */}
 
-                                        <button className="bg-green-300/50 rounded-[20px] inline-flex items-center justify-center px-2 py-1 text-[0.7rem] h-5 text-[#356d8a] border-none cursor-pointer mr-4 ">
-                                            Active
-                                        </button>
+                                        <div className="flex items-center justify-between mr-3">
+                                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#C8E6C9] rounded-full">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-[#4CAF50]" />
+                                                <span className="text-[10px] font-bold text-gray-700">
+                                                    Active
+                                                </span>
+                                            </div>
+                                        </div>
 
-                                        <p className="flex justify-between  m-0 cursor-pointer">
+                                        <p className="flex justify-between cursor-pointer">
                                             <Share2
-                                                size={18.5}
+                                                size={20}
                                                 strokeWidth={1.5}
                                                 className="hover:text-[#F25E0D]"
                                                 onClick={() => setShare(true)}

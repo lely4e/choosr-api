@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import toast from "react-hot-toast";
 import { API_URL } from "../config";
+import { Mail, Lock } from "lucide-react";
 
 export default function Login() {
   const { login } = useUser();
@@ -62,9 +63,10 @@ export default function Login() {
       console.log("Login successful:", data);
 
       // Redirect to another page
-      setTimeout(() => {
-        navigate("/my-polls");
-      }, 2000);
+      // setTimeout(() => {
+      //   navigate("/my-polls");
+      // }, 2000);
+      navigate("/my-polls")
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(`Error to log in: ${error.message}`);
@@ -91,16 +93,18 @@ export default function Login() {
             onSubmit={handleSubmit}
             className="flex flex-col items-center gap-1.25 pb-0"
           >
-            <h1 className="text-center mb-3 mt-2 text-[#737791] font-black text-3xl">
+            <h1 className="text-center mb-3 mt-5 text-[#737791] font-black text-3xl">
               Welcome back
             </h1>
-            <p className="flex flex-col items-center text-[12px] text-[#737791]">
+            <p className="flex flex-col items-center text-[12px] text-[#737791] mb-5">
               Please sign in to continue
             </p>
 
-            <label htmlFor="email" className="text-[#737791] pt-5">
+            {/* <label htmlFor="email" className="text-[#737791] pt-5">
               Email
-            </label>
+            </label> */}
+            <div className="relative w-75 mb-3">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
             <input
               id="email"
               type="email"
@@ -110,14 +114,17 @@ export default function Login() {
               onChange={(e) =>
                 setLoginData({ ...loginData, email: e.target.value })
               }
-              className="flex w-75 h-10 bg-[#737791] text-white text-center text-[12px] rounded-[10px]
-              placeholder-[#fff1ea] placeholder-italic placeholder-font-normal placeholder-opacity-100 placeholder:text-center"
+              className="w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
+    text-center
+    placeholder-[#fff1ea] placeholder:italic placeholder:font-normal"
               required
             />
-
-            <label htmlFor="password" className="text-[#737791] pt-3">
+</div>
+            {/* <label htmlFor="password" className="text-[#737791] pt-3">
               Password
-            </label>
+            </label> */}
+                  <div className="relative w-75 mb-3">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
             <input
               id="password"
               type="password"
@@ -127,16 +134,17 @@ export default function Login() {
               onChange={(e) =>
                 setLoginData({ ...loginData, password: e.target.value })
               }
-              className="flex w-75 h-10 bg-[#737791] text-white text-center text-[12px] rounded-[10px]
-              placeholder-[#fff1ea] placeholder-italic placeholder-font-normal placeholder-opacity-100 placeholder:text-center"
+              className="w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
+    text-center
+    placeholder-[#fff1ea] placeholder:italic placeholder:font-normal"
               required
             />
-
-            <div className="p-7.5 pt-5">
+</div>
+            <div className="p-7.5 pt-3">
               <button
                 id="submitButton"
                 type="submit"
-                className="justify-center items-center gap-3 mx-auto w-75 h-11 bg-[#F25E0D] rounded-[10px] text-white cursor-pointer"
+                className="justify-center items-center gap-3 mx-auto w-75 h-11 bg-linear-to-r from-[#FF8A5B] to-[#FF6A00] rounded-full text-white cursor-pointer"
               >
                 Sign In
               </button>

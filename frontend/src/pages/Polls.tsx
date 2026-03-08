@@ -130,10 +130,10 @@ const Polls: React.FC = () => {
       <div className="w-full flex">
         {sharedPolls && sharedPolls.length > 0 && (
           <div
-            className={`group relative inline-flex border rounded-3xl px-4 py-1 ml-4 mt-6 cursor-pointer items-center gap-2
+            className={`group relative inline-flex  rounded-3xl px-6 py-3 ml-4 mt-6 cursor-pointer items-center gap-2
             ${openSharedPolls
-                ? "bg-[#F25E0D] text-[#fefefe] border-[#F25E0D]" // active color
-                : "bg-transparent text-[#737791] border-[#737791] hover:text-[#fefefe] hover:bg-[#F25E0D] hover:border-[#F25E0D]"
+                ? "bg-linear-to-r from-[#FF8A5B] to-[#FF6A00] text-white shadow-lg shadow-orange-500/30 scale-105"
+                : "bg-white text-gray-700 border-2 border-gray-200 hover:border-orange-400 hover:text-orange-500 hover:shadow-md"
               }`}
             onClick={() => setOpenSharedPollls((prev) => !prev)}
           >
@@ -166,12 +166,14 @@ const Polls: React.FC = () => {
               >
                 <div className="pb-2.5 flex justify-between items-start gap-5 m-0">
                   {/* active-button */}
-                  <button
-                    className="bg-green-300/50 rounded-[20px] inline-flex items-center justify-center px-2 py-1 text-[0.7rem] 
-                  h-5 text-[#356d8a] border-none"
-                  >
-                    Active
-                  </button>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#C8E6C9] rounded-full">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#4CAF50]" />
+                      <span className="text-[10px] font-bold text-gray-700">
+                        Active
+                      </span>
+                    </div>
+                  </div>
                   <Share2
                     size={20}
                     strokeWidth={1.5}
@@ -191,7 +193,11 @@ const Polls: React.FC = () => {
                         <div className="bg-white p-10 rounded-2xl z-50 justify-between g-3">
                           <div className="flex justify-between">
                             <h3 className="font-bold text-lg mb-4.5 text-center ">
-                              Your event link for <span className="text-[#F25E0D]">{poll.title}</span> is ready to share! 🎉
+                              Your event link for{" "}
+                              <span className="text-[#F25E0D]">
+                                {poll.title}
+                              </span>{" "}
+                              is ready to share! 🎉
                             </h3>
                             <X
                               onClick={(e) => {
@@ -292,10 +298,10 @@ const Polls: React.FC = () => {
       <div className="w-full flex">
         {polls && polls.length > 0 && (
           <div
-            className={`group relative inline-flex border rounded-3xl px-4 py-1 ml-4 mt-14 cursor-pointer items-center gap-2
+            className={`group relative inline-flex  rounded-3xl px-6 py-3 ml-4 mt-14 cursor-pointer items-center gap-2
             ${openPolls
-                ? "bg-[#F25E0D] text-[#fefefe] border-[#F25E0D]" // active color
-                : "bg-transparent text-[#737791] border-[#737791] hover:text-[#fefefe] hover:bg-[#F25E0D] hover:border-[#F25E0D]"
+                ? "bg-linear-to-r from-[#FF8A5B] to-[#FF6A00] text-white shadow-lg shadow-orange-500/30 scale-105"
+                : "bg-white text-gray-700 border-2 border-gray-200 hover:border-orange-400 hover:text-orange-500 hover:shadow-md"
               }`}
             onClick={() => setOpenPollls((prev) => !prev)}
           >
@@ -328,12 +334,14 @@ const Polls: React.FC = () => {
               >
                 <div className="pb-2.5 flex justify-between items-start gap-5 m-0">
                   {/* active-button */}
-                  <button
-                    className="bg-green-300/50 rounded-[20px] inline-flex items-center justify-center px-2 py-1 text-[0.7rem] 
-                  h-5 text-[#356d8a] border-none"
-                  >
-                    Active
-                  </button>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#C8E6C9] rounded-full">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#4CAF50]" />
+                      <span className="text-[10px] font-bold text-gray-700">
+                        Active
+                      </span>
+                    </div>
+                  </div>
 
                   <Share2
                     size={20}
@@ -354,7 +362,11 @@ const Polls: React.FC = () => {
                         <div className="bg-white p-10 rounded-2xl z-50 justify-between g-3">
                           <div className="flex justify-between">
                             <h3 className="font-bold text-lg mb-4.5 text-center ">
-                              Your event link for <span className="text-[#F25E0D]">{poll.title}</span> is ready to share! 🎉
+                              Your event link for{" "}
+                              <span className="text-[#F25E0D]">
+                                {poll.title}
+                              </span>{" "}
+                              is ready to share! 🎉
                             </h3>
                             <X
                               onClick={(e) => {

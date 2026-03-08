@@ -12,6 +12,7 @@ import Search from "./components/Search"
 import Ideas from "./components/Ideas"
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
+import Footer from "./components/Footer"
 
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/polls/:uuid/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
         <Route path="/polls/:uuid/ideas" element={<ProtectedRoute><Ideas title={""} budget={0} /></ProtectedRoute>} />
       </Routes>
+      <Footer />
     </Router>
     </UserProvider>
     </>

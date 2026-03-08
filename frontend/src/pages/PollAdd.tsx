@@ -74,12 +74,14 @@ export default function addPoll() {
                 {/* poll-text */}
                 <div className="pb-2.5 flex justify-between items-start gap-5 m-0">
                   {/* active-button */}
-                  <button
-                    className="bg-green-300/50 rounded-[20px] inline-flex items-center justify-center px-2 py-1 text-[0.7rem] 
-                  h-5 text-[#356d8a] border-none opacity-40"
-                  >
-                    Active
-                  </button>
+                   <div className="flex items-center justify-between mb-3 opacity-40">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#C8E6C9] rounded-full">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#4CAF50]" />
+                      <span className="text-[10px] font-bold text-gray-700">
+                        Active
+                      </span>
+                    </div>
+                  </div>
                   <Share2 size={20} strokeWidth={1.5} className="opacity-40" />
                 </div>
                 {/* poll-text */}
@@ -144,7 +146,7 @@ export default function addPoll() {
                   <button
                     id="submitButton"
                     type="submit"
-                    className="justify-center items-center  mx-auto w-full h-12 bg-[#F25E0D] rounded-3xl text-white cursor-pointer"
+                    className="justify-center items-center  mx-auto w-full h-12 bg-linear-to-r from-[#FF8A5B] to-[#FF6A00] rounded-3xl text-white cursor-pointer"
                   >
                     Create Poll
                   </button>

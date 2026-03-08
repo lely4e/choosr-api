@@ -108,3 +108,8 @@ export interface SearchBarProps {
   showProducts: boolean;
   handleSearch: () => void;
 }
+
+export interface Item {
+  icon?: React.ElementType;
+  iconColor: string;
+};

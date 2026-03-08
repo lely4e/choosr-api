@@ -448,10 +448,10 @@ export default function Products({
                                                 e.stopPropagation();
                                                 handleVote(product.id, product.has_voted, e);
                                             }}
-                                            className={`group relative flex w-full rounded-xl items-center justify-center 
+                                            className={`group relative flex w-full rounded-full items-center justify-center 
                                                 gap-2.5 py-4 transition-colors duration-200 text-white 
                                             ${!product.has_voted
-                                                    ? "bg-[#F25E0D] cursor-pointer"
+                                                    ? "bg-linear-to-r from-[#FF8A5B] to-[#FF6A00] cursor-pointer"
                                                     : "bg-[#B0B6CC] "
                                                 }`}
                                         >

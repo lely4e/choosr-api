@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { API_URL } from "../config";
+import { User, Lock, Mail } from "lucide-react";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
@@ -67,31 +68,38 @@ export default function Signup() {
             onSubmit={handleSubmit}
             className="flex flex-col items-center gap-1.25 pb-0"
           >
-            <h1 className="text-center mb-3 mt-2 text-[#737791] font-black text-3xl">
+            <h1 className="text-center mb-3 mt-5 text-[#737791] font-black text-3xl">
               Create your account
             </h1>
-            <p className="flex flex-col items-center text-[12px] text-[#737791]">
+            <p className="flex flex-col items-center text-[12px] text-[#737791] mb-5">
               Get started in seconds
             </p>
 
-            <label htmlFor="username" className="text-[#737791] pt-5">
+            {/* <label htmlFor="username" className="text-[#737791] pt-5">
               Username
-            </label>
-            <input
-              id="username"
-              type="username"
-              name="username"
-              placeholder="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)} // e - event (React.ChangeEvent), e.target - input element itself(type="email"), e.taget.value = current text inside the input
-              className="flex w-75 h-10 bg-[#737791] text-white text-center text-[12px] rounded-[10px]
-              placeholder-[#fff1ea] placeholder-italic placeholder-font-normal placeholder-opacity-100 placeholder:text-center"
-              required
-            />
+            </label> */}
+            <div className="relative w-75 mb-3">
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
 
+              <input
+                id="username"
+                type="text"
+                name="username"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
+    text-center
+    placeholder-[#fff1ea] placeholder:italic placeholder:font-normal"
+                required
+              />
+            </div>
+            {/* 
             <label htmlFor="email" className="text-[#737791] pt-3">
               Email
-            </label>
+            </label> */}
+            <div className="relative w-75 mb-3">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
             <input
               id="email"
               type="email"
@@ -99,14 +107,17 @@ export default function Signup() {
               placeholder="email@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)} // e - event (React.ChangeEvent), e.target - input element itself(type="email"), e.taget.value = current text inside the input
-              className="flex w-75 h-10 bg-[#737791] text-white text-center text-[12px] rounded-[10px]
-              placeholder-[#fff1ea] placeholder-italic placeholder-font-normal placeholder-opacity-100 placeholder:text-center"
+              className="w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
+    text-center
+    placeholder-[#fff1ea] placeholder:italic placeholder:font-normal"
               required
             />
-
-            <label htmlFor="password" className="text-[#737791] pt-3">
+</div>
+            {/* <label htmlFor="password" className="text-[#737791] pt-3">
               Password
-            </label>
+            </label> */}
+             <div className="relative w-75 mb-3">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
             <input
               id="password"
               type="password"
@@ -114,16 +125,17 @@ export default function Signup() {
               placeholder="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="flex w-75 h-10 bg-[#737791] text-white text-center text-[12px] rounded-[10px]
-              placeholder-[#fff1ea] placeholder-italic placeholder-font-normal placeholder-opacity-100 placeholder:text-center"
+              className="w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
+    text-center
+    placeholder-[#fff1ea] placeholder:italic placeholder:font-normal"
               required
             />
-
-            <div className="p-7.5 pt-5">
+</div>
+            <div className="p-7.5 pt-3">
               <button
                 id="submitButton"
                 type="submit"
-                className="justify-center items-center gap-3 mx-auto w-75 h-11 bg-[#F25E0D] rounded-[10px] text-white cursor-pointer"
+                className="justify-center items-center gap-3 mx-auto w-75 h-11 bg-linear-to-r from-[#FF8A5B] to-[#FF6A00] rounded-full text-white cursor-pointer"
               >
                 Signup
               </button>

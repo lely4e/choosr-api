@@ -24,10 +24,3 @@ async def read_products_query(
 #     """Searching product using Amazon Search API"""
 #     products = await run_in_threadpool(get_items_test, search)
 #     return products
-
-
-# @search_router.get("/search/products")
-# async def read_products_query(search: str):
-#     """Searching product using Search API"""
-#     products = get_items_test(search)
-#     return products

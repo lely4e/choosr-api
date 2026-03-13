@@ -156,7 +156,7 @@ const Home: FC = () => {
         </div>
 
         {/* Main content — centered ballot box */}
-        <div className="relative min-h-screen flex items-center justify-center px-8 pt-0">
+        <div className="relative min-h-screen flex justify-center px-8 pt-20">
           <div className="relative max-w-4xl w-full">
             {/* Main card */}
             <motion.div

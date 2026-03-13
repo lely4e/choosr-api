@@ -1,9 +1,11 @@
+import toast from "react-hot-toast";
 
 export async function authFetch(url: string, options: RequestInit = {}) {
   const token = sessionStorage.getItem("access_token");
 
   if (!token) {
-    alert("No access token found. Please log in.");
+    toast.error("No access token found. Please log in.");
+    window.location.href = "/login";
     throw new Error("No access token");
   }
 
@@ -14,6 +16,12 @@ export async function authFetch(url: string, options: RequestInit = {}) {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  if (response.status === 401 || response.status === 403) {
+    toast.error("Your session has expired. Please log in again.");
+    sessionStorage.removeItem("access_token");
+    window.location.href = "/login";
+  }
 
   return response;
 }

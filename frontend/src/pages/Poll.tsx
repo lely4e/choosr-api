@@ -30,8 +30,9 @@ import "slick-carousel/slick/slick-theme.css";
 import type { Product } from "../utils/types";
 import { useUser } from "../context/UserContext";
 import toast from "react-hot-toast";
-import ReactDOM from "react-dom";
 import { API_URL } from "../config";
+import Modal from "../components/Modal";
+import { Link } from "react-router-dom";
 
 export default function PollPage() {
     const { user } = useUser();
@@ -286,7 +287,7 @@ export default function PollPage() {
 
     const handleCopy = async () => {
         if (!uuid) return;
-        const linkToCopy = `https://choosr/polls/${uuid}`;
+        const linkToCopy = `${window.location.origin}/polls/${uuid}`;
 
         try {
             await navigator.clipboard.writeText(linkToCopy);
@@ -311,12 +312,12 @@ export default function PollPage() {
             <div className="mx-auto flex justify-center px-4">
                 {/* product-container */}
                 <div className="grid gap-6 w-full max-w-200 mt-10">
-                    <a
-                        href="/my-polls"
+                    <Link
+                        to="/my-polls"
                         className="flex gap-3 text-[#33aaea] hover:text-[#F25E0D] text-left"
                     >
                         <MoveLeft /> Back to polls
-                    </a>
+                    </Link>
 
                     {/* card-poll */}
                     <div
@@ -372,34 +373,27 @@ export default function PollPage() {
                                                 )}
                                             </div>
                                         )}
-                                        {openPoll &&
-                                            ReactDOM.createPortal(
-                                                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                                                    <div className="bg-white p-10 rounded-2xl">
-                                                        <h3 className="font-bold text-lg ">
-                                                            Are you sure you want to delete this shared poll?
-                                                        </h3>
-
-                                                        <div className="flex mt-10 flex-1 gap-2 justify-between">
-                                                            <button
-                                                                className="flex-1 border  rounded-xl px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
-                                                                onClick={() => setOpenPoll(false)}
-                                                            >
-                                                                Cancel
-                                                            </button>
-                                                            <button
-                                                                className="flex-1  bg-red-600 text-white rounded-xl px-6 py-2 hover:bg-red-700 hover:text-white transition-colors"
-                                                                onClick={() =>
-                                                                    handleDeleteSharedPoll(poll.uuid)
-                                                                }
-                                                            >
-                                                                Yes, Delete
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>,
-                                                document.body,
-                                            )}
+                                        <Modal isOpen={openPoll} onClose={() => setOpenPoll(false)}>
+                                            <h3 className="font-bold text-lg ">
+                                                Are you sure you want to delete this shared poll?
+                                            </h3>
+                                            <div className="flex mt-10 flex-1 gap-2 justify-between">
+                                                <button
+                                                    className="flex-1 border  rounded-xl px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
+                                                    onClick={() => setOpenPoll(false)}
+                                                >
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    className="flex-1  bg-red-600 text-white rounded-xl px-6 py-2 hover:bg-red-700 hover:text-white transition-colors"
+                                                    onClick={() =>
+                                                        handleDeleteSharedPoll(poll.uuid)
+                                                    }
+                                                >
+                                                    Yes, Delete
+                                                </button>
+                                            </div>
+                                        </Modal>
 
                                         {user && user.id === poll.user_id && (
                                             <>
@@ -423,34 +417,27 @@ export default function PollPage() {
                                                         />
                                                     </p>
 
-                                                    {open &&
-                                                        ReactDOM.createPortal(
-                                                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                                                                <div className="bg-white p-10 rounded-2xl">
-                                                                    <h3 className="font-bold text-lg ">
-                                                                        Are you sure you want to delete this poll?
-                                                                    </h3>
-
-                                                                    <div className="flex mt-10 flex-1 gap-2 justify-between">
-                                                                        <button
-                                                                            className="flex-1 border  rounded-xl px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
-                                                                            onClick={() => setOpen(false)}
-                                                                        >
-                                                                            Cancel
-                                                                        </button>
-                                                                        <button
-                                                                            className="flex-1  bg-red-600 text-white rounded-xl px-6 py-2 hover:bg-red-700 hover:text-white transition-colors"
-                                                                            onClick={(e) =>
-                                                                                handleDeletePoll(e, poll.uuid)
-                                                                            }
-                                                                        >
-                                                                            Yes, Delete
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>,
-                                                            document.body,
-                                                        )}
+                                                    <Modal isOpen={open} onClose={() => setOpen(false)}>
+                                                        <h3 className="font-bold text-lg ">
+                                                            Are you sure you want to delete this poll?
+                                                        </h3>
+                                                        <div className="flex mt-10 flex-1 gap-2 justify-between">
+                                                            <button
+                                                                className="flex-1 border  rounded-xl px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
+                                                                onClick={() => setOpen(false)}
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                            <button
+                                                                className="flex-1  bg-red-600 text-white rounded-xl px-6 py-2 hover:bg-red-700 hover:text-white transition-colors"
+                                                                onClick={(e) =>
+                                                                    handleDeletePoll(e, poll.uuid)
+                                                                }
+                                                            >
+                                                                Yes, Delete
+                                                            </button>
+                                                        </div>
+                                                    </Modal>
                                                 </div>
                                             </>
                                         )}
@@ -483,55 +470,53 @@ export default function PollPage() {
 
                                         {/* share button */}
                                         <div>
-                                            {share &&
-                                                ReactDOM.createPortal(
-                                                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-9999">
-                                                        <div className="bg-white p-10 rounded-2xl z-50 justify-between g-3">
-                                                            <div className="flex justify-between">
-                                                                <h3 className="font-bold text-lg mb-4.5 text-center ">
-                                                                    Your event link for <span className="text-[#F25E0D]">{poll.title}</span> is ready to share! 🎉
-                                                                </h3>
-                                                                <X
-                                                                    onClick={(e) => {
-                                                                        e.preventDefault();
-                                                                        e.stopPropagation();
-                                                                        setShare(false);
-                                                                    }}
-                                                                    className="cursor-pointer"
-                                                                />
-                                                            </div>
-                                                            <div className="flex">
-                                                                <input
-                                                                    className="border-0 border-b border-[#F25E0D] bg-transparent  text-[#737791] pl-2.5 text-base w-125 h-12  focus:outline-none"
-                                                                    id={uuid}
-                                                                    value={`https://choosr/polls/${uuid}`}
-                                                                    readOnly
-                                                                />
+                                            <Modal isOpen={share} onClose={() => setShare(false)}>
+                                                <div className="flex justify-between">
+                                                    <h3 className="font-bold text-lg mb-4.5 text-center ">
+                                                        Your event link for{" "}
+                                                        <span className="text-[#F25E0D]">
+                                                            {poll.title}
+                                                        </span>{" "}
+                                                        is ready to share! 🎉
+                                                    </h3>
+                                                    <X
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            setShare(false);
+                                                        }}
+                                                        className="cursor-pointer"
+                                                    />
+                                                </div>
+                                                <div className="flex">
+                                                    <input
+                                                        className="border-0 border-b border-[#F25E0D] bg-transparent  text-[#737791] pl-2.5 text-base w-125 h-12  focus:outline-none"
+                                                        id={uuid}
+                                                        value={`${window.location.origin}/polls/${uuid}`}
+                                                        readOnly
+                                                    />
 
-                                                                <button
-                                                                    onClick={handleCopy}
-                                                                    className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-xl
+                                                    <button
+                                                        onClick={handleCopy}
+                                                        className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-xl
                                                                     ${!copied
-                                                                            ? "bg-[#F25E0D] text-white cursor-pointer"
-                                                                            : "bg-[#B0B6CC]"
-                                                                        }
+                                                                        ? "bg-[#F25E0D] text-white cursor-pointer"
+                                                                        : "bg-[#B0B6CC]"
+                                                                    }
                                                                 `}
-                                                                >
-                                                                    {!copied ? (
-                                                                        <Copy size={20} strokeWidth={2} />
-                                                                    ) : (
-                                                                        <Check
-                                                                            size={20}
-                                                                            strokeWidth={2}
-                                                                            style={{ color: "white" }}
-                                                                        />
-                                                                    )}
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>,
-                                                    document.body,
-                                                )}
+                                                    >
+                                                        {!copied ? (
+                                                            <Copy size={20} strokeWidth={2} />
+                                                        ) : (
+                                                            <Check
+                                                                size={20}
+                                                                strokeWidth={2}
+                                                                style={{ color: "white" }}
+                                                            />
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            </Modal>
                                         </div>
                                         {/* <p className="flex justify-between items-start gap-5 m-0 cursor-pointer ">
                                             <strong>

@@ -14,8 +14,8 @@ import {
   ChevronUp,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import ReactDOM from "react-dom";
 import { API_URL } from "../config";
+import Modal from "../components/Modal";
 
 const Polls: React.FC = () => {
   const [polls, setPolls] = useState<Poll[]>([]);
@@ -87,7 +87,7 @@ const Polls: React.FC = () => {
 
   const handleCopy = async (uuid: string) => {
     if (!uuid) return;
-    const linkToCopy = `https://choosr/polls/${uuid}`;
+    const linkToCopy = `${window.location.origin}/polls/${uuid}`;
 
     try {
       await navigator.clipboard.writeText(linkToCopy);
@@ -186,67 +186,55 @@ const Polls: React.FC = () => {
                   />
                 </div>
 
-                <div>
-                  {share === poll.uuid &&
-                    ReactDOM.createPortal(
-                      <div className="fixed inset-0 bg-black/15 flex items-center justify-center z-9999">
-                        <div className="bg-white p-10 rounded-2xl z-50 justify-between g-3">
-                          <div className="flex justify-between">
-                            <h3 className="font-bold text-lg mb-4.5 text-center ">
-                              Your event link for{" "}
-                              <span className="text-[#F25E0D]">
-                                {poll.title}
-                              </span>{" "}
-                              is ready to share! 🎉
-                            </h3>
-                            <X
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setShare(null);
-                              }}
-                              className="cursor-pointer"
-                            />
-                          </div>
-                          <div className="flex">
-                            <input
-                              className="border-0 border-b border-[#F25E0D] bg-transparent text-[#737791] pl-2.5 text-base w-125 h-12 "
-                              id={poll.uuid}
-                              value={`https://choosr/polls/${poll.uuid}`}
-                              readOnly
-                            />
+                <Modal isOpen={share === poll.uuid} onClose={() => setShare(null)}>
+                  <div className="flex justify-between">
+                    <h3 className="font-bold text-lg mb-4.5 text-center ">
+                      Your event link for{" "}
+                      <span className="text-[#F25E0D]">{poll.title}</span> is
+                      ready to share! 🎉
+                    </h3>
+                    <X
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShare(null);
+                      }}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex">
+                    <input
+                      className="border-0 border-b border-[#F25E0D] bg-transparent text-[#737791] pl-2.5 text-base w-125 h-12 "
+                      id={poll.uuid}
+                      value={`${window.location.origin}/polls/${poll.uuid}`}
+                      readOnly
+                    />
 
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleCopy(poll.uuid);
-                              }}
-                              className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-xl
-                             ${!copied
-                                  ? "bg-[#F25E0D] text-white cursor-pointer"
-                                  : "bg-[#B0B6CC]"
-                                }
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleCopy(poll.uuid);
+                      }}
+                      className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-xl
+                             ${copied === poll.uuid
+                                ? "bg-[#B0B6CC]"
+                                : "bg-[#F25E0D] text-white cursor-pointer"
+                              }
                            `}
-                            >
-                              {!copied ? (
-                                <Copy size={20} strokeWidth={2} />
-                              ) : (
-                                <Check
-                                  size={20}
-                                  strokeWidth={2}
-                                  style={{ color: "white" }}
-                                />
-                              )}
-                            </button>
-
-                            {/* </div> */}
-                          </div>
-                        </div>
-                      </div>,
-                      document.body,
-                    )}
-                </div>
+                    >
+                      {copied === poll.uuid ? (
+                        <Check
+                          size={20}
+                          strokeWidth={2}
+                          style={{ color: "white" }}
+                        />
+                      ) : (
+                        <Copy size={20} strokeWidth={2} />
+                      )}
+                    </button>
+                  </div>
+                </Modal>
 
                 <h3 className="text-left m-0 font-bold text-3xl text-black ">
                   {poll.title}
@@ -355,67 +343,55 @@ const Polls: React.FC = () => {
                   />
                 </div>
 
-                <div>
-                  {share === poll.uuid &&
-                    ReactDOM.createPortal(
-                      <div className="fixed inset-0 bg-black/15 flex items-center justify-center z-9999">
-                        <div className="bg-white p-10 rounded-2xl z-50 justify-between g-3">
-                          <div className="flex justify-between">
-                            <h3 className="font-bold text-lg mb-4.5 text-center ">
-                              Your event link for{" "}
-                              <span className="text-[#F25E0D]">
-                                {poll.title}
-                              </span>{" "}
-                              is ready to share! 🎉
-                            </h3>
-                            <X
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setShare(null);
-                              }}
-                              className="cursor-pointer"
-                            />
-                          </div>
-                          <div className="flex">
-                            <input
-                              className="border-0 border-b border-[#F25E0D] bg-transparent text-[#737791] pl-2.5 text-base w-125 h-12 "
-                              id={poll.uuid}
-                              value={`https://choosr/polls/${poll.uuid}`}
-                              readOnly
-                            />
+                <Modal isOpen={share === poll.uuid} onClose={() => setShare(null)}>
+                  <div className="flex justify-between">
+                    <h3 className="font-bold text-lg mb-4.5 text-center ">
+                      Your event link for{" "}
+                      <span className="text-[#F25E0D]">{poll.title}</span> is
+                      ready to share! 🎉
+                    </h3>
+                    <X
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShare(null);
+                      }}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex">
+                    <input
+                      className="border-0 border-b border-[#F25E0D] bg-transparent text-[#737791] pl-2.5 text-base w-125 h-12 "
+                      id={poll.uuid}
+                      value={`${window.location.origin}/polls/${poll.uuid}`}
+                      readOnly
+                    />
 
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleCopy(poll.uuid);
-                              }}
-                              className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-xl
-                              ${!copied
-                                  ? "bg-[#F25E0D] text-white cursor-pointer"
-                                  : "bg-[#B0B6CC]"
-                                }
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleCopy(poll.uuid);
+                      }}
+                      className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-xl
+                              ${copied === poll.uuid
+                                ? "bg-[#B0B6CC]"
+                                : "bg-[#F25E0D] text-white cursor-pointer"
+                              }
                           `}
-                            >
-                              {!copied ? (
-                                <Copy size={20} strokeWidth={2} />
-                              ) : (
-                                <Check
-                                  size={20}
-                                  strokeWidth={2}
-                                  style={{ color: "white" }}
-                                />
-                              )}
-                            </button>
-
-                            {/* </div> */}
-                          </div>
-                        </div>
-                      </div>,
-                      document.body,
-                    )}
-                </div>
+                    >
+                      {copied === poll.uuid ? (
+                        <Check
+                          size={20}
+                          strokeWidth={2}
+                          style={{ color: "white" }}
+                        />
+                      ) : (
+                        <Copy size={20} strokeWidth={2} />
+                      )}
+                    </button>
+                  </div>
+                </Modal>
 
                 <h3 className="text-left m-0 font-bold text-3xl text-black ">
                   {poll.title}

@@ -27,7 +27,7 @@ const CustomPrevArrow = (props: any) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                background: "#0096FF",
+                background: "#6366f1",
                 borderRadius: "50%",
                 width: 36,
                 height: 36,
@@ -51,7 +51,7 @@ const CustomNextArrow = (props: any) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                background: "#0096FF",
+                background: "#6366f1",
                 borderRadius: "50%",
                 width: 36,
                 height: 36,
@@ -217,7 +217,7 @@ export default function SearchIdea({
 
             {/* Products carousel */}
             {showProducts && searchResults.length > 0 && (
-                <div className="w-full bg-[#0095ff20] rounded-[30px] p-10">
+                <div className="w-full bg-[#6B5CFF33] rounded-[30px] p-10">
                     <Slider {...settings}>
                         {searchResults.map((product) => (
                             <div key={product.link} className="flex justify-center px-2">
@@ -277,7 +277,7 @@ export default function SearchIdea({
                                transition
                                ${addedProduct.includes(product.link)
                                                         ? "bg-[#B0B6CC] cursor-not-allowed"
-                                                        : "bg-linear-to-br from-[#0084ff] to-[#48d9ec] hover:opacity-90 cursor-pointer "
+                                                        : "bg-linear-to-br from-indigo-500 to-pink-300 hover:opacity-90 cursor-pointer "
                                                     }`}
                                             >
                                                 {addedProduct.includes(product.link) ? (

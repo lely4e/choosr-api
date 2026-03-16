@@ -33,6 +33,7 @@ import toast from "react-hot-toast";
 import { API_URL } from "../config";
 import Modal from "../components/Modal";
 import { Link } from "react-router-dom";
+import Toggle from "../components/Toggle";
 
 export default function PollPage() {
     const { user } = useUser();
@@ -50,6 +51,7 @@ export default function PollPage() {
     const [editedBudget, setEditedBudget] = useState<number>(0);
     const [editedDescription, setEditedDescription] = useState<string>("");
     const [editedDeadline, setEditedDeadline] = useState<string>("");
+    const [editedManuallyClosed, setEditedManuallyClosed] = useState<boolean>(false);
 
     const [showGiftIdeas, setShowGiftIdeas] = useState(false);
     const [showProducts, setShowProducts] = useState(true);
@@ -250,6 +252,7 @@ export default function PollPage() {
         setEditedBudget(poll.budget);
         setEditedDescription(poll.description || "");
         setEditedDeadline(poll.deadline || "");
+        setEditedManuallyClosed(poll.manually_closed);
     };
 
     const cancelEditing = () => setIsEditing(false);
@@ -263,6 +266,7 @@ export default function PollPage() {
                 editedBudget,
                 editedDescription || undefined,
                 editedDeadline || undefined,
+                editedManuallyClosed,
             );
 
             console.log("Server response:", updatedPoll);
@@ -314,7 +318,7 @@ export default function PollPage() {
                 <div className="grid gap-6 w-full max-w-200 mt-10">
                     <Link
                         to="/my-polls"
-                        className="flex gap-3 text-[#33aaea] hover:text-[#F25E0D] text-left"
+                        className="flex gap-3 text-[#6366f1] hover:text-[#4F46E5] text-left"
                     >
                         <MoveLeft /> Back to polls
                     </Link>
@@ -335,14 +339,33 @@ export default function PollPage() {
                                         poll.title
                                     ) : (
                                         // edit mode
-                                        <div className="flex justify-between gap-2.5">
-                                            <input
-                                                type="text"
-                                                value={editedTitle}
-                                                onChange={(e) => setEditedTitle(e.target.value)}
-                                                className=" w-full border-b border-gray-300 border-0 focus:border-blue-500 focus:outline-none text-left font-bold text-3xl text-black"
-                                            />
-                                        </div>
+                                        <>
+                                            <div className="flex justify-between gap-2.5">
+
+                                                <input
+                                                    type="text"
+                                                    value={editedTitle}
+                                                    onChange={(e) => setEditedTitle(e.target.value)}
+                                                    className=" w-full border-b border-gray-300 border-0 focus:border-blue-500 focus:outline-none text-left font-bold text-3xl text-black"
+                                                />
+
+                                                <div className="text-xs font-bold text-gray-700">
+                                                    <Toggle
+                                                        // label={editedManuallyClosed ? "Poll closed" : "Poll opened"}
+                                                        initial={!editedManuallyClosed}
+                                                        onChange={(checked) => {
+                                                            setEditedManuallyClosed(!checked);
+                                                            {
+                                                                !editedManuallyClosed ?
+                                                                toast.success("Poll closed") :
+                                                                toast.success("Poll opened")
+                                                            }
+                                                        }
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>
+                                        </>
                                     )}
                                 </h3>
                             </div>
@@ -379,13 +402,13 @@ export default function PollPage() {
                                             </h3>
                                             <div className="flex mt-10 flex-1 gap-2 justify-between">
                                                 <button
-                                                    className="flex-1 border  rounded-xl px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
+                                                    className="flex-1 border  rounded-full px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
                                                     onClick={() => setOpenPoll(false)}
                                                 >
                                                     Cancel
                                                 </button>
                                                 <button
-                                                    className="flex-1  bg-red-600 text-white rounded-xl px-6 py-2 hover:bg-red-700 hover:text-white transition-colors"
+                                                    className="flex-1  bg-red-600 text-white rounded-full px-6 py-2 hover:bg-red-700 hover:text-white transition-colors"
                                                     onClick={() =>
                                                         handleDeleteSharedPoll(poll.uuid)
                                                     }
@@ -423,13 +446,13 @@ export default function PollPage() {
                                                         </h3>
                                                         <div className="flex mt-10 flex-1 gap-2 justify-between">
                                                             <button
-                                                                className="flex-1 border  rounded-xl px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
+                                                                className="flex-1 border  rounded-full px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
                                                                 onClick={() => setOpen(false)}
                                                             >
                                                                 Cancel
                                                             </button>
                                                             <button
-                                                                className="flex-1  bg-red-600 text-white rounded-xl px-6 py-2 hover:bg-red-700 hover:text-white transition-colors"
+                                                                className="flex-1  bg-red-600 text-white rounded-full px-6 py-2 hover:bg-red-700 hover:text-white transition-colors"
                                                                 onClick={(e) =>
                                                                     handleDeletePoll(e, poll.uuid)
                                                                 }
@@ -451,10 +474,12 @@ export default function PollPage() {
                                         </p> */}
 
                                         <div className="flex items-center justify-between mr-3">
-                                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#C8E6C9] rounded-full">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-[#4CAF50]" />
+                                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+                                                style={{ backgroundColor: poll.active ? '#C8E6C9' : '#FFCDD2' }}>
+                                                <div className="w-1.5 h-1.5 rounded-full"
+                                                    style={{ backgroundColor: poll.active ? '#4CAF50' : '#F44336' }} />
                                                 <span className="text-[10px] font-bold text-gray-700">
-                                                    Active
+                                                    {poll.active ? "Active" : "Closed"}
                                                 </span>
                                             </div>
                                         </div>
@@ -498,11 +523,11 @@ export default function PollPage() {
 
                                                     <button
                                                         onClick={handleCopy}
-                                                        className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-xl
+                                                        className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-full
                                                                     ${!copied
-                                                                        ? "bg-[#F25E0D] text-white cursor-pointer"
-                                                                        : "bg-[#B0B6CC]"
-                                                                    }
+                                                                ? "bg-[#F25E0D] text-white cursor-pointer"
+                                                                : "bg-[#B0B6CC]"
+                                                            }
                                                                 `}
                                                     >
                                                         {!copied ? (
@@ -615,19 +640,19 @@ export default function PollPage() {
                                             placeholder="Date"
                                             value={editedDeadline || ""}
                                             onChange={(e) => setEditedDeadline(e.target.value)}
-                                            className="bg-[#F25E0D] text-white p-2 rounded-xl"
+                                            className="bg-[#F25E0D] text-white px-6 py-2 rounded-full"
                                         />
 
                                         <button
                                             onClick={cancelEditing}
-                                            className="ml-40 h-8.75 w-full flex-1 items-center text-base justify-center border border-[#737791] text-[#737791] hover:bg-[#B0B6CC] hover:border-[#B0B6CC] hover:text-white transition-colors font-normal rounded-xl cursor-pointer"
+                                            className="ml-40 px-6 py-2 w-full flex-1 items-center text-base justify-center border border-[#737791] text-[#737791] hover:bg-[#B0B6CC] hover:border-[#B0B6CC] hover:text-white transition-colors font-normal rounded-full cursor-pointer"
                                         >
                                             Cancel
                                         </button>
 
                                         <button
                                             onClick={handleApply}
-                                            className="h-8.75 w-full flex-1 items-center text-base justify-center text-white bg-[#0096FF] hover:bg-[#0072c4]  hover:text-white transition-colors font-normal rounded-xl cursor-pointer"
+                                            className="px-6 py-2 w-full flex-1 items-center text-base justify-center text-white bg-[#6366f1] hover:bg-[#4F46E5]  hover:text-white transition-colors font-normal rounded-full cursor-pointer"
                                         >
                                             Apply
                                         </button>

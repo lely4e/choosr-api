@@ -73,6 +73,21 @@ class Poll(Base):
         "Activity", back_populates="poll", cascade="all, delete-orphan"
     )
 
+    manually_closed: Mapped[bool] = mapped_column("manually_closed", Boolean, nullable=False, default=False)
+
+    @property
+    def active(self) -> bool:
+        """True if the poll is not manually closed and the deadline is not reached"""
+        return not self.manually_closed and (self.deadline is None or self.deadline > date.today())
+
+    def close(self) -> None:
+        """Close the poll manually"""
+        self.manually_closed = True
+
+    def open(self) -> None:
+        """Open the poll manually"""
+        self.manually_closed = False
+
     @property
     def created_by(self) -> str | None:
         return self.user.username if self.user else None

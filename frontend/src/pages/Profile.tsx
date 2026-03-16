@@ -120,14 +120,14 @@ export default function Profile() {
 
                   <div className="flex justify-between gap-2.5 ">
                     <button
-                      className="flex-1 border  rounded-xl px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
+                      className="flex-1 border  rounded-full px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
                       onClick={cancelEditing}
                     >
                       Cancel
                     </button>
 
                     <button
-                      className="flex-1  bg-[#0096FF]  text-white rounded-xl px-6 py-2  hover:bg-[#0072c4]  hover:text-white transition-colors"
+                      className="flex-1 text-white rounded-full px-6 py-2  bg-[#6366f1] hover:bg-[#4F46E5]  hover:text-white transition-colors"
                       onClick={async () => {
                         await handleUpdateUser();
                         setIsEditing(false);

@@ -10,6 +10,7 @@ class PollIn(BaseModel):
     budget: float = Field(..., gt=0)
     description: Optional[str] = Field(None, min_length=3, max_length=140)
     deadline: Optional[date] = Field(None)
+    manually_closed: bool = Field(False)
 
 
 class PollOut(BaseModel):
@@ -22,5 +23,7 @@ class PollOut(BaseModel):
     created_at: datetime
     total_products: int
     created_by: str
+    active: bool
+    manually_closed: bool
 
     model_config = ConfigDict(from_attributes=True)

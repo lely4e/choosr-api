@@ -8,10 +8,12 @@ export const updatePoll = async (
   budget: number,
   description?: string,
   deadline?: string,
+  manuallyClosed?: boolean,
 ): Promise<Poll> => {
   const body: Record<string, unknown> = { title, budget };
   if (description) body.description = description;
   if (deadline !== undefined) body.deadline = deadline;
+  if (manuallyClosed !== undefined) body.manually_closed = manuallyClosed;
 
   console.log("Sending body:", JSON.stringify(body));
   console.log("Deadline value:", deadline);

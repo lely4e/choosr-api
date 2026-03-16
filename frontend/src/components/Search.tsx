@@ -34,7 +34,7 @@ const CustomPrevArrow = (props: any) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#0096FF",
+        background: "#6366f1",
         borderRadius: "50%",
         width: 36,
         height: 36,
@@ -58,7 +58,7 @@ const CustomNextArrow = (props: any) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#0096FF",
+        background: "#6366f1",
         borderRadius: "50%",
         width: 36,
         height: 36,
@@ -215,7 +215,7 @@ export default function Search({
             onChange={(e) => setUserInput(e.target.value)}
             placeholder="Search and add products to compare and vote"
             className="flex-1 h-12 px-5 text-base font-serif italic
-                     border-0 border-[#0dadf2] border-b
+                     border-0 border-[#6366f1] border-b
                      bg-transparent
                      placeholder:text-[#737791]
                      placeholder:italic
@@ -226,9 +226,9 @@ export default function Search({
             onClick={handleSearch}
             disabled={loading}
             className="flex items-center justify-center cursor-pointer 
-                     w-12 h-12 rounded-xl
-                     bg-[#0096FF] text-white
-                     transition hover:bg-[#F25E0D]
+                     w-12 h-12 rounded-full
+                     bg-[#6366f1] text-white
+                     transition hover:bg-[#4F46E5]
                      disabled:opacity-50"
           >
             {loading ? (
@@ -254,7 +254,7 @@ export default function Search({
 
       {/* Products carousel */}
       {showProducts && searchResults.length > 0 && (
-        <div className="w-full bg-[#0095ff20] rounded-[30px] p-10">
+        <div className="w-full bg-[#0095FF33] rounded-[30px] p-10">
           <Slider {...settings}>
             {searchResults.map((product) => (
               <div key={product.link} className="flex justify-center px-2">
@@ -339,7 +339,7 @@ export default function Search({
                                transition
                                ${addedProduct.includes(product.link)
                                                     ? "bg-[#B0B6CC] cursor-not-allowed"
-                                                    : "bg-linear-to-br from-[#0084ff] to-[#48d9ec] hover:opacity-90 cursor-pointer "
+                                                    : "bg-linear-to-br from-[#6366F1] to-[#A78BFA] hover:opacity-90 cursor-pointer "
                                                 }`}
                                         >
                                             {addedProduct.includes(product.link) ? (

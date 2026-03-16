@@ -71,10 +71,10 @@ export default function Ideas({ getProducts, title, budget }: IdeasProps) {
     }, [ideas]);
 
     useEffect(() => {
-  if (ideas.length > 0) {
-    setOpenIdeas(true);
-  }
-}, [ideas]);
+        if (ideas.length > 0) {
+            setOpenIdeas(true);
+        }
+    }, [ideas]);
 
     return (
         <>
@@ -209,13 +209,13 @@ export default function Ideas({ getProducts, title, budget }: IdeasProps) {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="mt-10 h-13.5 w-full bg-linear-to-r from-orange-500 to-pink-500 text-white font-medium py-2 rounded-xl hover:opacity-90 transition hover:cursor-pointer"
+                                    className="mt-10 h-13.5 w-full bg-linear-to-r from-orange-500 to-pink-500 text-white font-medium py-2 rounded-full hover:opacity-90 transition hover:cursor-pointer"
                                 >
                                     {loading ? "Loading..." : "Get Ideas"}
                                 </button>
                             </form>
                         </div>
-                        
+
                         {ideas.length > 0 && openIdeas && (
                             <h1
                                 ref={GiftSuggest}
@@ -226,38 +226,38 @@ export default function Ideas({ getProducts, title, budget }: IdeasProps) {
                         )}
 
                         {/* ideas-list */}
-                        {openIdeas && 
-                        <div className="max-w-300 mx-auto px-4 bg-[#fefefe] rounded-[30px] ">
-                            <div className="flex mr-6 pt-5 justify-end">
-                                <X size={30} strokeWidth={2} onClick={(e) => {
-                                                                        e.preventDefault();
-                                                                        e.stopPropagation();
-                                                                        setOpenIdeas(false);
-                                                                    }}
-                                                                    className="cursor-pointer"/>
-                            </div>
-                            {ideas.map((idea, index) => (<div key={index}
+                        {openIdeas &&
+                            <div className="max-w-300 mx-auto px-4 bg-[#fefefe] rounded-[30px] ">
+                                <div className="flex mr-6 pt-5 justify-end">
+                                    <X size={30} strokeWidth={2} onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setOpenIdeas(false);
+                                    }}
+                                        className="cursor-pointer" />
+                                </div>
+                                {ideas.map((idea, index) => (<div key={index}
 
                                 // className="box-content mb-4"
                                 >
-                                {/* card-product-ideas px] */}
-                                <div 
-                                className="flex flex-col gap-3 w-full min-w-75 pl-6 pr-6 "
-                                >
+                                    {/* card-product-ideas px] */}
+                                    <div
+                                        className="flex flex-col gap-3 w-full min-w-75 pl-6 pr-6 "
+                                    >
 
-                                    {/* gift-idea-search-wrapper */}
-                                    <div className="w-full block font-bold mb-4">
-                                        <SearchIdea userSearch={idea.name} getProducts={getProducts} />
-                                        {/* <p className="flex text-left"> {idea.description} </p> */}
-                                        {/* product-description */}
-                                        {/* <div className="flex text-left font-normal">
+                                        {/* gift-idea-search-wrapper */}
+                                        <div className="w-full block font-bold mb-4">
+                                            <SearchIdea userSearch={idea.name} getProducts={getProducts} />
+                                            {/* <p className="flex text-left"> {idea.description} </p> */}
+                                            {/* product-description */}
+                                            {/* <div className="flex text-left font-normal">
                                             {idea.description}
                                         </div> */}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            ))}
-                        </div>}
+                                ))}
+                            </div>}
                     </section>
                 </div>
             </div>

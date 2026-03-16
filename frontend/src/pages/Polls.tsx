@@ -16,6 +16,7 @@ import {
 import toast from "react-hot-toast";
 import { API_URL } from "../config";
 import Modal from "../components/Modal";
+import CreateCard from "../components/CreateCard";
 
 const Polls: React.FC = () => {
   const [polls, setPolls] = useState<Poll[]>([]);
@@ -117,14 +118,6 @@ const Polls: React.FC = () => {
             View, manage, and collaborate on your polls.
           </span>
         </div>
-
-        {/* <button
-          onClick={() => navigate("/add-poll")}
-          className="flex items-center text-white bg-[#F25E0D] rounded-[10px] w-[200px] h-[44px] justify-center" 
-        >
-          <Plus size={20} strokeWidth={2} className="mr-1.5 text-white" />
-          Create Poll
-        </button> */}
       </div>
 
       <div className="w-full flex">
@@ -166,11 +159,21 @@ const Polls: React.FC = () => {
               >
                 <div className="pb-2.5 flex justify-between items-start gap-5 m-0">
                   {/* active-button */}
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#C8E6C9] rounded-full">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#4CAF50]" />
+                  <div className="flex items-center justify-between mr-3">
+                    <div
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+                      style={{
+                        backgroundColor: poll.active ? "#C8E6C9" : "#FFCDD2",
+                      }}
+                    >
+                      <div
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{
+                          backgroundColor: poll.active ? "#4CAF50" : "#F44336",
+                        }}
+                      />
                       <span className="text-[10px] font-bold text-gray-700">
-                        Active
+                        {poll.active ? "Active" : "Closed"}
                       </span>
                     </div>
                   </div>
@@ -186,7 +189,10 @@ const Polls: React.FC = () => {
                   />
                 </div>
 
-                <Modal isOpen={share === poll.uuid} onClose={() => setShare(null)}>
+                <Modal
+                  isOpen={share === poll.uuid}
+                  onClose={() => setShare(null)}
+                >
                   <div className="flex justify-between">
                     <h3 className="font-bold text-lg mb-4.5 text-center ">
                       Your event link for{" "}
@@ -216,11 +222,11 @@ const Polls: React.FC = () => {
                         e.stopPropagation();
                         handleCopy(poll.uuid);
                       }}
-                      className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-xl
+                      className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-full
                              ${copied === poll.uuid
-                                ? "bg-[#B0B6CC]"
-                                : "bg-[#F25E0D] text-white cursor-pointer"
-                              }
+                          ? "bg-[#B0B6CC]"
+                          : "bg-[#F25E0D] text-white cursor-pointer"
+                        }
                            `}
                     >
                       {copied === poll.uuid ? (
@@ -284,23 +290,23 @@ const Polls: React.FC = () => {
       </div>
 
       <div className="w-full flex">
-        {polls && polls.length > 0 && (
-          <div
-            className={`group relative inline-flex  rounded-3xl px-6 py-3 ml-4 mt-14 cursor-pointer items-center gap-2
+        {/* {polls && polls.length > 0 && ( */}
+        <div
+          className={`group relative inline-flex  rounded-3xl px-6 py-3 ml-4 mt-14 cursor-pointer items-center gap-2
             ${openPolls
-                ? "bg-linear-to-r from-[#FF8A5B] to-[#FF6A00] text-white shadow-lg shadow-orange-500/30 scale-105"
-                : "bg-white text-gray-700 border-2 border-gray-200 hover:border-orange-400 hover:text-orange-500 hover:shadow-md"
-              }`}
-            onClick={() => setOpenPollls((prev) => !prev)}
-          >
-            My Polls{" "}
-            {openPolls ? (
-              <ChevronUp size={20} strokeWidth={2} />
-            ) : (
-              <ChevronDown size={20} strokeWidth={2} />
-            )}
-          </div>
-        )}
+              ? "bg-linear-to-r from-[#FF8A5B] to-[#FF6A00] text-white shadow-lg shadow-orange-500/30 scale-105"
+              : "bg-white text-gray-700 border-2 border-gray-200 hover:border-orange-400 hover:text-orange-500 hover:shadow-md"
+            }`}
+          onClick={() => setOpenPollls((prev) => !prev)}
+        >
+          My Polls{" "}
+          {openPolls ? (
+            <ChevronUp size={20} strokeWidth={2} />
+          ) : (
+            <ChevronDown size={20} strokeWidth={2} />
+          )}
+        </div>
+        {/* )} */}
       </div>
       {/* wrap-poll */}
       <div className="mx-auto flex px-4 justify-center">
@@ -322,11 +328,21 @@ const Polls: React.FC = () => {
               >
                 <div className="pb-2.5 flex justify-between items-start gap-5 m-0">
                   {/* active-button */}
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#C8E6C9] rounded-full">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#4CAF50]" />
+                  <div className="flex items-center justify-between mr-3">
+                    <div
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+                      style={{
+                        backgroundColor: poll.active ? "#C8E6C9" : "#FFCDD2",
+                      }}
+                    >
+                      <div
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{
+                          backgroundColor: poll.active ? "#4CAF50" : "#F44336",
+                        }}
+                      />
                       <span className="text-[10px] font-bold text-gray-700">
-                        Active
+                        {poll.active ? "Active" : "Closed"}
                       </span>
                     </div>
                   </div>
@@ -343,7 +359,10 @@ const Polls: React.FC = () => {
                   />
                 </div>
 
-                <Modal isOpen={share === poll.uuid} onClose={() => setShare(null)}>
+                <Modal
+                  isOpen={share === poll.uuid}
+                  onClose={() => setShare(null)}
+                >
                   <div className="flex justify-between">
                     <h3 className="font-bold text-lg mb-4.5 text-center ">
                       Your event link for{" "}
@@ -373,11 +392,11 @@ const Polls: React.FC = () => {
                         e.stopPropagation();
                         handleCopy(poll.uuid);
                       }}
-                      className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-xl
+                      className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-full
                               ${copied === poll.uuid
-                                ? "bg-[#B0B6CC]"
-                                : "bg-[#F25E0D] text-white cursor-pointer"
-                              }
+                          ? "bg-[#B0B6CC]"
+                          : "bg-[#F25E0D] text-white cursor-pointer"
+                        }
                           `}
                     >
                       {copied === poll.uuid ? (
@@ -432,31 +451,13 @@ const Polls: React.FC = () => {
             ))}
 
             {/* create-card */}
-            <div
-              className="h-full box-content bg-white/[0.439] backdrop-blur-[10px] border-2 border-dashed 
-            border-[#cbd5f5] rounded-[30px] p-6 flex flex-col items-center justify-center cursor-pointer 
-            transition-all duration-250 hover:border-[#F25E0D] hover:bg-[rgba(246,143,92,0.05)]"
-              onClick={() => navigate("/add-poll")}
-            >
-              {/* create-icon */}
-              <div className="w-14 h-14 flex items-center justify-center mb-4">
-                <svg
-                  className="w-7 h-7 text-[#9496b8]"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-              </div>
-              {/* create-title */}
-              <p className=" text-slate-600 mb-1 text-sm">Create Poll</p>
-            </div>
+            <CreateCard />
+          </div>
+        )}
+        {/* create-card */}
+        {polls.length === 0 && (
+          <div className="grid gap-6 w-full my-10 mx-auto grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+            <CreateCard />
           </div>
         )}
       </div>

@@ -17,6 +17,8 @@ export interface Poll {
   user_id: number;
   total_products: number;
   created_by: string
+  active: boolean;
+  manually_closed: boolean;
 }
 
 export interface Activities {

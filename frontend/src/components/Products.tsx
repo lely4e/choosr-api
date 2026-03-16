@@ -379,13 +379,13 @@ export default function Products({
 
                                                                 <div className="flex mt-10 flex-1 gap-2 justify-between">
                                                                     <button
-                                                                        className="flex-1 border  rounded-xl px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
+                                                                        className="flex-1 border  rounded-full px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
                                                                         onClick={() => setOpen(0)}
                                                                     >
                                                                         Cancel
                                                                     </button>
                                                                     <button
-                                                                        className="flex-1  bg-red-600 text-white rounded-xl px-6 py-2  hover:bg-red-700 hover:text-white transition-colors"
+                                                                        className="flex-1  bg-red-600 text-white rounded-full px-6 py-2  hover:bg-red-700 hover:text-white transition-colors"
                                                                         onClick={() =>
                                                                             handleDeleteProduct(product.id)
                                                                         }

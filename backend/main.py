@@ -22,12 +22,27 @@ from app.core.errors import PollAlreadyExist, poll_already_exist_handler
 from app.core.errors import DataError, data_error_handler
 from app.core.errors import IntegrityError, integrity_error_handler
 from fastapi.middleware.cors import CORSMiddleware
-
 from app.db.database import Base, engine
+from contextlib import asynccontextmanager
+from scheduler import start_scheduler, shutdown_scheduler
+from app.core.logging import setup_logger
+
+
+logger = setup_logger()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("Starting application")
+    start_scheduler()
+    yield
+    shutdown_scheduler()
+    logger.info("Shutting down application")
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version="0.1.0",
+    lifespan=lifespan
 )
 
 

@@ -1,11 +1,11 @@
-from app.db.models import Poll, Product
-from sqlalchemy.orm import Session, aliased
+from datetime import date
 from sqlalchemy import func
-from app.db.models import User
-from app.core.errors import UserNotFoundError, PollNotFoundError
 from sqlalchemy.exc import SQLAlchemyError
-from fastapi.exceptions import HTTPException
+from sqlalchemy.orm import Session, aliased
 from fastapi import status
+from fastapi.exceptions import HTTPException
+from app.core.errors import PollNotFoundError, UserNotFoundError
+from app.db.models import Poll, Product, User
 
 
 class PollManager:
@@ -56,23 +56,43 @@ class PollManager:
         )
         return polls
 
+    def get_expired_deadlines_polls(self):
+        """Retrieve polls whose deadline is today or earlier and not manually closed."""
+        return (
+            self.db.query(Poll)
+            .filter(Poll.deadline.isnot(None))
+            .filter(Poll.deadline <= date.today())
+            .filter(Poll.manually_closed.is_(False))
+            .all()
+        )
+
+    def mark_poll_closed(self, poll_id):
+        """Mark a poll as manually closed by its primary key ID."""
+        poll = self.db.query(Poll).filter(Poll.id == poll_id).first()
+        if not poll:
+            raise PollNotFoundError(f"Poll with id {poll_id} not found")
+
+        poll.manually_closed = True
+        self.db.commit()
+
+
     def get_polls_by_user_id(self, user_id):
         """Retrieve polls created by current user"""
         return (
-        self.db.query(Poll)
-        .filter(Poll.user_id == user_id)
-        .order_by(Poll.manually_closed.asc())
-        .all()
-    )
+            self.db.query(Poll)
+            .filter(Poll.user_id == user_id)
+            .order_by(Poll.manually_closed.asc())
+            .all()
+        )
 
 
     def get_poll(self, uuid):
         """Retrieve a poll by it's unique link"""
         return (
-        self.db.query(Poll)
-        .filter(Poll.uuid == uuid)
-        .first()
-    )
+            self.db.query(Poll)
+            .filter(Poll.uuid == uuid)
+            .first()
+        )
 
     def update_poll(self, uuid, poll_in, user):
         """Update a poll by it's unique link"""

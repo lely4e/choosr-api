@@ -34,6 +34,7 @@ import { API_URL } from "../config";
 import Modal from "../components/Modal";
 import { Link } from "react-router-dom";
 import Toggle from "../components/Toggle";
+import AddProductCard from "../components/AddProduct";
 
 export default function PollPage() {
     const { user } = useUser();
@@ -62,6 +63,8 @@ export default function PollPage() {
     const [openPoll, setOpenPoll] = useState(false);
     const [share, setShare] = useState(false);
     const [copied, setCopied] = useState(false);
+
+     const [openCard, setOpenCard] = useState(false)
 
     const navigate = useNavigate();
 
@@ -357,8 +360,8 @@ export default function PollPage() {
                                                             setEditedManuallyClosed(!checked);
                                                             {
                                                                 !editedManuallyClosed ?
-                                                                toast.success("Poll closed") :
-                                                                toast.success("Poll opened")
+                                                                    toast.success("Poll closed") :
+                                                                    toast.success("Poll opened")
                                                             }
                                                         }
                                                         }
@@ -677,8 +680,11 @@ export default function PollPage() {
                 <h1 className="text-[1.5em]  leading-tight pt-10 font-black">
                     Products
                 </h1>
-                <Search getProducts={getProducts} />
+                <Search getProducts={getProducts} openCard={openCard} setOpenCard={setOpenCard}/>
             </div>
+
+            {openCard && 
+            <AddProductCard getProducts={getProducts} />}
 
             {showProducts ? (
                 <Products

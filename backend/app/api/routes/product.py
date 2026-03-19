@@ -1,4 +1,9 @@
-from app.api.schemas.product import ProductAddJSON, ProductOut, ProductListOut
+from app.api.schemas.product import (
+    ProductAddJSON,
+    ProductOut,
+    ProductListOut,
+    ProductIn,
+)
 from app.api.dependencies import get_product_manager, get_user_manager, get_vote_manager
 from fastapi import APIRouter, Depends, Request
 from app.api.repository.product_manager import ProductManager
@@ -24,8 +29,21 @@ async def get_products(
     return products_with_votes
 
 
+@product_router.post("/products/custom", response_model=ProductOut)
+async def add_product_manually(
+    uuid: UUID,
+    request: Request,
+    product_in: ProductAddJSON,
+    product_manager: ProductManager = Depends(get_product_manager),
+    user_manager: UserManager = Depends(get_user_manager),
+) -> ProductOut:
+    """Add a product in JSON format from different websites"""
+    user = user_manager.get_user_by_email(request.state.user)
+    return product_manager.add_product(uuid, product_in, user)
+
+
 @product_router.post("/products", response_model=ProductOut)
-async def add_product(
+async def add_product_from_amazon(
     uuid: UUID,
     request: Request,
     product_in: ProductAddJSON,

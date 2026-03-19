@@ -22,6 +22,8 @@ type Layout = "poll" | "gift";
 interface ExtendedSearchProps extends SearchProps {
   layout?: Layout;
   getProducts?: () => Promise<void>;
+  openCard?: boolean;
+  setOpenCard?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const CustomPrevArrow = (props: any) => {
@@ -81,6 +83,8 @@ export default function Search({
   userSearch,
   layout = "poll",
   getProducts,
+  openCard,
+  setOpenCard,
 }: ExtendedSearchProps) {
   const { uuid } = useParams<{ uuid: string }>();
 
@@ -136,20 +140,17 @@ export default function Search({
 
   const handleAddProduct = async (product: ProductSearch) => {
     try {
-      const response = await authFetch(
-        `${API_URL}/polls/${uuid}/products`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: product.title,
-            link: product.link,
-            image: product.image,
-            rating: product.rating,
-            price: product.price,
-          }),
-        },
-      );
+      const response = await authFetch(`${API_URL}/polls/${uuid}/products`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: product.title,
+          link: product.link,
+          image: product.image,
+          rating: product.rating,
+          price: product.price,
+        }),
+      });
       const data = await response.json();
 
       if (!response.ok) {
@@ -213,7 +214,7 @@ export default function Search({
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
-            placeholder="Search and add products to compare and vote"
+            placeholder="Search Amazon or add a custom product +"
             className="flex-1 h-12 px-5 text-base font-serif italic
                      border-0 border-[#6366f1] border-b
                      bg-transparent
@@ -235,6 +236,23 @@ export default function Search({
               "..."
             ) : !showProducts ? (
               <SearchIcon size={20} strokeWidth={2} />
+            ) : (
+              <ChevronUp size={20} strokeWidth={2} />
+            )}
+          </button>
+          <button
+            onClick={() => setOpenCard && setOpenCard((prev) => !prev)}
+            className="flex items-center justify-center cursor-pointer 
+                    w-12 h-12 rounded-full
+                    transition hover:bg-[#B0B6CC]
+                    disabled:opacity-50
+                    bg-white/60 text-[#737791]
+                    hover:text-white
+                    shadow-[0_10px_25px_rgba(0,0,0,0.06),0_4px_10px_rgba(0,0,0,0.04)] 
+                    duration-250 ease-in-out"
+          >
+            {!openCard ? (
+              <Plus size={26} strokeWidth={2} />
             ) : (
               <ChevronUp size={20} strokeWidth={2} />
             )}
@@ -266,7 +284,10 @@ export default function Search({
                               max-w-62.5 w-full"
                 >
                   {/* img */}
-                  <div className="h-32.5 flex items-center justify-center hover:text-[#0096FF] hover:cursor-pointer" onClick={() => window.open(product.link, "_blank")}>
+                  <div
+                    className="h-32.5 flex items-center justify-center hover:text-[#0096FF] hover:cursor-pointer"
+                    onClick={() => window.open(product.link, "_blank")}
+                  >
                     <img
                       src={product.image}
                       alt={product.title}
@@ -291,13 +312,14 @@ export default function Search({
                     </div>
 
                     {/* Title */}
-                    <div className="text-sm font-semibold leading-snug line-clamp-2 text-left hover:text-[#0096FF] hover:cursor-pointer" 
-                          onClick={() => {
-                                                window.open(product.link, "_blank")
-                                          
-                                            }}>
-                                            {truncate(product.title, 100)}
-                                            {/* <Tooltip text={product.title} /> */}
+                    <div
+                      className="text-sm font-semibold leading-snug line-clamp-2 text-left hover:text-[#0096FF] hover:cursor-pointer"
+                      onClick={() => {
+                        window.open(product.link, "_blank");
+                      }}
+                    >
+                      {truncate(product.title, 100)}
+                      {/* <Tooltip text={product.title} /> */}
                     </div>
 
                     {/* Add Button */}
@@ -320,8 +342,8 @@ export default function Search({
                     </button> */}
 
                     {/* Action Buttons */}
-                          <div className="flex justify-between gap-2 mt-2">
-                                            {/* <button
+                    <div className="flex justify-between gap-2 mt-2">
+                      {/* <button
                                                 onClick={() => window.open(product.link, "_blank")}
                                                 className="flex-1 rounded-full border border-[#0d78f2] cursor-pointer
                                  text-[#0d78f2] py-2 text-sm
@@ -331,24 +353,24 @@ export default function Search({
                                                 <FileText size={16} />
                                             </button> */}
 
-                                            <button
-                                            type="button"
-                                            onClick={() => handleAddProduct(product)}
-                                            disabled={addedProduct.includes(product.link)}
-                                            className={`flex-3 h-10 rounded-full flex items-center justify-center text-white 
+                      <button
+                        type="button"
+                        onClick={() => handleAddProduct(product)}
+                        disabled={addedProduct.includes(product.link)}
+                        className={`flex-3 h-10 rounded-full flex items-center justify-center text-white 
                                transition
                                ${addedProduct.includes(product.link)
-                                                    ? "bg-[#B0B6CC] cursor-not-allowed"
-                                                    : "bg-linear-to-br from-[#6366F1] to-[#A78BFA] hover:opacity-90 cursor-pointer "
-                                                }`}
-                                        >
-                                            {addedProduct.includes(product.link) ? (
-                                                <Check size={20} />
-                                            ) : (
-                                                <Plus size={20} />
-                                            )}
-                                        </button>
-                    {/* <div className="flex justify-between gap-3 mt-2">
+                            ? "bg-[#B0B6CC] cursor-not-allowed"
+                            : "bg-linear-to-br from-[#6366F1] to-[#A78BFA] hover:opacity-90 cursor-pointer "
+                          }`}
+                      >
+                        {addedProduct.includes(product.link) ? (
+                          <Check size={20} />
+                        ) : (
+                          <Plus size={20} />
+                        )}
+                      </button>
+                      {/* <div className="flex justify-between gap-3 mt-2">
                       <button
                         onClick={() => window.open(product.link, "_blank")}
                         className="flex-1 rounded-full border border-[#0d78f2] cursor-pointer

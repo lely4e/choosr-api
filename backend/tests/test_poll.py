@@ -60,10 +60,10 @@ async def test_get_poll_success(client, create_poll_and_user):
 
     assert response.status_code == status.HTTP_200_OK
     data = response.json()
-    assert data[0]["title"] == poll.title
-    assert data[0]["budget"] == poll.budget
-    assert data[0]["uuid"] == str(poll.uuid)
-    assert "created_at" in data[0]
+    assert data["items"][0]["title"] == poll.title
+    assert data["items"][0]["budget"] == poll.budget
+    assert data["items"][0]["uuid"] == str(poll.uuid)
+    assert "created_at" in data["items"][0]
 
 
 @pytest.mark.asyncio

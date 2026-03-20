@@ -111,12 +111,12 @@ async def test_get_products_success(client, add_user_poll_and_product):
     data = response.json()
     # db = TestSessionLocal()
     # product = db.query(Product).filter(Product.poll_id == poll.id).first()
-    assert data[0]["title"] == product.title
-    assert data[0]["link"] == product.link
-    assert data[0]["image"] == product.image
-    assert data[0]["rating"] == product.rating
-    assert data[0]["price"] == product.price
-    assert data[0]["votes"] == 0
+    assert data["items"][0]["title"] == product.title
+    assert data["items"][0]["link"] == product.link
+    assert data["items"][0]["image"] == product.image
+    assert data["items"][0]["rating"] == product.rating
+    assert data["items"][0]["price"] == product.price
+    assert data["items"][0]["votes"] == 0
     # db.close()
 
 

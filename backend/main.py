@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI, Request, HTTPException, status
 from app.api import router
 from fastapi.responses import JSONResponse, Response
-from fastapi_pagination import Page, add_pagination, paginate
+from fastapi_pagination import add_pagination
 import jwt
 from jwt import InvalidTokenError
 from app.core.config import settings

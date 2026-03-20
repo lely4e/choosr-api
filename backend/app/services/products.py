@@ -6,25 +6,25 @@ from pathlib import Path
 import json
 
 
-# def get_items_test(text):
-#     # url = f"https://www.searchapi.io/api/v1/searches/{text}"  # search_W75dANvqloTdM7QBZ4blrDJ3
-#     url = f"https://www.searchapi.io/api/v1/searches/search_W75dANvqloTdM7QBZ4blrDJ3"
+def get_items_test(text):
+    # url = f"https://www.searchapi.io/api/v1/searches/{text}"  # search_W75dANvqloTdM7QBZ4blrDJ3
+    url = f"https://www.searchapi.io/api/v1/searches/search_W75dANvqloTdM7QBZ4blrDJ3"
 
-#     response = requests.get(url)
-#     data = response.json()
-#     items = []
-#     for item in data.get("organic_results", []):
-#         items.append(
-#             {
-#                 "title": item.get("title"),
-#                 "link": item.get("link"),
-#                 "image": item.get("thumbnail"),
-#                 "rating": item.get("rating"),
-#                 "price": item.get("extracted_price"),
-#             }
-#         )
+    response = requests.get(url)
+    data = response.json()
+    items = []
+    for item in data.get("organic_results", []):
+        items.append(
+            {
+                "title": item.get("title"),
+                "link": item.get("link"),
+                "image": item.get("thumbnail"),
+                "rating": item.get("rating"),
+                "price": item.get("extracted_price"),
+            }
+        )
 
-#     return items
+    return items
 
 
 # -------------------------- JSON ---------------------

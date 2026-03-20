@@ -11,22 +11,24 @@ from app.api.repository.vote_manager import VoteManager
 from app.api.repository.user_manager import UserManager
 from app.core.security import oauth2_scheme
 from uuid import UUID
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlalchemy import paginate
 
 
 product_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
-@product_router.get("/products", response_model=list[ProductListOut])
+@product_router.get("/products", response_model=Page[ProductListOut])
 async def get_products(
     uuid: UUID,
     request: Request,
     vote_manager: VoteManager = Depends(get_vote_manager),
     user_manager: UserManager = Depends(get_user_manager),
-) -> list[ProductListOut]:
+) -> Page[ProductListOut]:
     """Retrieve all products from the selected poll"""
     user = user_manager.get_user_by_email(request.state.user)
     products_with_votes = vote_manager.get_products_with_votes(uuid, user)
-    return products_with_votes
+    return paginate(products_with_votes)
 
 
 @product_router.post("/products/custom", response_model=ProductOut)

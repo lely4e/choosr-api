@@ -6,19 +6,20 @@ from app.api.repository.user_manager import UserManager
 from app.api.repository.poll_manager import PollManager
 from app.core.security import oauth2_scheme
 from uuid import UUID
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlalchemy import paginate
 
 poll_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
-@poll_router.get("", response_model=List[PollOut])
+@poll_router.get("", response_model=Page[PollOut])
 async def read_own_items(
     request: Request,
     poll_manager: PollManager = Depends(get_poll_manager),
     user_manager: UserManager = Depends(get_user_manager),
-) -> List[PollOut]:
-    """Retrieve polls from the current user"""
+):
     user = user_manager.get_user_by_email(request.state.user)
-    return poll_manager.get_polls_by_user_id(user_id=user.id)
+    return paginate(poll_manager.get_polls_by_user_id(user.id))
 
 
 @poll_router.post("", response_model=PollOut)

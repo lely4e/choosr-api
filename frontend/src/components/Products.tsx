@@ -32,6 +32,9 @@ export default function Products({
     products,
     setProducts,
     getProducts,
+    sentinelRef,
+    loadingMore,
+    hasMore,
 }: ProductsProps) {
     const { user } = useUser();
 
@@ -581,9 +584,27 @@ export default function Products({
                                         </>
                                     )}
                                 </div>
+                                
                             </div>
+                            
                         </div>
+
+                        
                     ))}
+                    <div ref={sentinelRef} className="h-4 w-full" />
+
+    {loadingMore && (
+        <div className="flex justify-center py-4">
+            <div className="w-6 h-6 border-2 border-[#6366f1] 
+                            border-t-transparent rounded-full animate-spin" />
+        </div>
+    )}
+
+    {!hasMore && products.length > 0 && (
+        <p className="text-center text-sm text-[#737791] py-4">
+            No more products
+        </p>
+    )}
                 </div>
             </div>
         </>

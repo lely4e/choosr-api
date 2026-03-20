@@ -138,6 +138,6 @@ class VoteManager:
             .where(Poll.uuid == uuid)
             .group_by(Product.id)
             .order_by(desc("votes"))
-            .all()
+            # .all()
         )
         return votes

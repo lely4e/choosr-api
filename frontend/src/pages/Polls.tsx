@@ -42,7 +42,7 @@ const Polls: React.FC = () => {
           return;
         }
 
-        setPolls(data);
+        setPolls(data.items);
         console.log("Polls fetched:", data);
       } catch (error: unknown) {
         if (error instanceof Error) {

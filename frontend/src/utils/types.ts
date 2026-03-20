@@ -45,6 +45,9 @@ export interface ProductsProps {
   products: Product[];
   setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   getProducts: () => Promise<void>;
+  sentinelRef: React.RefObject<HTMLDivElement | null>;
+  loadingMore: boolean;
+  hasMore: boolean;
 }
 
 export interface IdeasProps {

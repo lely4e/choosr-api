@@ -77,12 +77,15 @@ export default function SearchIdea({
 }: ExtendedSearchProps) {
     const { uuid } = useParams<{ uuid: string }>();
 
-    const [ideaTitle] = useState(userSearch ?? "");
+    const ideaTitle = userSearch ?? "";
     const [searchResults, setSearchResults] = useState<ProductSearch[]>([]);
     const [loading, setLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
     const [showProducts, setShowProducts] = useState(false);
     const [addedProduct, setAddedProduct] = useState<string[]>([]);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
 
     const handleSearch = async () => {
         const value = ideaTitle.trim();
@@ -95,10 +98,16 @@ export default function SearchIdea({
 
         setLoading(true);
         setHasSearched(true);
+        setPage(1);
+        setHasMore(true);
 
         try {
             const response = await authFetch(
-                `${API_URL}/products/search?search=${encodeURIComponent(value)}`,
+                `${API_URL}/products/search?${new URLSearchParams({
+                    search: value,
+                    page: "1",
+                    size: "10",
+                })}`,
             );
             const data = await response.json();
 
@@ -107,8 +116,10 @@ export default function SearchIdea({
                 return;
             }
 
-            setSearchResults(data);
+            setSearchResults(data.items);
             setShowProducts(true);
+
+            setHasMore(data.page < data.pages);
         } catch (error: unknown) {
             if (error instanceof Error) {
                 toast.error(`Failed to search: ${error.message}`);
@@ -128,6 +139,42 @@ export default function SearchIdea({
             handleSearch();
         }
     }, [ideaTitle]);
+
+    const loadMore = async () => {
+        if (!hasMore || loadingMore) return;
+
+        const nextPage = page + 1;
+        setLoadingMore(true);
+
+        try {
+            const response = await authFetch(
+                `${API_URL}/products/search?${new URLSearchParams({
+                    search: ideaTitle.trim(),
+                    page: String(nextPage),
+                    size: "10",
+                })}`,
+            );
+
+            const data = await response.json();
+
+            setSearchResults((prev) => [...prev, ...data.items]); // APPEND
+            setPage(nextPage);
+
+            setHasMore(data.page < data.pages);
+        } finally {
+            setLoadingMore(false);
+        }
+    };
+
+    const handleAfterChange = (currentIndex: number) => {
+        const totalSlides = searchResults.length;
+        const visibleSlides = 4;
+
+        if (currentIndex >= totalSlides - visibleSlides - 1) {
+            loadMore();
+        }
+    };
+
 
     const handleAddProduct = async (product: ProductSearch) => {
         try {
@@ -186,6 +233,7 @@ export default function SearchIdea({
         touchMove: true,
         touchThreshold: 10,
         adaptiveHeight: true,
+        afterChange: handleAfterChange,
         responsive: [
             {
                 breakpoint: 1024,
@@ -300,6 +348,15 @@ export default function SearchIdea({
                                 </div>
                             </div>
                         ))}
+
+                        {/* Loading indicator slide */}
+                        {hasMore && (
+                            <div className="flex items-center justify-center h-full px-2">
+                                <div className="text-[#737791] text-sm animate-pulse">
+                                    {loadingMore ? "Loading..." : "Scroll for more"}
+                                </div>
+                            </div>
+                        )}
                     </Slider>
                 </div>
             )}

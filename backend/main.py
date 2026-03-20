@@ -1,7 +1,8 @@
 import uvicorn
 from fastapi import FastAPI, Request, HTTPException, status
-from app.api import router
+
 from fastapi.responses import JSONResponse, Response
+from fastapi_pagination import add_pagination
 import jwt
 from jwt import InvalidTokenError
 from app.core.config import settings
@@ -30,6 +31,7 @@ from app.core.logging import setup_logger
 
 logger = setup_logger()
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting application")
@@ -39,12 +41,11 @@ async def lifespan(app: FastAPI):
     logger.info("Shutting down application")
 
 
-app = FastAPI(
-    title=settings.PROJECT_NAME,
-    version="0.1.0",
-    lifespan=lifespan
-)
+app = FastAPI(title=settings.PROJECT_NAME, version="0.1.0", lifespan=lifespan)
 
+add_pagination(app)
+
+from app.api import router
 
 app.include_router(router)
 

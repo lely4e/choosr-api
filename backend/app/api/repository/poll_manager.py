@@ -75,24 +75,18 @@ class PollManager:
         poll.manually_closed = True
         self.db.commit()
 
-
     def get_polls_by_user_id(self, user_id):
         """Retrieve polls created by current user"""
         return (
             self.db.query(Poll)
             .filter(Poll.user_id == user_id)
-            .order_by(Poll.manually_closed.asc())
-            .all()
+            .order_by(Poll.manually_closed.asc(), Poll.id.asc())
+            # .all()
         )
-
 
     def get_poll(self, uuid):
         """Retrieve a poll by it's unique link"""
-        return (
-            self.db.query(Poll)
-            .filter(Poll.uuid == uuid)
-            .first()
-        )
+        return self.db.query(Poll).filter(Poll.uuid == uuid).first()
 
     def update_poll(self, uuid, poll_in, user):
         """Update a poll by it's unique link"""

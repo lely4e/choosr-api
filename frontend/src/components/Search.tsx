@@ -94,6 +94,9 @@ export default function Search({
   const [hasSearched, setHasSearched] = useState(false);
   const [showProducts, setShowProducts] = useState(false);
   const [addedProduct, setAddedProduct] = useState<string[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const handleSearch = async () => {
     if (showProducts) {
@@ -111,10 +114,16 @@ export default function Search({
 
     setLoading(true);
     setHasSearched(true);
+    setPage(1);
+    setHasMore(true);
 
     try {
       const response = await authFetch(
-        `${API_URL}/products/search?search=${encodeURIComponent(value)}`,
+        `${API_URL}/products/search?${new URLSearchParams({
+          search: value,
+          page: "1",
+          size: "10",
+        })}`,
       );
       const data = await response.json();
 
@@ -122,9 +131,10 @@ export default function Search({
         toast.error(data.detail || data.error || "Failed to search");
         return;
       }
-
-      setSearchResults(data);
+      setSearchResults(data.items);
       setShowProducts(true);
+
+      setHasMore(data.page < data.pages);
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(`Failed to search: ${error.message}`);
@@ -135,6 +145,32 @@ export default function Search({
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMore = async () => {
+    if (!hasMore || loadingMore) return;
+
+    const nextPage = page + 1;
+    setLoadingMore(true);
+
+    try {
+      const response = await authFetch(
+        `${API_URL}/products/search?${new URLSearchParams({
+          search: userInput.trim(),
+          page: String(nextPage),
+          size: "10",
+        })}`,
+      );
+
+      const data = await response.json();
+
+      setSearchResults((prev) => [...prev, ...data.items]); // APPEND
+      setPage(nextPage);
+
+      setHasMore(data.page < data.pages);
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -176,6 +212,15 @@ export default function Search({
     }
   };
 
+  const handleAfterChange = (currentIndex: number) => {
+    const totalSlides = searchResults.length;
+    const visibleSlides = 4;
+
+    if (currentIndex >= totalSlides - visibleSlides - 1) {
+      loadMore();
+    }
+  };
+
   // Slick Settings
   const settings = {
     dots: false,
@@ -192,6 +237,7 @@ export default function Search({
     touchMove: true,
     touchThreshold: 10,
     adaptiveHeight: true,
+    afterChange: handleAfterChange,
     responsive: [
       {
         breakpoint: 1024,
@@ -322,37 +368,8 @@ export default function Search({
                       {/* <Tooltip text={product.title} /> */}
                     </div>
 
-                    {/* Add Button */}
-                    {/* <button
-                      type="button"
-                      onClick={() => handleAddProduct(product)}
-                      disabled={addedProduct.includes(product.link)}
-                      className={`w-full h-10 rounded-xl flex items-center justify-center text-white 
-                               transition
-                               ${addedProduct.includes(product.link)
-                          ? "bg-[#B0B6CC] cursor-not-allowed"
-                          : "bg-linear-to-br from-[#0084ff] to-[#48d9ec] hover:opacity-90 cursor-pointer "
-                        }`}
-                    >
-                      {addedProduct.includes(product.link) ? (
-                        <Check size={20} />
-                      ) : (
-                        <Plus size={20} />
-                      )}
-                    </button> */}
-
                     {/* Action Buttons */}
                     <div className="flex justify-between gap-2 mt-2">
-                      {/* <button
-                                                onClick={() => window.open(product.link, "_blank")}
-                                                className="flex-1 rounded-full border border-[#0d78f2] cursor-pointer
-                                 text-[#0d78f2] py-2 text-sm
-                                 flex items-center justify-center
-                                 hover:bg-[#0d78f210] transition"
-                                            >
-                                                <FileText size={16} />
-                                            </button> */}
-
                       <button
                         type="button"
                         onClick={() => handleAddProduct(product)}
@@ -370,31 +387,20 @@ export default function Search({
                           <Plus size={20} />
                         )}
                       </button>
-                      {/* <div className="flex justify-between gap-3 mt-2">
-                      <button
-                        onClick={() => window.open(product.link, "_blank")}
-                        className="flex-1 rounded-full border border-[#0d78f2] cursor-pointer
-                                 text-[#0d78f2] py-2 text-sm
-                                 flex items-center justify-center
-                                 hover:bg-[#0d78f210] transition"
-                      >
-                        <FileText size={16} />
-                      </button>
-
-                      <button
-                        className="flex-1 rounded-full border border-[#0d78f2] cursor-pointer
-                                 text-[#0d78f2] py-2 text-sm
-                                 flex items-center justify-center
-                                 hover:bg-[#0d78f210] transition"
-                      >
-                        <Bookmark size={16} />
-                      </button>
-                    </div> */}
                     </div>
                   </div>
                 </div>
               </div>
             ))}
+
+            {/* Loading indicator slide */}
+            {hasMore && (
+              <div className="flex items-center justify-center h-full px-2">
+                <div className="text-[#737791] text-sm animate-pulse">
+                  {loadingMore ? "Loading..." : "Scroll for more"}
+                </div>
+              </div>
+            )}
           </Slider>
         </div>
       )}

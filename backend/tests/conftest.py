@@ -18,9 +18,7 @@ import random
 from fastapi_pagination import add_pagination
 
 
-add_pagination(app)
-
-TEST_DATABASE_URL = f"postgresql://{os.getenv("DB_USER")}:{os.getenv("DB_PASS")}@{os.getenv("DB_HOST")}:{os.getenv("DB_PORT")}/{os.getenv("DB_NAME")}"
+TEST_DATABASE_URL = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASS')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
 # NuLLPool to avoid connections being reused between tests
 test_engine = create_engine(TEST_DATABASE_URL, poolclass=NullPool)
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
@@ -45,6 +43,7 @@ def override_get_db():
 
 
 app.dependency_overrides[get_db] = override_get_db
+add_pagination(app)
 
 
 # Async test client

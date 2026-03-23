@@ -5,6 +5,11 @@ from starlette.status import HTTP_422_UNPROCESSABLE_CONTENT
 from sqlalchemy.exc import DataError
 import psycopg2
 from sqlalchemy.exc import IntegrityError
+from slowapi.errors import RateLimitExceeded
+
+
+async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    return JSONResponse(status_code=429, content={"detail": "Rate limit exceeded"})
 
 
 # Pydantic validation errors (422)

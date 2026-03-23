@@ -41,7 +41,8 @@ Make the recommendations creative, practical, and aligned with the recipient’s
     response = client.models.generate_content(
         model="gemini-2.5-flash-lite",
         config=types.GenerateContentConfig(
-            system_instruction="You are a helpful gift suggestion assistant."
+            system_instruction="You are a helpful gift suggestion assistant.",
+            max_output_tokens=300,
         ),
         contents=prompt_text,
     )

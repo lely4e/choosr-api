@@ -5,12 +5,14 @@ from app.api.repository.user_manager import UserManager
 from app.services.suggestion import ai_prompt
 from app.core.security import oauth2_scheme
 from fastapi.concurrency import run_in_threadpool
+from app.core.limiter import limiter
 
 
 suggestion_router = APIRouter(dependencies=[Depends(oauth2_scheme)])
 
 
 @suggestion_router.post("/products/suggestion")
+@limiter.limit("10/minute")
 async def suggest(
     request: Request,
     suggest_in: SuggestIn,

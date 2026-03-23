@@ -13,6 +13,11 @@ from app.core.errors import (
     http_exception_handler,
     exception_handler,
 )
+
+
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from starlette.responses import JSONResponse
 from app.core.errors import UserNotFoundError, user_not_found_handler
 from app.core.errors import PollNotFoundError, poll_not_found_handler
 from app.core.errors import ProductNotFoundError, product_not_found_handler
@@ -22,6 +27,8 @@ from app.core.errors import UserAlreadyExistsError, user_exists_handler
 from app.core.errors import PollAlreadyExist, poll_already_exist_handler
 from app.core.errors import DataError, data_error_handler
 from app.core.errors import IntegrityError, integrity_error_handler
+
+from app.core.errors import RateLimitExceeded, rate_limit_handler
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.database import Base, engine
 from contextlib import asynccontextmanager
@@ -61,6 +68,11 @@ app.add_exception_handler(VoteNotFoundError, vote_not_found_handler)
 app.add_exception_handler(CommentsNotFoundError, comments_not_found_handler)
 app.add_exception_handler(IntegrityError, integrity_error_handler)
 app.add_exception_handler(PollAlreadyExist, poll_already_exist_handler)
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
+from app.core.limiter import limiter
+
+
+app.state.limiter = limiter
 
 
 @app.middleware("http")
@@ -98,6 +110,8 @@ async def auth_middleware(request: Request, call_next):
     return response
 
 
+app.add_middleware(SlowAPIMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -114,7 +128,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", reload=True)

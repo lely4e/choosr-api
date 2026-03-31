@@ -22,5 +22,11 @@ ENV PORT=8000
 # Expose that port (for local testing)
 EXPOSE 8000
 
+# Entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+
 # Use Uvicorn to serve FastAPI
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

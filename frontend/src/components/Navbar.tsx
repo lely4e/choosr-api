@@ -5,7 +5,7 @@ import profileImg from "../assets/profile.svg"
 import logoImg from "../assets/logo_orange.svg"
 
 export default function Navbar() {
-const { user } = useUser();
+  const { user } = useUser();
 
   // NOT LOGGED IN
   if (!user) {
@@ -67,6 +67,15 @@ const { user } = useUser();
           </Link>
 
           <Link
+            to="/my-ideas"
+            className="text-[#737791] font-medium
+                       hover:text-[#F25E0D]
+                       transition"
+          >
+            My Ideas
+          </Link>
+
+          <Link
             to="/add-poll"
             className="flex items-center gap-2
                        px-4 py-2 rounded-full
@@ -74,7 +83,7 @@ const { user } = useUser();
                        text-white font-medium
                        transition hover:opacity-90"
           >
-            <Plus size={16} strokeWidth={2.5} color="white"/>
+            <Plus size={16} strokeWidth={2.5} color="white" />
             Create Poll
           </Link>
 

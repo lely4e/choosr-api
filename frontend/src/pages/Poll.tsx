@@ -14,16 +14,17 @@ import {
     Clock,
     Edit,
     Trash2,
-    Gift,
     Dot,
     MoveLeft,
     Copy,
     Check,
     X,
-    User2Icon,
     ChevronUp,
     MinusCircle,
     PlusCircle,
+    HistoryIcon,
+    Wand2,
+    UserCircle,
 } from "lucide-react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -35,6 +36,8 @@ import Modal from "../components/Modal";
 import { Link } from "react-router-dom";
 import Toggle from "../components/Toggle";
 import AddProductCard from "../components/AddProduct";
+import HistoryPanel from "../components/HistoryPanel";
+import { useHistory } from "../hooks/useHistory";
 
 export default function PollPage() {
     const { user } = useUser();
@@ -52,7 +55,8 @@ export default function PollPage() {
     const [editedBudget, setEditedBudget] = useState<number>(0);
     const [editedDescription, setEditedDescription] = useState<string>("");
     const [editedDeadline, setEditedDeadline] = useState<string>("");
-    const [editedManuallyClosed, setEditedManuallyClosed] = useState<boolean>(false);
+    const [editedManuallyClosed, setEditedManuallyClosed] =
+        useState<boolean>(false);
 
     const [showGiftIdeas, setShowGiftIdeas] = useState(false);
     const [showProducts, setShowProducts] = useState(true);
@@ -64,7 +68,7 @@ export default function PollPage() {
     const [share, setShare] = useState(false);
     const [copied, setCopied] = useState(false);
 
-    const [openCard, setOpenCard] = useState(false)
+    const [openCard, setOpenCard] = useState(false);
 
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
@@ -77,6 +81,18 @@ export default function PollPage() {
         setShowGiftIdeas((prev) => !prev);
         setShowProducts(true);
     };
+
+    const {
+        history,
+        openHistory,
+        openHistoryDelete,
+        setOpenHistoryDelete,
+        handleToggleHistory,
+        handleDeleteHistory,
+        handleAddHistoryToIdeas,
+        handleCopyHistory,
+        copiedId
+    } = useHistory(uuid);
 
     // fetch activities
     useEffect(() => {
@@ -112,7 +128,6 @@ export default function PollPage() {
 
             console.log("Products fetched:", data);
             console.log("Amount of products:", data.length);
-
         } catch (error: unknown) {
             if (error instanceof Error) {
                 toast.error(`Failed to fetch products: ${error.message}`);
@@ -134,7 +149,7 @@ export default function PollPage() {
         setLoadingMore(true);
         await getProducts(page + 1, true);
         setLoadingMore(false);
-    }
+    };
 
     useEffect(() => {
         if (!sentinelRef.current) return;
@@ -145,7 +160,7 @@ export default function PollPage() {
                     loadMore();
                 }
             },
-            { threshold: 0.1 }
+            { threshold: 0.1 },
         );
 
         observer.observe(sentinelRef.current);
@@ -156,7 +171,7 @@ export default function PollPage() {
         if (!uuid) return;
         try {
             const response = await authFetch(
-                `${API_URL}/polls/${uuid}/products?page=1&size=${page * 10}`
+                `${API_URL}/polls/${uuid}/products?page=1&size=${page * 10}`,
             );
             const data = await response.json();
             setProducts(data.items);
@@ -265,12 +280,9 @@ export default function PollPage() {
 
     const handleDeleteSharedPoll = async (uuid: string) => {
         try {
-            const response = await authFetch(
-                `${API_URL}/activities/${uuid}`,
-                {
-                    method: "DELETE",
-                },
-            );
+            const response = await authFetch(`${API_URL}/activities/${uuid}`, {
+                method: "DELETE",
+            });
 
             const data = await response.json();
 
@@ -363,7 +375,6 @@ export default function PollPage() {
         }
     };
 
-
     return (
         <>
             {/* Poll card section */}
@@ -395,12 +406,11 @@ export default function PollPage() {
                                         // edit mode
                                         <>
                                             <div className="flex justify-between gap-2.5">
-
                                                 <input
                                                     type="text"
                                                     value={editedTitle}
                                                     onChange={(e) => setEditedTitle(e.target.value)}
-                                                    className=" w-full border-b border-gray-300 border-0 focus:border-blue-500 focus:outline-none text-left font-bold text-3xl text-black"
+                                                    className=" w-full border-b border-[#737791] bg-transparent outline-none text-left font-bold text-3xl text-black"
                                                 />
 
                                                 <div className="text-xs font-bold text-gray-700">
@@ -410,12 +420,11 @@ export default function PollPage() {
                                                         onChange={(checked) => {
                                                             setEditedManuallyClosed(!checked);
                                                             {
-                                                                !editedManuallyClosed ?
-                                                                    toast.success("Poll closed") :
-                                                                    toast.success("Poll opened")
+                                                                !editedManuallyClosed
+                                                                    ? toast.success("Poll closed")
+                                                                    : toast.success("Poll opened");
                                                             }
-                                                        }
-                                                        }
+                                                        }}
                                                     />
                                                 </div>
                                             </div>
@@ -435,14 +444,14 @@ export default function PollPage() {
                                                     (activity) => activity.uuid === poll.uuid,
                                                 ) ? (
                                                     <PlusCircle
-                                                        size={20}
+                                                        size={16}
                                                         strokeWidth={1.5}
                                                         className="hover:text-[#F25E0D]"
                                                         onClick={() => handleAddSharedPoll(poll.uuid)}
                                                     />
                                                 ) : (
                                                     <MinusCircle
-                                                        size={20}
+                                                        size={16}
                                                         strokeWidth={1.5}
                                                         className="hover:text-[#F25E0D]"
                                                         onClick={() => setOpenPoll(true)}
@@ -463,9 +472,7 @@ export default function PollPage() {
                                                 </button>
                                                 <button
                                                     className="flex-1  bg-red-600 text-white rounded-full px-6 py-2 hover:bg-red-700 hover:text-white transition-colors"
-                                                    onClick={() =>
-                                                        handleDeleteSharedPoll(poll.uuid)
-                                                    }
+                                                    onClick={() => handleDeleteSharedPoll(poll.uuid)}
                                                 >
                                                     Yes, Delete
                                                 </button>
@@ -479,7 +486,7 @@ export default function PollPage() {
                                                     onClick={startEditing}
                                                 >
                                                     <Edit
-                                                        size={20}
+                                                        size={17}
                                                         strokeWidth={1.5}
                                                         className="hover:text-[#F25E0D]"
                                                     />
@@ -487,7 +494,7 @@ export default function PollPage() {
                                                 <div>
                                                     <p className="flex justify-between items-start gap-5 mr-4 cursor-pointer">
                                                         <Trash2
-                                                            size={19}
+                                                            size={16}
                                                             strokeWidth={1.5}
                                                             className="hover:text-[#F25E0D]"
                                                             onClick={() => setOpen(true)}
@@ -507,9 +514,7 @@ export default function PollPage() {
                                                             </button>
                                                             <button
                                                                 className="flex-1  bg-red-600 text-white rounded-full px-6 py-2 hover:bg-red-700 hover:text-white transition-colors"
-                                                                onClick={(e) =>
-                                                                    handleDeletePoll(e, poll.uuid)
-                                                                }
+                                                                onClick={(e) => handleDeletePoll(e, poll.uuid)}
                                                             >
                                                                 Yes, Delete
                                                             </button>
@@ -528,11 +533,33 @@ export default function PollPage() {
                                         </p> */}
 
                                         <div className="flex items-center justify-between mr-3">
-                                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-                                                style={{ backgroundColor: poll.active ? '#C8E6C9' : '#FFCDD2' }}>
-                                                <div className="w-1.5 h-1.5 rounded-full"
-                                                    style={{ backgroundColor: poll.active ? '#4CAF50' : '#F44336' }} />
-                                                <span className="text-[10px] font-bold text-gray-700">
+                                            <div
+                                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full -rotate-6"
+                                                style={{
+                                                    backgroundColor: poll.active ? "#C8E6C9" : "#FFCDD2",
+                                                }}
+                                            >
+                                                <div className="relative w-1.5 h-1.5">
+                                                    {poll.active && (
+                                                        <div
+                                                            className="absolute inset-0 rounded-full animate-ping"
+                                                            style={{
+                                                                backgroundColor: "#4CAF50",
+                                                                opacity: 0.6,
+                                                            }}
+                                                        />
+                                                    )}
+                                                    <div
+                                                        className="relative w-1.5 h-1.5 rounded-full"
+                                                        style={{
+                                                            backgroundColor: poll.active
+                                                                ? "#4CAF50"
+                                                                : "#F44336",
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                <span className="text-[10px] font-bold text-gray-700 tracking-[0.5px]">
                                                     {poll.active ? "Active" : "Closed"}
                                                 </span>
                                             </div>
@@ -540,7 +567,7 @@ export default function PollPage() {
 
                                         <p className="flex justify-between cursor-pointer">
                                             <Share2
-                                                size={20}
+                                                size={16}
                                                 strokeWidth={1.5}
                                                 className="hover:text-[#F25E0D]"
                                                 onClick={() => setShare(true)}
@@ -553,9 +580,7 @@ export default function PollPage() {
                                                 <div className="flex justify-between">
                                                     <h3 className="font-bold text-lg mb-4.5 text-center ">
                                                         Your event link for{" "}
-                                                        <span className="text-[#F25E0D]">
-                                                            {poll.title}
-                                                        </span>{" "}
+                                                        <span className="text-[#F25E0D]">{poll.title}</span>{" "}
                                                         is ready to share! 🎉
                                                     </h3>
                                                     <X
@@ -585,10 +610,10 @@ export default function PollPage() {
                                                                 `}
                                                     >
                                                         {!copied ? (
-                                                            <Copy size={20} strokeWidth={2} />
+                                                            <Copy size={16} strokeWidth={2} />
                                                         ) : (
                                                             <Check
-                                                                size={20}
+                                                                size={16}
                                                                 strokeWidth={2}
                                                                 style={{ color: "white" }}
                                                             />
@@ -621,7 +646,7 @@ export default function PollPage() {
                                         type="number"
                                         value={editedBudget}
                                         onChange={(e) => setEditedBudget(Number(e.target.value))}
-                                        className=" border-b border-gray-300 border-0 focus:border-blue-500 focus:outline-none flex justify-between items-start text-sm text-black"
+                                        className=" border-b border-[#737791] bg-transparent outline-none focus:outline-none flex justify-between items-start text-sm text-black"
                                     />
                                 )}
                             </p>
@@ -637,7 +662,7 @@ export default function PollPage() {
                                 )}
 
                                 <div className="flex items-bottom  mb-2 gap-2 ml-0 text-[14px] text-[#EA7317] justify-between">
-                                    <div className="flex items-center mt-10 mb-10 gap-2 ml-0 text-[14px] text-[#EA7317]">
+                                    <div className="flex items-center mt-10 mb-10 gap-2 ml-0 text-[14px] text-[#EA7317] ">
                                         <ShoppingBagIcon size={14} strokeWidth={2} />
                                         {products.length} {products.length === 1 ? "item" : "items"}
                                         <span>
@@ -657,9 +682,25 @@ export default function PollPage() {
                                         <span>
                                             <Dot className="mx-1" color="#F25E0D" size={14} />
                                         </span>
-                                        <User2Icon size={14} strokeWidth={2} /> created by{" "}
+                                        <UserCircle size={14} strokeWidth={1.5} /> created by{" "}
                                         {user && poll.user_id !== user.id ? poll.created_by : "me"}
+                                        {history.length !== 0 ? (
+                                            <>
+                                                <span>
+                                                    <Dot className="mx-1" color="#F25E0D" size={14} />
+                                                </span>
+                                                <div
+                                                    className="flex items-center gap-2 border border-[#F25E0D] px-3 py-1 rounded-2xl cursor-pointer hover:bg-[#F25E0D] hover:text-amber-50"
+                                                    onClick={handleToggleHistory}
+                                                >
+                                                    <HistoryIcon size={14} strokeWidth={2} /> history
+                                                </div>{" "}
+                                            </>
+                                        ) : (
+                                            ""
+                                        )}
                                     </div>
+
                                     <div>
                                         <button
                                             onClick={handleShowIdeas}
@@ -669,7 +710,7 @@ export default function PollPage() {
                                     hover:scale-105 gap-2"
                                         >
                                             {!showGiftIdeas ? (
-                                                <Gift size={30} strokeWidth={1.5} />
+                                                <Wand2 size={30} strokeWidth={1.5} />
                                             ) : (
                                                 <ChevronUp size={30} strokeWidth={2} />
                                             )}
@@ -684,7 +725,7 @@ export default function PollPage() {
                                     type="text"
                                     value={editedDescription}
                                     onChange={(e) => setEditedDescription(e.target.value)}
-                                    className="border-b border-gray-300 border-0 focus:border-blue-500 focus:outline-none flex text-left  mt-2.5 text-sm text-[#737791] font-serif italic"
+                                    className="border-b border-[#737791] bg-transparent outline-none flex text-left  mt-2.5 text-sm text-[#737791] font-serif italic"
                                 />
                                 <div className="flex items-bottom  mb-2 text-[14px] text-[#EA7317] justify-between">
                                     <div className="flex w-full items-center mt-10 mb-10 gap-2 text-[14px] text-[#EA7317] ">
@@ -719,6 +760,19 @@ export default function PollPage() {
                     </div>
                 </div>
             </div>
+            {history.length > 0 && openHistory && (
+                <HistoryPanel
+                    history={history}
+                    uuid={poll.uuid}
+                    openHistoryDelete={openHistoryDelete}
+                    setOpenHistoryDelete={setOpenHistoryDelete}
+                    onDelete={handleDeleteHistory}
+                    onAddToIdeas={handleAddHistoryToIdeas}
+                    onCopy={handleCopyHistory}
+                    copiedId={copiedId} 
+    
+                />
+            )}
 
             <div className="flex flex-col items-center ">
                 {showGiftIdeas && (
@@ -731,11 +785,14 @@ export default function PollPage() {
                 <h1 className="text-[1.5em]  leading-tight pt-10 font-black">
                     Products
                 </h1>
-                <Search getProducts={getProducts} openCard={openCard} setOpenCard={setOpenCard} />
+                <Search
+                    getProducts={getProducts}
+                    openCard={openCard}
+                    setOpenCard={setOpenCard}
+                />
             </div>
 
-            {openCard &&
-                <AddProductCard getProducts={getProducts} />}
+            {openCard && <AddProductCard getProducts={getProducts} />}
 
             {showProducts ? (
                 <Products

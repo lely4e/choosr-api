@@ -4,6 +4,8 @@ from .repository.product_manager import ProductManager
 from .repository.vote_manager import VoteManager
 from .repository.comment_manager import CommentManager
 from .repository.activity_manager import ActivityManager
+from .repository.history_manager import HistoryManager
+from .repository.idea_manager import IdeaManager
 from app.db.database import get_db
 from sqlalchemy.orm import Session
 from fastapi import Depends
@@ -31,3 +33,11 @@ def get_comment_manager(db: Session = Depends(get_db)) -> CommentManager:
 
 def get_activity_manager(db: Session = Depends(get_db)) -> ActivityManager:
     return ActivityManager(db)
+
+
+def get_history_manager(db: Session = Depends(get_db)) -> HistoryManager:
+    return HistoryManager(db)
+
+
+def get_idea_manager(db: Session = Depends(get_db)) -> IdeaManager:
+    return IdeaManager(db)

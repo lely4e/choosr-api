@@ -7,6 +7,7 @@ import AgeSlider from "./AgeSlider";
 import SearchIdea from "./SearchIdea";
 import { X } from "lucide-react";
 import { API_URL } from "../config";
+import { useParams } from "react-router-dom";
 
 export default function Ideas({ getProducts, title, budget }: IdeasProps) {
     // const [eventTitle, setEventTitle] = useState("");
@@ -20,6 +21,7 @@ export default function Ideas({ getProducts, title, budget }: IdeasProps) {
     const GiftSuggest = useRef<HTMLHeadingElement | null>(null);
 
     const [openIdeas, setOpenIdeas] = useState(false)
+    const { uuid } = useParams<{ uuid: string }>();
 
     const buttonsStyle =
         "w-full rounded-3xl border border-[#737791] px-3 py-2 text-[14px] hover:bg-[#F25E0D] hover:text-white hover:border-0 hover:cursor-pointer";
@@ -29,7 +31,7 @@ export default function Ideas({ getProducts, title, budget }: IdeasProps) {
         setLoading(true);
         try {
             const response = await authFetch(
-                `${API_URL}/products/suggestion`,
+                `${API_URL}/polls/${uuid}/products/suggestion`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },

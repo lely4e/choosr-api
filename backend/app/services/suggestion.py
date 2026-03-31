@@ -31,13 +31,43 @@ Budget range: {budget_range}
 
 Please suggest 5 gift ideas that match all of these details. 
 For each suggestion, provide the JSON which should have:
-a list of objects where every object has key name with the Name of the gift
+a list of objects where every object has key name with the Name of the gift without description and category list which was passed by user according this Pydantic model: 
 
+class TitleItem(BaseModel):
+    name: str = Field(..., min_length=3, max_length=200)
+    category: List[str]
+    model_config = ConfigDict(from_attributes=True)
+    
+Response body MUST be ONLY this JSON format:
+
+{
+    {
+      "name": "description",
+      "category": [recipient_relation, recipient_hobbies, gift_type]
+    },
+    {
+      "name": "description",
+      "category": [recipient_relation, recipient_hobbies, gift_type]
+    },
+    {
+      "name": "description",
+      "category": [recipient_relation, recipient_hobbies, gift_type]
+    },
+    {
+      "name": "description",
+      "category": [recipient_relation, recipient_hobbies, gift_type]
+    },
+    {
+      "name": "description",
+      "category": [recipient_relation, recipient_hobbies, gift_type]
+    }
+
+}
 
 Make the recommendations creative, practical, and aligned with the recipient’s interests and preferences.
 
     """
-
+    print("Calling Gemini...")
     response = client.models.generate_content(
         model="gemini-2.5-flash-lite",
         config=types.GenerateContentConfig(
@@ -46,8 +76,10 @@ Make the recommendations creative, practical, and aligned with the recipient’s
         ),
         contents=prompt_text,
     )
+    print("Gemini responded")
 
     return extract_json_from_gemini(response)
+    # return [{"name": "Test Gift"}]
 
 
 def extract_json_from_gemini(response):

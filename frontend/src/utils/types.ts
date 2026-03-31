@@ -118,3 +118,25 @@ export interface Item {
   icon?: React.ElementType;
   iconColor: string;
 };
+
+
+export interface MyIdeas {
+  id: number;
+  title: TitleItem;
+  user_id: number;
+  history_id: number | null;
+  created_at: string;
+}
+
+export interface TitleItem {
+  name: string;
+  category: string[];
+}
+
+export interface History {
+  id: number;
+  titles: TitleItem;
+  user_id: number;
+  poll_id: number;
+  created_at: string;
+}

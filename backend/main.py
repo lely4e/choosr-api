@@ -23,6 +23,8 @@ from app.core.errors import PollNotFoundError, poll_not_found_handler
 from app.core.errors import ProductNotFoundError, product_not_found_handler
 from app.core.errors import VoteNotFoundError, vote_not_found_handler
 from app.core.errors import CommentsNotFoundError, comments_not_found_handler
+from app.core.errors import IdeaNotFoundError, idea_not_found_handler
+from app.core.errors import HistoryNotFoundError, history_not_found_handler
 from app.core.errors import UserAlreadyExistsError, user_exists_handler
 from app.core.errors import PollAlreadyExist, poll_already_exist_handler
 from app.core.errors import DataError, data_error_handler
@@ -61,6 +63,8 @@ app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(UserNotFoundError, user_not_found_handler)
 app.add_exception_handler(Exception, exception_handler)
 app.add_exception_handler(PollNotFoundError, poll_not_found_handler)
+app.add_exception_handler(IdeaNotFoundError, idea_not_found_handler)
+app.add_exception_handler(HistoryNotFoundError, history_not_found_handler)
 app.add_exception_handler(UserAlreadyExistsError, user_exists_handler)
 app.add_exception_handler(DataError, data_error_handler)
 app.add_exception_handler(ProductNotFoundError, product_not_found_handler)
@@ -128,7 +132,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", reload=True)

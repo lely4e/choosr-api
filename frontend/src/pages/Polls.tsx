@@ -6,12 +6,12 @@ import {
   Share2,
   ShoppingBagIcon,
   Clock,
-  Dot,
   X,
   Copy,
   Check,
   ChevronDown,
   ChevronUp,
+  UserCircle,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { API_URL } from "../config";
@@ -150,7 +150,7 @@ const Polls: React.FC = () => {
                 key={poll.uuid}
                 className="box-content bg-white/50 backdrop-blur-md rounded-[30px] p-6 cursor-pointer 
               flex flex-col shadow-[0_-1px_25px_rgba(0,0,0,0.1)] transition-all duration-250 ease-in-out h-full 
-              hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
+              hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)] hover:bg-white/80"
                 onClick={(e) => {
                   navigate(`/polls/${poll.uuid}`);
                   e.preventDefault();
@@ -160,25 +160,26 @@ const Polls: React.FC = () => {
                 <div className="pb-2.5 flex justify-between items-start gap-5 m-0">
                   {/* active-button */}
                   <div className="flex items-center justify-between mr-3">
-                    <div
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-                      style={{
-                        backgroundColor: poll.active ? "#C8E6C9" : "#FFCDD2",
-                      }}
-                    >
-                      <div
-                        className="w-1.5 h-1.5 rounded-full"
-                        style={{
-                          backgroundColor: poll.active ? "#4CAF50" : "#F44336",
-                        }}
-                      />
-                      <span className="text-[10px] font-bold text-gray-700">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full -rotate-6"
+                      style={{ backgroundColor: poll.active ? '#C8E6C9' : '#FFCDD2' }}>
+
+                      <div className="relative w-1.5 h-1.5">
+                        {poll.active && (
+                          <div className="absolute inset-0 rounded-full animate-ping"
+                            style={{ backgroundColor: '#4CAF50', opacity: 0.6 }} />
+                        )}
+                        <div className="relative w-1.5 h-1.5 rounded-full "
+                          style={{ backgroundColor: poll.active ? '#4CAF50' : '#F44336' }} />
+                      </div>
+
+                      <span className="text-[10px] font-bold text-gray-700 tracking-[0.5px]">
                         {poll.active ? "Active" : "Closed"}
                       </span>
                     </div>
                   </div>
+
                   <Share2
-                    size={20}
+                    size={16}
                     strokeWidth={1.5}
                     className="hover:text-[#F25E0D]"
                     onClick={(e) => {
@@ -257,31 +258,46 @@ const Polls: React.FC = () => {
                   </p>
                 )}
 
-                {/* deadline */}
-                <p className="flex items-center mt-auto mb-5 gap-2 ml-0 text-[12px] text-[#EA7317]">
-                  <ShoppingBagIcon size={14} strokeWidth={1.5} />{" "}
-                  {poll.total_products}{" "}
-                  {poll.total_products === 1 ? "item" : "items"}
-                  <span>
+                         {/* total products */}
+                <p className="flex items-center mt-auto mb-5 gap-2 ml-0 text-[12px] text-[#EA7317] justify-between">
+                  <div className="flex items-center gap-3  px-2 py-1 rounded-full bg-[#F25E0D]/10">
+                    <ShoppingBagIcon size={14} strokeWidth={1.5} />{" "}
+                    {poll.total_products}{" "}
+                    {poll.total_products === 1 ? "item" : "items"}
+                  </div>
+
+                  {/* <span>
                     <Dot className="mx-1" color="#F25E0D" size={14} />
-                  </span>
-                  {poll.deadline ? (
-                    <>
-                      <Clock size={14} strokeWidth={1.5} />
-                      <span>{poll.deadline}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Clock size={14} strokeWidth={1.5} />
-                      <span>No deadline</span>
-                    </>
-                  )}
+                  </span> */}
+
+                  <div className="flex items-center gap-3  px-2 py-1 rounded-full bg-[#F25E0D]/10">
+                    {poll.deadline ? (
+                      <>
+                        <Clock size={14} strokeWidth={1.5} />
+                        {/* <span>{poll.deadline}</span> */}
+                        <span>
+                          {Math.max(
+                            0,
+                            Math.ceil((new Date(poll.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+                          )} days left
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Clock size={14} strokeWidth={1.5} />
+                        <span>No deadline</span>
+                      </>
+                    )}
+                  </div>
                 </p>
+
                 <button
-                  className="bg-purple-300/50 rounded-[20px] flex items-center py-1 text-[0.7rem] 
-                  text-[#356d8a] border-none mb-3 justify-center"
+                  className="flex items-center text-[#ba4cea] text-[0.7rem] px-5 py-2.5 bg-[#efd6ff] rounded-full
+                   border-none mb-3 justify-center "
                 >
-                  created by {poll.created_by}
+                  <div className="flex items-center gap-2">
+                    <UserCircle size={12} strokeWidth={2.0} /> created by {poll.created_by}
+                  </div>
                 </button>
               </div>
             ))}
@@ -319,7 +335,7 @@ const Polls: React.FC = () => {
                 key={poll.uuid}
                 className="box-content bg-white/50 backdrop-blur-md rounded-[30px] p-6 cursor-pointer 
               flex flex-col shadow-[0_-1px_25px_rgba(0,0,0,0.1)] transition-all duration-250 ease-in-out h-full 
-              hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
+              hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)] hover:bg-white/80"
                 onClick={(e) => {
                   navigate(`/polls/${poll.uuid}`);
                   e.preventDefault();
@@ -329,26 +345,26 @@ const Polls: React.FC = () => {
                 <div className="pb-2.5 flex justify-between items-start gap-5 m-0">
                   {/* active-button */}
                   <div className="flex items-center justify-between mr-3">
-                    <div
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-                      style={{
-                        backgroundColor: poll.active ? "#C8E6C9" : "#FFCDD2",
-                      }}
-                    >
-                      <div
-                        className="w-1.5 h-1.5 rounded-full"
-                        style={{
-                          backgroundColor: poll.active ? "#4CAF50" : "#F44336",
-                        }}
-                      />
-                      <span className="text-[10px] font-bold text-gray-700">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full -rotate-6"
+                      style={{ backgroundColor: poll.active ? '#C8E6C9' : '#FFCDD2' }}>
+
+                      <div className="relative w-1.5 h-1.5">
+                        {poll.active && (
+                          <div className="absolute inset-0 rounded-full animate-ping"
+                            style={{ backgroundColor: '#4CAF50', opacity: 0.6 }} />
+                        )}
+                        <div className="relative w-1.5 h-1.5 rounded-full"
+                          style={{ backgroundColor: poll.active ? '#4CAF50' : '#F44336' }} />
+                      </div>
+
+                      <span className="text-[10px] font-bold text-gray-700 ">
                         {poll.active ? "Active" : "Closed"}
                       </span>
                     </div>
                   </div>
 
                   <Share2
-                    size={20}
+                    size={16}
                     strokeWidth={1.5}
                     className="hover:text-[#F25E0D]"
                     onClick={(e) => {
@@ -427,37 +443,49 @@ const Polls: React.FC = () => {
                   </p>
                 )}
 
-                {/* deadline */}
-                <p className="flex items-center mt-auto mb-5 gap-2 ml-0 text-[12px] text-[#EA7317]">
-                  <ShoppingBagIcon size={14} strokeWidth={1.5} />{" "}
-                  {poll.total_products}{" "}
-                  {poll.total_products === 1 ? "item" : "items"}
-                  <span>
+                {/* total products */}
+                <p className="flex items-center mt-auto mb-5 gap-2 ml-0 text-[12px] text-[#EA7317] justify-between">
+                  <div className="flex items-center gap-3  px-2 py-1 rounded-full bg-[#F25E0D]/10">
+                    <ShoppingBagIcon size={14} strokeWidth={1.5} />{" "}
+                    {poll.total_products}{" "}
+                    {poll.total_products === 1 ? "item" : "items"}
+                  </div>
+
+                  {/* <span>
                     <Dot className="mx-1" color="#F25E0D" size={14} />
-                  </span>
-                  {poll.deadline ? (
-                    <>
-                      <Clock size={14} strokeWidth={1.5} />
-                      <span>{poll.deadline}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Clock size={14} strokeWidth={1.5} />
-                      <span>No deadline</span>
-                    </>
-                  )}
+                  </span> */}
+
+                  <div className="flex items-center gap-3  px-2 py-1 rounded-full bg-[#F25E0D]/10">
+                    {poll.deadline ? (
+                      <>
+                        <Clock size={14} strokeWidth={1.5} />
+                        {/* <span>{poll.deadline}</span> */}
+                        <span>
+                          {Math.max(
+                            0,
+                            Math.ceil((new Date(poll.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+                          )} days left
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Clock size={14} strokeWidth={1.5} />
+                        <span>No deadline</span>
+                      </>
+                    )}
+                  </div>
                 </p>
               </div>
             ))}
 
             {/* create-card */}
-            <CreateCard />
+            <CreateCard address={"/add-poll"} text={"Create Poll"} />
           </div>
         )}
         {/* create-card */}
         {polls.length === 0 && (
           <div className="grid gap-6 w-full my-10 mx-auto grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-            <CreateCard />
+            <CreateCard address={"/add-poll"} text={"Create Poll"} />
           </div>
         )}
       </div>

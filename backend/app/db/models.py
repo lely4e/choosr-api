@@ -14,6 +14,8 @@ from app.db.database import Base
 import uuid as uuid_module
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime, date
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Index
 
 
 class User(Base):
@@ -27,7 +29,7 @@ class User(Base):
         DateTime(timezone=True), server_default=func.now()
     )
 
-    # One-to-many relationship: a user can have many polls, products, votes
+    # One-to-many relationship: a user can have many polls, products, votes, comments, activities
     polls: Mapped[list["Poll"]] = relationship(
         "Poll", back_populates="user", cascade="all, delete-orphan"
     )
@@ -42,6 +44,12 @@ class User(Base):
     )
     activities: Mapped[list["Activity"]] = relationship(
         "Activity", back_populates="user", cascade="all, delete-orphan"
+    )
+    history: Mapped[list["History"]] = relationship(
+        "History", back_populates="user", cascade="all, delete-orphan"
+    )
+    ideas: Mapped[list["Ideas"]] = relationship(
+        "Ideas", back_populates="user", cascade="all, delete-orphan"
     )
 
 
@@ -71,6 +79,10 @@ class Poll(Base):
     user: Mapped["User"] = relationship("User", back_populates="polls")
     activities: Mapped[list["Activity"]] = relationship(
         "Activity", back_populates="poll", cascade="all, delete-orphan"
+    )
+
+    history: Mapped[list["History"]] = relationship(
+        "History", back_populates="poll", cascade="all, delete-orphan"
     )
 
     manually_closed: Mapped[bool] = mapped_column(
@@ -185,3 +197,51 @@ class Activity(Base):
     # Relationship
     user: Mapped["User"] = relationship("User", back_populates="activities")
     poll: Mapped["Poll"] = relationship("Poll", back_populates="activities")
+
+
+class History(Base):
+    __tablename__ = "history"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    titles: Mapped[list] = mapped_column(JSONB, nullable=False)
+
+    # Foreign Key link to user id, product id
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"), index=True, nullable=False
+    )
+    poll_id: Mapped[int] = mapped_column(
+        ForeignKey("polls.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+
+    # Relationship
+    user: Mapped["User"] = relationship("User", back_populates="history")
+    poll: Mapped["Poll"] = relationship("Poll", back_populates="history")
+    ideas: Mapped[list["Ideas"]] = relationship("Ideas", back_populates="history")
+
+
+class Ideas(Base):
+    __tablename__ = "ideas"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    title: Mapped[dict] = mapped_column(JSONB, nullable=False)
+
+    # Foreign Key link to user id and history id
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"), index=True, nullable=False
+    )
+
+    history_id: Mapped[int] = mapped_column(
+        ForeignKey("history.id", ondelete="SET NULL"), nullable=True
+    )
+
+    __table_args__ = (Index("idx_ideas_title_category", title, postgresql_using="gin"),)
+
+    # Relationship
+    user: Mapped["User"] = relationship("User", back_populates="ideas")
+    history: Mapped["History"] = relationship("History", back_populates="ideas")

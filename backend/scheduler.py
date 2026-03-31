@@ -34,6 +34,7 @@ def start_scheduler():
     scheduler.add_job(
         check_deadline,
         trigger="cron",
+        # minute="*/1",
         hour=0,  # midnight
         minute=0,
         id="deadline_job",

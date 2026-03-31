@@ -5,8 +5,10 @@ import Signup from "./pages/Signup"
 import Login from "./pages/Login"
 import Home from "./pages/Home"
 import Polls from "./pages/Polls"
+import MyIdeasPage from "./pages/MyIdeas"
 import PollPage from "./pages/Poll"
 import PollAdd from "./pages/PollAdd"
+import IdeaAdd from "./pages/IdeaAdd"
 import Profile from "./pages/Profile"
 import Search from "./components/Search"
 import Ideas from "./components/Ideas"
@@ -27,8 +29,10 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/my-polls" element={<ProtectedRoute><Polls /></ProtectedRoute>} />
+        <Route path="/my-ideas" element={<ProtectedRoute><MyIdeasPage /></ProtectedRoute>} />
         <Route path="/polls/:uuid" element={<ProtectedRoute><PollPage /></ProtectedRoute>} />
         <Route path="/add-poll" element={<ProtectedRoute><PollAdd /></ProtectedRoute>} />
+        <Route path="/add-idea" element={<ProtectedRoute><IdeaAdd /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/polls/:uuid/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
         <Route path="/polls/:uuid/ideas" element={<ProtectedRoute><Ideas title={""} budget={0} /></ProtectedRoute>} />

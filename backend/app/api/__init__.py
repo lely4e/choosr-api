@@ -8,12 +8,14 @@ from app.api.routes.comments import comment_router
 from app.api.routes.search import search_router
 from app.api.routes.suggestion import suggestion_router
 from app.api.routes.activity import activity_router
+from app.api.routes.idea import idea_router
 
 router = APIRouter()
 router.include_router(auth_router, tags=["Authentication"])
 router.include_router(user_router, prefix="/me", tags=["User"])
 router.include_router(search_router, tags=["Search Products"])
-router.include_router(suggestion_router, tags=["Suggestions"])
+router.include_router(suggestion_router, tags=["Gift Suggestions & History"])
+router.include_router(idea_router, tags=["Ideas"])
 router.include_router(activity_router, tags=["Activities"])
 router.include_router(poll_router, prefix="/polls", tags=["Polls"])
 

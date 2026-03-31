@@ -1,6 +1,11 @@
 import { useNavigate } from "react-router-dom";
 
-export default function CreateCard() {
+type CreateCardProps = {
+  address: string;
+  text: string;
+};
+
+export default function CreateCard({address, text}: CreateCardProps) {
     const navigate = useNavigate();
   return (
     
@@ -10,7 +15,7 @@ export default function CreateCard() {
         className="h-full box-content bg-white/[0.439] backdrop-blur-[10px] border-2 border-dashed 
         border-[#cbd5f5] rounded-[30px] p-6 flex flex-col items-center justify-center cursor-pointer
         transition-all duration-250 hover:border-[#F25E0D] hover:bg-[rgba(246,143,92,0.05)]"
-        onClick={() => navigate("/add-poll")}
+        onClick={() => navigate(address)}
       >
         {/* create-icon */}
         <div className="w-14 h-14 flex items-center justify-center mb-4">
@@ -30,7 +35,7 @@ export default function CreateCard() {
         </div>
 
         {/* create-title */}
-        <p className="text-slate-600 mb-1 text-sm">Create Poll</p>
+        <p className="text-slate-600 mb-1 text-sm">{text}</p>
       </div>
     </>
   );

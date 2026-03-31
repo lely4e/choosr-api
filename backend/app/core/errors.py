@@ -135,3 +135,27 @@ class CommentsNotFoundError(Exception):
 
 async def comments_not_found_handler(request: Request, exc: CommentsNotFoundError):
     return JSONResponse(status_code=404, content={"error": exc.message})
+
+
+class HistoryNotFoundError(Exception):
+    """Custom exception if history not found."""
+
+    def __init__(self, message="History not found"):
+        self.message = message
+        super().__init__(self.message)
+
+
+async def history_not_found_handler(request: Request, exc: HistoryNotFoundError):
+    return JSONResponse(status_code=404, content={"error": exc.message})
+
+
+class IdeaNotFoundError(Exception):
+    """Custom exception if idea not found."""
+
+    def __init__(self, message="Idea not found"):
+        self.message = message
+        super().__init__(self.message)
+
+
+async def idea_not_found_handler(request: Request, exc: IdeaNotFoundError):
+    return JSONResponse(status_code=404, content={"error": exc.message})

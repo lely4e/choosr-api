@@ -29,7 +29,14 @@ export const updatePoll = async (
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.detail || "Unauthorized");
+    const message =
+      data?.detail ||
+      data?.message ||
+      data?.error ||
+      (typeof data === "string" ? data : null) ||
+      "Request failed";
+
+    throw new Error(message);
   }
   return data as Poll;
 };

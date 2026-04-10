@@ -1,43 +1,21 @@
-import React, { useEffect, useRef, useState } from "react";
-import { type Activities, type Poll } from "../utils/types";
-import { authFetch } from "../utils/auth";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { deletePoll } from "../utils/deletePoll";
-import { updatePoll } from "../utils/updatePoll";
 import Search from "../components/Search";
 import Ideas from "../components/Ideas";
 import Products from "../components/Products";
-import {
-    Share2,
-    ShoppingBagIcon,
-    Clock,
-    Edit,
-    Trash2,
-    Dot,
-    MoveLeft,
-    Copy,
-    Check,
-    X,
-    ChevronUp,
-    MinusCircle,
-    PlusCircle,
-    HistoryIcon,
-    Wand2,
-    UserCircle,
-} from "lucide-react";
+import { MoveLeft } from "lucide-react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import type { Product } from "../utils/types";
 import { useUser } from "../context/UserContext";
-import toast from "react-hot-toast";
-import { API_URL } from "../config";
-import Modal from "../components/Modal";
 import { Link } from "react-router-dom";
-import Toggle from "../components/Toggle";
 import AddProductCard from "../components/AddProduct";
 import HistoryPanel from "../components/HistoryPanel";
 import { useHistory } from "../hooks/useHistory";
+import { useActivities } from "../hooks/useActivities";
+import { useProducts } from "../hooks/useProducts";
+import { usePoll } from "../hooks/usePoll";
+import PollCard from "../components/PollCard";
+import PollEditForm from "../components/PollEditForm";
 
 export default function PollPage() {
     const { user } = useUser();
@@ -46,41 +24,8 @@ export default function PollPage() {
 
     const { uuid } = useParams<{ uuid: string }>();
 
-    const [poll, setPoll] = useState<Poll | null>(null);
-
-    const [activities, setActivities] = useState<Activities[]>([]);
-
-    const [isEditing, setIsEditing] = useState<boolean>(false);
-    const [editedTitle, setEditedTitle] = useState<string>("");
-    const [editedBudget, setEditedBudget] = useState<number>(0);
-    const [editedDescription, setEditedDescription] = useState<string>("");
-    const [editedDeadline, setEditedDeadline] = useState<string>("");
-    const [editedManuallyClosed, setEditedManuallyClosed] =
-        useState<boolean>(false);
-
     const [showGiftIdeas, setShowGiftIdeas] = useState(false);
     const [showProducts, setShowProducts] = useState(true);
-
-    const [products, setProducts] = useState<Product[]>([]);
-
-    const [open, setOpen] = useState(false);
-    const [openPoll, setOpenPoll] = useState(false);
-    const [share, setShare] = useState(false);
-    const [copied, setCopied] = useState(false);
-
-    const [openCard, setOpenCard] = useState(false);
-
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
-    const [loadingMore, setLoadingMore] = useState(false);
-    const sentinelRef = useRef<HTMLDivElement>(null);
-
-    const navigate = useNavigate();
-
-    const handleShowIdeas = () => {
-        setShowGiftIdeas((prev) => !prev);
-        setShowProducts(true);
-    };
 
     const {
         history,
@@ -91,120 +36,55 @@ export default function PollPage() {
         handleDeleteHistory,
         handleAddHistoryToIdeas,
         handleCopyHistory,
-        copiedId
+        copiedId,
     } = useHistory(uuid);
 
-    // fetch activities
-    useEffect(() => {
-        const getActivities = async () => {
-            try {
-                const response = await authFetch(`${API_URL}/activities`);
-                const data = await response.json();
-                setActivities(data);
-            } catch (error) {
-                console.error("Failed to fetch activities", error);
-            }
-        };
-        getActivities();
-    }, []);
+    const {
+        activities,
+        open,
+        setOpen,
+        handleAddSharedPoll,
+        handleDeleteSharedPoll,
+    } = useActivities();
 
-    // fetch products
-    const getProducts = async (pageNum = 1, append = false) => {
-        if (!uuid) return;
-        try {
-            const response = await authFetch(
-                `${API_URL}/polls/${uuid}/products?page=${pageNum}&size=10`,
-            );
-            const data = await response.json();
+    const {
+        products,
+        getProducts,
+        setProducts,
+        refreshProducts,
+        sentinelRef,
+        loadingMore,
+        hasMore,
+    } = useProducts(uuid);
 
-            if (append) {
-                setProducts((prev) => [...prev, ...data.items]);
-            } else {
-                setProducts(data.items);
-            }
-
-            setHasMore(data.page < data.pages);
-            setPage(pageNum);
-
-            console.log("Products fetched:", data);
-            console.log("Amount of products:", data.length);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to fetch products: ${error.message}`);
-                console.error(`Failed to fetch products: ${error.message}`);
-            } else {
-                toast.error("Failed to fetch products!");
-                console.error("Failed to fetch products!", error);
-            }
-        }
-    };
-
-    useEffect(() => {
-        if (!uuid) return;
-        getProducts(1, false);
-    }, [uuid]);
-
-    const loadMore = async () => {
-        if (!hasMore || loadingMore) return;
-        setLoadingMore(true);
-        await getProducts(page + 1, true);
-        setLoadingMore(false);
-    };
-
-    useEffect(() => {
-        if (!sentinelRef.current) return;
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && hasMore && !loadingMore) {
-                    loadMore();
-                }
-            },
-            { threshold: 0.1 },
-        );
-
-        observer.observe(sentinelRef.current);
-        return () => observer.disconnect();
-    }, [hasMore, loadingMore, products]);
-
-    const refreshProducts = async () => {
-        if (!uuid) return;
-        try {
-            const response = await authFetch(
-                `${API_URL}/polls/${uuid}/products?page=1&size=${page * 10}`,
-            );
-            const data = await response.json();
-            setProducts(data.items);
-        } catch (error) {
-            toast.error("Failed to refresh products!");
-        }
-    };
-
-    useEffect(() => {
-        const getPoll = async () => {
-            if (!uuid) return;
-            try {
-                const response = await authFetch(`${API_URL}/polls/${uuid}`);
-                const data = await response.json();
-                if (!response.ok) {
-                    alert(data.detail || "Unauthorized");
-                    console.error("Unauthorized:", data);
-                    return;
-                }
-                setPoll(data);
-                console.log("Polls fetched:", data);
-            } catch (error: unknown) {
-                if (error instanceof Error) {
-                    toast.error(`Failed to fetch products: ${error.message}`);
-                    console.error(`Failed to fetch products: ${error.message}`);
-                } else {
-                    toast.error("Failed to fetch products!");
-                    console.error("Failed to fetch products!", error);
-                }
-            }
-        };
-        getPoll();
-    }, [uuid]);
+    const {
+        poll,
+        isEditing,
+        editedTitle,
+        editedBudget,
+        editedManuallyClosed,
+        editedDescription,
+        editedDeadline,
+        setEditedTitle,
+        setEditedBudget,
+        setEditedDescription,
+        setEditedDeadline,
+        setEditedManuallyClosed,
+        startEditing,
+        cancelEditing,
+        handleApplyUpdate,
+        handleDeletePoll,
+        handleCopy,
+        copied,
+        openPoll,
+        setOpenPoll,
+        share,
+        setShare,
+        showPollCard,
+        setShowPollCard,
+        openCard,
+        setOpenCard,
+    } = usePoll(uuid);
 
     if (!poll) {
         return (
@@ -213,166 +93,12 @@ export default function PollPage() {
             </div>
         );
     }
-
-    // delete poll
-    const handleDeletePoll = async (e: React.MouseEvent, uuid: string) => {
-        e.stopPropagation();
-        try {
-            await deletePoll(uuid);
-            toast.success("Poll deleted successfully!", {
-                duration: 2000,
-            });
-            setOpen(false);
-
-            setTimeout(() => {
-                navigate("/my-polls");
-            }, 2000);
-            console.log("Poll deleted");
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to delete poll: ${error.message}`);
-                console.error(`Failed to delete poll: ${error.message}`);
-            } else {
-                toast.error("Failed to delete poll!");
-                console.error("Failed to delete poll!", error);
-            }
-        }
+    const handleShowIdeas = () => {
+        setShowGiftIdeas((prev) => !prev);
+        setShowProducts(true);
     };
-
-    const handleAddSharedPoll = async (uuid: string) => {
-        try {
-            const response = await authFetch(`${API_URL}/activities`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    uuid: uuid,
-                }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                console.error("Error to add shared poll:", data);
-                throw new Error(data.error || "Unknown error");
-            }
-
-            const updated = await authFetch(`${API_URL}/activities`);
-            setActivities(await updated.json());
-
-            console.log("Shared Poll added successfully:", data);
-            toast.success("Shared Poll added successfully!", {
-                duration: 2000,
-            });
-
-            setTimeout(() => {
-                navigate("/my-polls");
-            }, 1000);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Error to add poll: ${error.message}`);
-                console.error(`Error to add poll: ${error.message}`);
-            } else {
-                toast.error("Error to add poll!");
-                console.error("Error to add poll!", error);
-            }
-        }
-    };
-
-    const handleDeleteSharedPoll = async (uuid: string) => {
-        try {
-            const response = await authFetch(`${API_URL}/activities/${uuid}`, {
-                method: "DELETE",
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                console.error("Error to delete shared poll:", data);
-                throw new Error(data.error || "Unknown error");
-            }
-
-            toast.success("Shared Poll deleted successfully!", {
-                duration: 2000,
-            });
-            setOpen(false);
-
-            setTimeout(() => {
-                navigate("/my-polls");
-            }, 2000);
-            console.log("Shared Poll deleted");
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to delete shared poll: ${error.message}`);
-                console.error(`Failed to delete shared poll: ${error.message}`);
-            } else {
-                toast.error("Failed to delete shared poll!");
-                console.error("Failed to delete shared poll!", error);
-            }
-        }
-    };
-
-    // update poll
-    const startEditing = () => {
-        setIsEditing(true);
-        setEditedTitle(poll.title);
-        setEditedBudget(poll.budget);
-        setEditedDescription(poll.description || "");
-        setEditedDeadline(poll.deadline || "");
-        setEditedManuallyClosed(poll.manually_closed);
-    };
-
-    const cancelEditing = () => setIsEditing(false);
-
-    const handleApply = async () => {
-        if (!uuid) return;
-        try {
-            const updatedPoll = await updatePoll(
-                uuid!,
-                editedTitle,
-                editedBudget,
-                editedDescription || undefined,
-                editedDeadline || undefined,
-                editedManuallyClosed,
-            );
-
-            console.log("Server response:", updatedPoll);
-            console.log("Deadline in response:", updatedPoll.deadline);
-
-            setPoll(updatedPoll);
-            setIsEditing(false);
-            toast.success("Poll updated successfully!", {
-                duration: 2000,
-            });
-            console.log("Poll updated", poll);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to update poll: ${error.message}`);
-                console.error(`Failed to update poll: ${error.message}`);
-            } else {
-                toast.error("Failed to update poll!");
-                console.error("Failed to update poll!", error);
-            }
-        }
-    };
-
-    const handleCopy = async () => {
-        if (!uuid) return;
-        const linkToCopy = `${window.location.origin}/polls/${uuid}`;
-
-        try {
-            await navigator.clipboard.writeText(linkToCopy);
-            setCopied(true);
-            toast.success("Link copied to clipboard!", { duration: 2000 });
-            setTimeout(() => setCopied(false), 2000);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to copy: ${error.message}`);
-                console.error(`Failed to copy: ${error.message}`);
-            } else {
-                toast.error("Failed to copy!");
-                console.error("Failed to copy!", error);
-            }
-        }
+    const handleShowEdit = () => {
+        setShowPollCard(false);
     };
 
     return (
@@ -389,377 +115,65 @@ export default function PollPage() {
                     </Link>
 
                     {/* card-poll */}
-                    <div
-                        key={poll.uuid}
-                        className="bg-white/50 backdrop-blur-md rounded-[30px] p-6 
-                    flex flex-col shadow-[0_10px_25px_rgba(0,0,0,0.06),0_4px_10px_rgba(0,0,0,0.04)] 
-                    transition-all duration-250 h-4/5"
-                    >
-                        {/* poll-text */}
-                        <div className="flex justify-between items-start m-0">
-                            {/* poll-title-container */}
-                            <div className="min-h-6 flex-1">
-                                <h3 className="text-left m-0 font-bold text-3xl text-black ">
-                                    {!isEditing ? (
-                                        poll.title
-                                    ) : (
-                                        // edit mode
-                                        <>
-                                            <div className="flex justify-between gap-2.5">
-                                                <input
-                                                    type="text"
-                                                    value={editedTitle}
-                                                    onChange={(e) => setEditedTitle(e.target.value)}
-                                                    className=" w-full border-b border-[#737791] bg-transparent outline-none text-left font-bold text-3xl text-black"
-                                                />
+                    {showPollCard && (
+                        <PollCard
+                            poll={poll}
+                            uuid={uuid!}
+                            user={user}
+                            activities={activities}
+                            products={products}
+                            history={history}
+                            isEditing={isEditing}
+                            editedTitle={editedTitle}
+                            editedManuallyClosed={editedManuallyClosed}
+                            editedBudget={editedBudget}
+                            open={open}
+                            openPoll={openPoll}
+                            share={share}
+                            copied={copied}
+                            setOpen={setOpen}
+                            setOpenPoll={setOpenPoll}
+                            setShare={setShare}
+                            setEditedTitle={setEditedTitle}
+                            setEditedManuallyClosed={setEditedManuallyClosed}
+                            setEditedBudget={setEditedBudget}
+                            startEditing={startEditing}
+                            handleDeletePoll={handleDeletePoll}
+                            handleAddSharedPoll={handleAddSharedPoll}
+                            handleDeleteSharedPoll={handleDeleteSharedPoll}
+                            handleCopy={handleCopy}
+                            handleToggleHistory={handleToggleHistory}
+                            handleShowIdeas={handleShowIdeas}
+                            showGiftIdeas={showGiftIdeas}
+                            handleShowEdit={handleShowEdit}
+                        />
+                    )}
 
-                                                <div className="text-xs font-bold text-gray-700">
-                                                    <Toggle
-                                                        // label={editedManuallyClosed ? "Poll closed" : "Poll opened"}
-                                                        initial={!editedManuallyClosed}
-                                                        onChange={(checked) => {
-                                                            setEditedManuallyClosed(!checked);
-                                                            {
-                                                                !editedManuallyClosed
-                                                                    ? toast.success("Poll closed")
-                                                                    : toast.success("Poll opened");
-                                                            }
-                                                        }}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </>
-                                    )}
-                                </h3>
-                            </div>
-
-                            <div className="pt-1.5 flex justify-between items-center">
-                                {!isEditing ? (
-                                    <>
-                                        {/* view mode */}
-                                        {/* add poll from other creators to vote  */}
-                                        {user && user.id !== poll.user_id && activities && (
-                                            <div className="flex mr-4 cursor-pointer">
-                                                {!activities.some(
-                                                    (activity) => activity.uuid === poll.uuid,
-                                                ) ? (
-                                                    <PlusCircle
-                                                        size={16}
-                                                        strokeWidth={1.5}
-                                                        className="hover:text-[#F25E0D]"
-                                                        onClick={() => handleAddSharedPoll(poll.uuid)}
-                                                    />
-                                                ) : (
-                                                    <MinusCircle
-                                                        size={16}
-                                                        strokeWidth={1.5}
-                                                        className="hover:text-[#F25E0D]"
-                                                        onClick={() => setOpenPoll(true)}
-                                                    />
-                                                )}
-                                            </div>
-                                        )}
-                                        <Modal isOpen={openPoll} onClose={() => setOpenPoll(false)}>
-                                            <h3 className="font-bold text-lg ">
-                                                Are you sure you want to delete this shared poll?
-                                            </h3>
-                                            <div className="flex mt-10 flex-1 gap-2 justify-between">
-                                                <button
-                                                    className="flex-1 border  rounded-full px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
-                                                    onClick={() => setOpenPoll(false)}
-                                                >
-                                                    Cancel
-                                                </button>
-                                                <button
-                                                    className="flex-1  bg-red-600 text-white rounded-full px-6 py-2 hover:bg-red-700 hover:text-white transition-colors"
-                                                    onClick={() => handleDeleteSharedPoll(poll.uuid)}
-                                                >
-                                                    Yes, Delete
-                                                </button>
-                                            </div>
-                                        </Modal>
-
-                                        {user && user.id === poll.user_id && (
-                                            <>
-                                                <p
-                                                    className="flex justify-between items-start gap-5 mr-4 cursor-pointer"
-                                                    onClick={startEditing}
-                                                >
-                                                    <Edit
-                                                        size={17}
-                                                        strokeWidth={1.5}
-                                                        className="hover:text-[#F25E0D]"
-                                                    />
-                                                </p>
-                                                <div>
-                                                    <p className="flex justify-between items-start gap-5 mr-4 cursor-pointer">
-                                                        <Trash2
-                                                            size={16}
-                                                            strokeWidth={1.5}
-                                                            className="hover:text-[#F25E0D]"
-                                                            onClick={() => setOpen(true)}
-                                                        />
-                                                    </p>
-
-                                                    <Modal isOpen={open} onClose={() => setOpen(false)}>
-                                                        <h3 className="font-bold text-lg ">
-                                                            Are you sure you want to delete this poll?
-                                                        </h3>
-                                                        <div className="flex mt-10 flex-1 gap-2 justify-between">
-                                                            <button
-                                                                className="flex-1 border  rounded-full px-6 py-2 hover:bg-[#B0B6CC] hover:text-white transition-colors"
-                                                                onClick={() => setOpen(false)}
-                                                            >
-                                                                Cancel
-                                                            </button>
-                                                            <button
-                                                                className="flex-1  bg-red-600 text-white rounded-full px-6 py-2 hover:bg-red-700 hover:text-white transition-colors"
-                                                                onClick={(e) => handleDeletePoll(e, poll.uuid)}
-                                                            >
-                                                                Yes, Delete
-                                                            </button>
-                                                        </div>
-                                                    </Modal>
-                                                </div>
-                                            </>
-                                        )}
-
-                                        {/* <p className="flex justify-between items-start gap-5 mr-4 cursor-pointer ">
-                                            <Bell
-                                                size={19.5}
-                                                strokeWidth={1.5}
-                                                style={{ color: "#737791" }}
-                                            />
-                                        </p> */}
-
-                                        <div className="flex items-center justify-between mr-3">
-                                            <div
-                                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full -rotate-6"
-                                                style={{
-                                                    backgroundColor: poll.active ? "#C8E6C9" : "#FFCDD2",
-                                                }}
-                                            >
-                                                <div className="relative w-1.5 h-1.5">
-                                                    {poll.active && (
-                                                        <div
-                                                            className="absolute inset-0 rounded-full animate-ping"
-                                                            style={{
-                                                                backgroundColor: "#4CAF50",
-                                                                opacity: 0.6,
-                                                            }}
-                                                        />
-                                                    )}
-                                                    <div
-                                                        className="relative w-1.5 h-1.5 rounded-full"
-                                                        style={{
-                                                            backgroundColor: poll.active
-                                                                ? "#4CAF50"
-                                                                : "#F44336",
-                                                        }}
-                                                    />
-                                                </div>
-
-                                                <span className="text-[10px] font-bold text-gray-700 tracking-[0.5px]">
-                                                    {poll.active ? "Active" : "Closed"}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <p className="flex justify-between cursor-pointer">
-                                            <Share2
-                                                size={16}
-                                                strokeWidth={1.5}
-                                                className="hover:text-[#F25E0D]"
-                                                onClick={() => setShare(true)}
-                                            />
-                                        </p>
-
-                                        {/* share button */}
-                                        <div>
-                                            <Modal isOpen={share} onClose={() => setShare(false)}>
-                                                <div className="flex justify-between">
-                                                    <h3 className="font-bold text-lg mb-4.5 text-center ">
-                                                        Your event link for{" "}
-                                                        <span className="text-[#F25E0D]">{poll.title}</span>{" "}
-                                                        is ready to share! 🎉
-                                                    </h3>
-                                                    <X
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            e.stopPropagation();
-                                                            setShare(false);
-                                                        }}
-                                                        className="cursor-pointer"
-                                                    />
-                                                </div>
-                                                <div className="flex">
-                                                    <input
-                                                        className="border-0 border-b border-[#F25E0D] bg-transparent  text-[#737791] pl-2.5 text-base w-125 h-12  focus:outline-none"
-                                                        id={uuid}
-                                                        value={`${window.location.origin}/polls/${uuid}`}
-                                                        readOnly
-                                                    />
-
-                                                    <button
-                                                        onClick={handleCopy}
-                                                        className={` px-4  border-[#F25E0D] hover:bg-black h-12 hover:text-white transition-colors rounded-full
-                                                                    ${!copied
-                                                                ? "bg-[#F25E0D] text-white cursor-pointer"
-                                                                : "bg-[#B0B6CC]"
-                                                            }
-                                                                `}
-                                                    >
-                                                        {!copied ? (
-                                                            <Copy size={16} strokeWidth={2} />
-                                                        ) : (
-                                                            <Check
-                                                                size={16}
-                                                                strokeWidth={2}
-                                                                style={{ color: "white" }}
-                                                            />
-                                                        )}
-                                                    </button>
-                                                </div>
-                                            </Modal>
-                                        </div>
-                                        {/* <p className="flex justify-between items-start gap-5 m-0 cursor-pointer ">
-                                            <strong>
-                                                <MoreHorizontal
-                                                    size={20}
-                                                    strokeWidth={1.5}
-                                                    color="#356d8a"
-                                                />
-                                            </strong>
-                                        </p> */}
-                                    </>
-                                ) : null}
-                            </div>
-                        </div>
-
-                        <div className="min-h-6 flex">
-                            <p className="flex justify-between items-start mt-2.5 text-sm text-black">
-                                Budget: $
-                                {!isEditing ? (
-                                    `${poll.budget}`
-                                ) : (
-                                    <input
-                                        type="number"
-                                        value={editedBudget}
-                                        onChange={(e) => setEditedBudget(Number(e.target.value))}
-                                        className=" border-b border-[#737791] bg-transparent outline-none focus:outline-none flex justify-between items-start text-sm text-black"
-                                    />
-                                )}
-                            </p>
-                        </div>
-
-                        {!isEditing ? (
-                            <>
-                                {/* view mode */}
-                                {poll.description && (
-                                    <p className="flex text-left  mt-2.5 text-sm text-[#737791] font-serif italic">
-                                        {poll.description}
-                                    </p>
-                                )}
-
-                                <div className="flex items-bottom  mb-2 gap-2 ml-0 text-[14px] text-[#EA7317] justify-between">
-                                    <div className="flex items-center mt-10 mb-10 gap-2 ml-0 text-[14px] text-[#EA7317] ">
-                                        <ShoppingBagIcon size={14} strokeWidth={2} />
-                                        {products.length} {products.length === 1 ? "item" : "items"}
-                                        <span>
-                                            <Dot className="mx-1" color="#F25E0D" size={14} />
-                                        </span>
-                                        {poll.deadline ? (
-                                            <>
-                                                <Clock size={14} strokeWidth={1.5} />
-                                                <span>{poll.deadline}</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Clock size={14} strokeWidth={1.5} />
-                                                <span>No deadline</span>
-                                            </>
-                                        )}
-                                        <span>
-                                            <Dot className="mx-1" color="#F25E0D" size={14} />
-                                        </span>
-                                        <UserCircle size={14} strokeWidth={1.5} /> created by{" "}
-                                        {user && poll.user_id !== user.id ? poll.created_by : "me"}
-                                        {history.length !== 0 ? (
-                                            <>
-                                                <span>
-                                                    <Dot className="mx-1" color="#F25E0D" size={14} />
-                                                </span>
-                                                <div
-                                                    className="flex items-center gap-2 border border-[#F25E0D] px-3 py-1 rounded-2xl cursor-pointer hover:bg-[#F25E0D] hover:text-amber-50"
-                                                    onClick={handleToggleHistory}
-                                                >
-                                                    <HistoryIcon size={14} strokeWidth={2} /> history
-                                                </div>{" "}
-                                            </>
-                                        ) : (
-                                            ""
-                                        )}
-                                    </div>
-
-                                    <div>
-                                        <button
-                                            onClick={handleShowIdeas}
-                                            className="flex items-center font-medium text-[16px] text-white bg-linear-to-r from-[#9900ff] to-pink-500 
-                                    rounded-[30px] px-4 py-2 h-14 cursor-pointer
-                                    transform transition duration-300 ease-in-out
-                                    hover:scale-105 gap-2"
-                                        >
-                                            {!showGiftIdeas ? (
-                                                <Wand2 size={30} strokeWidth={1.5} />
-                                            ) : (
-                                                <ChevronUp size={30} strokeWidth={2} />
-                                            )}
-                                        </button>
-                                    </div>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                {/* edit mode */}
-                                <input
-                                    type="text"
-                                    value={editedDescription}
-                                    onChange={(e) => setEditedDescription(e.target.value)}
-                                    className="border-b border-[#737791] bg-transparent outline-none flex text-left  mt-2.5 text-sm text-[#737791] font-serif italic"
-                                />
-                                <div className="flex items-bottom  mb-2 text-[14px] text-[#EA7317] justify-between">
-                                    <div className="flex w-full items-center mt-10 mb-10 gap-2 text-[14px] text-[#EA7317] ">
-                                        <Clock size={14} strokeWidth={2} />
-                                        <input
-                                            type="date"
-                                            placeholder="Date"
-                                            value={editedDeadline || ""}
-                                            onChange={(e) => setEditedDeadline(e.target.value)}
-                                            className="bg-[#F25E0D] text-white px-6 py-2 rounded-full"
-                                        />
-
-                                        <button
-                                            onClick={cancelEditing}
-                                            className="ml-40 px-6 py-2 w-full flex-1 items-center text-base justify-center border border-[#737791] text-[#737791] hover:bg-[#B0B6CC] hover:border-[#B0B6CC] hover:text-white transition-colors font-normal rounded-full cursor-pointer"
-                                        >
-                                            Cancel
-                                        </button>
-
-                                        <button
-                                            onClick={handleApply}
-                                            className="px-6 py-2 w-full flex-1 items-center text-base justify-center text-white bg-[#6366f1] hover:bg-[#4F46E5]  hover:text-white transition-colors font-normal rounded-full cursor-pointer"
-                                        >
-                                            Apply
-                                        </button>
-                                    </div>
-
-                                    <div></div>
-                                </div>
-                            </>
-                        )}
-                    </div>
+                    {isEditing && (
+                        <PollEditForm
+                            editedTitle={editedTitle}
+                            setEditedTitle={setEditedTitle}
+                            editedBudget={editedBudget}
+                            setEditedBudget={setEditedBudget}
+                            editedManuallyClosed={editedManuallyClosed}
+                            setEditedManuallyClosed={setEditedManuallyClosed}
+                            editedDescription={editedDescription}
+                            editedDeadline={editedDeadline}
+                            setEditedDescription={setEditedDescription}
+                            setEditedDeadline={setEditedDeadline}
+                            cancelEditing={() => {
+                                cancelEditing();
+                                setShowPollCard(true);
+                            }}
+                            handleApply={() => {
+                                handleApplyUpdate();
+                                setShowPollCard(true);
+                            }}
+                        />
+                    )}
                 </div>
             </div>
+
             {history.length > 0 && openHistory && (
                 <HistoryPanel
                     history={history}
@@ -769,8 +183,7 @@ export default function PollPage() {
                     onDelete={handleDeleteHistory}
                     onAddToIdeas={handleAddHistoryToIdeas}
                     onCopy={handleCopyHistory}
-                    copiedId={copiedId} 
-    
+                    copiedId={copiedId}
                 />
             )}
 

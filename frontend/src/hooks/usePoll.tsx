@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 export function usePoll(uuid: string | undefined) {
     const [poll, setPoll] = useState<Poll | null>(null);
-    const [open, setOpen] = useState(false);
+    const [, setOpen] = useState(false);
     const [isEditing, setIsEditing] = useState<boolean>(false);
 
     const [editedTitle, setEditedTitle] = useState<string>("");

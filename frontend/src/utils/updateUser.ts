@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { API_URL } from "../config";
 import { authFetch } from "./auth";
 
@@ -13,9 +14,11 @@ export const updateUsername = async (newUsername: string): Promise<void> => {
     }
   );
 
-  const data = await response.json();
+  const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new Error(data.detail || "Unauthorized");
+    toast.error(data?.detail || "Failed to update username");
+    console.error("Failed to update username:", data);
+    return;
   }
 };

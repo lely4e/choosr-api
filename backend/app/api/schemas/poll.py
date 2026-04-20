@@ -6,7 +6,7 @@ from datetime import date
 
 
 class PollIn(BaseModel):
-    title: str = Field(..., min_length=3, max_length=100)
+    title: str = Field(..., min_length=3, max_length=40)
     budget: float = Field(..., gt=0)
     description: Optional[str] = Field(None, min_length=3, max_length=140)
     deadline: Optional[date] = Field(None)

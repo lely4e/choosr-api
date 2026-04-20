@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { API_URL } from "../config";
 import { authFetch } from "./auth";
 
@@ -7,9 +8,11 @@ export const deleteIdea = async (ideaId: number): Promise<void> => {
     { method: "DELETE" }
   );
 
-  const data = await response.json();
+  const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new Error(data.detail || "Unauthorized");
+    toast.error(data?.detail || "Failed to delete idea");
+    console.error("Failed to delete idea:", data);
+    return;
   }
 };

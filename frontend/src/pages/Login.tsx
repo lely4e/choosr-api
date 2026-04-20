@@ -4,23 +4,44 @@ import { Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import toast from "react-hot-toast";
 import { API_URL } from "../config";
-import { Mail, Lock } from "lucide-react";
+import { loginSchema, type LoginFormErrors } from "../schemas/loginSchema";
+import { EnvelopeIcon, LockIcon } from "@phosphor-icons/react";
 
 export default function Login() {
   const { login } = useUser();
   const [loginData, setLoginData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
+
+  const [errors, setErrors] = useState<LoginFormErrors>({});
 
   const navigate = useNavigate();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const body = new URLSearchParams({
-      username: loginData.email,
+    const result = loginSchema.safeParse({
+      username: loginData.username,
       password: loginData.password,
+    })
+
+    if (!result.success) {
+      const fieldErrors: LoginFormErrors = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as keyof LoginFormErrors;
+        if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+      }
+
+      setErrors(fieldErrors);
+      return false;
+    }
+
+    setErrors({});
+
+    const body = new URLSearchParams({
+      username: result.data.username,
+      password: result.data.password,
     });
 
     try {
@@ -31,11 +52,17 @@ export default function Login() {
         body: body.toString(),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        toast.error(data.detail || data.error || "Login failed");
-        console.error("Login error:", data);
+        if (data.detail?.toLowerCase().includes("password")) {
+          setErrors({ password: data.detail });
+        }
+        if (data.detail?.toLowerCase().includes("username")) {
+          setErrors({ password: data.detail });
+        } else {
+          toast.error(data.detail || "Login failed");
+        }
         return;
       }
 
@@ -48,7 +75,6 @@ export default function Login() {
       });
 
       if (!userResponse.ok) {
-        alert("Failed to fetch user data");
         return;
       }
 
@@ -62,19 +88,11 @@ export default function Login() {
       });
       console.log("Login successful:", data);
 
-      // Redirect to another page
-      // setTimeout(() => {
-      //   navigate("/my-polls");
-      // }, 2000);
       navigate("/my-polls")
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(`Error to log in: ${error.message}`);
-        console.error(`Error to log in: ${error.message}`);
-      } else {
-        toast.error("Error to log in!");
-        console.error("Error to log in !", error);
-      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Something went wrong";
+      toast.error(message);
+      console.error("Error to log in:", error);
     }
   }
 
@@ -100,46 +118,48 @@ export default function Login() {
               Please sign in to continue
             </p>
 
-            {/* <label htmlFor="email" className="text-[#737791] pt-5">
-              Email
-            </label> */}
             <div className="relative w-75 mb-3">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
-            <input
-              id="email"
-              type="email"
-              name="email"
-              placeholder="email@example.com"
-              value={loginData.email}
-              onChange={(e) =>
-                setLoginData({ ...loginData, email: e.target.value })
-              }
-              className="w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
-    text-center
-    placeholder-[#fff1ea] placeholder:italic placeholder:font-normal"
-              required
-            />
-</div>
-            {/* <label htmlFor="password" className="text-[#737791] pt-3">
-              Password
-            </label> */}
-                  <div className="relative w-75 mb-3">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
-            <input
-              id="password"
-              type="password"
-              name="password"
-              placeholder="password"
-              value={loginData.password}
-              onChange={(e) =>
-                setLoginData({ ...loginData, password: e.target.value })
-              }
-              className="w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
-    text-center
-    placeholder-[#fff1ea] placeholder:italic placeholder:font-normal"
-              required
-            />
-</div>
+              <EnvelopeIcon className="absolute left-4 top-5 -translate-y-1/2 text-white w-4 h-4" />
+              <input
+                id="email"
+                type="email"
+                name="email"
+                placeholder="email@example.com"
+                value={loginData.username}
+                onChange={(e) =>
+                  setLoginData({ ...loginData, username: e.target.value })
+                }
+                required
+                className={`w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
+                text-center placeholder-[#fff1ea] placeholder:italic placeholder:font-normal
+                 ${errors.username ? "border-red-400" : "border-[#737791]"}`}
+              />
+              {errors.username && (
+                <span className="text-red-500 text-xs mt-1">{errors.username}</span>
+              )}
+            </div>
+
+            <div className="relative w-75 mb-3">
+              <LockIcon className="absolute left-4 top-5 -translate-y-1/2 text-white w-4 h-4" />
+              <input
+                id="password"
+                type="password"
+                name="password"
+                placeholder="password"
+                value={loginData.password}
+                onChange={(e) =>
+                  setLoginData({ ...loginData, password: e.target.value })
+                }
+                required
+                className={`w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
+                text-center placeholder-[#fff1ea] placeholder:italic placeholder:font-normal
+                       ${errors.password ? "border-red-400" : "border-[#737791]"}`}
+              />
+              {errors.password && (
+                <span className="text-red-500 text-xs mt-1">{errors.password}</span>
+              )}
+
+            </div>
             <div className="p-7.5 pt-3">
               <button
                 id="submitButton"

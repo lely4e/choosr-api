@@ -9,6 +9,8 @@ import {
 import {
     ArrowCounterClockwiseIcon,
     CalendarBlankIcon,
+    CalendarCheckIcon,
+    CalendarIcon,
     CaretUpIcon,
     CheckIcon,
     DotIcon,
@@ -23,6 +25,9 @@ import {
     XIcon,
 } from "@phosphor-icons/react";
 import NoteCard from "./NoteCard";
+import { daysLeft } from "../utils/date";
+import { Tooltip } from "./Tooltip";
+import { motion } from "framer-motion";
 
 interface PollCardProps {
     poll: Poll;
@@ -81,22 +86,35 @@ export default function PollCard({
     handleShowEdit,
 }: PollCardProps) {
     return (
-        <div
+        <motion.div
             key={poll.uuid}
             className="bg-white/50 backdrop-blur-md rounded-[30px] p-6 
             flex flex-col shadow-[0_10px_25px_rgba(0,0,0,0.06),0_4px_10px_rgba(0,0,0,0.04)] 
             transition-all duration-250 h-4/5"
-        >
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0, duration: 0.6 }}>
             {/* active + icons */}
-            <div className="flex justify-between items-center mb-2">
-                <div className="">
-                    {/* active status */}
-                    <div className="flex items-center justify-between">
-                        <div
-                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full "
-                            style={{ backgroundColor: poll.active ? "#C8E6C9" : "#FFCDD2" }}
-                        >
-                            <div className="relative w-1.5 h-1.5">
+            <div className="flex justify-between items-center mb-2 gap-2 flex-wrap">
+
+                {/* poll-text */}
+                <div className="flex justify-between items-center m-0">
+                    {/* poll-title-container */}
+                    <div className="min-h-6 flex-1 mr-3">
+                        <h3 className="text-left m-0 font-bold text-3xl text-black ">
+                            {poll.title}
+                        </h3>
+                    </div>
+
+
+                    <div className="">
+                        {/* active status */}
+                        <div className="flex items-center justify-between">
+                            {/* <div
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full "
+                                style={{ backgroundColor: poll.active ? "#C8E6C9" : "#FFCDD2" }}
+                            > */}
+                            <div className="relative w-2 h-2">
                                 {poll.active && (
                                     <div
                                         className="absolute inset-0 rounded-full animate-ping"
@@ -104,46 +122,46 @@ export default function PollCard({
                                     />
                                 )}
                                 <div
-                                    className="relative w-1.5 h-1.5 rounded-full"
+                                    className="relative w-2 h-2 rounded-full"
                                     style={{
                                         backgroundColor: poll.active ? "#4CAF50" : "#F44336",
                                     }}
                                 />
+                                {/* </div> */}
+                                {/* <span className="text-[10px] font-bold text-gray-700 tracking-[0.5px]">
+                                    {poll.active ? "Active" : "Closed"}
+                                </span> */}
                             </div>
-                            <span className="text-[10px] font-bold text-gray-700 tracking-[0.5px]">
-                                {poll.active ? "Active" : "Closed"}
-                            </span>
                         </div>
                     </div>
                 </div>
-
                 {/* icons block */}
-                <div className="flex text-[#737791] items-center">
+                <div className="flex text-[#737791] items-center flex-wrap">
                     {/* add poll from other creators to vote  */}
                     {user && user.id !== poll.user_id && activities && (
                         <>
-                            <div className="flex cursor-pointer border border-[#B0B6CC] rounded-2xl px-1 py-1 hover:text-[#F25E0D] mr-2">
+                            <div className="flex cursor-pointer hover:text-[#F25E0D] mr-3">
                                 {!activities.some((activity) => activity.uuid === poll.uuid) ? (
                                     <PlusIcon
-                                        size={14}
-                                        weight="bold"
+                                        size={16}
+
                                         className="hover:text-[#F25E0D]"
                                         onClick={() => handleAddSharedPoll(poll.uuid)}
                                     />
                                 ) : (
                                     <TrashSimpleIcon
-                                        size={14}
-                                        weight="fill"
+                                        size={16}
+
                                         strokeWidth={1.5}
                                         className="hover:text-[#F25E0D]"
                                         onClick={() => setOpenPoll(true)}
                                     />
                                 )}
                             </div>
-                            <p className="flex  cursor-pointer border  border-[#B0B6CC] rounded-2xl px-1 py-1 hover:border-[#F25E0D] hover:text-[#F25E0D]">
+                            <p className="flex  cursor-pointer hover:text-[#F25E0D]">
                                 <ShareFatIcon
-                                    size={14}
-                                    weight="fill"
+                                    size={16}
+
                                     strokeWidth={1.5}
                                     onClick={() => setShare(true)}
                                 />
@@ -175,35 +193,35 @@ export default function PollCard({
                     {user && user.id === poll.user_id && (
                         <>
                             <p
-                                className="flex  mr-2 items-start cursor-pointer border border-[#B0B6CC] rounded-2xl px-1 py-1 hover:border-[#F25E0D] hover:text-[#F25E0D]"
+                                className="group relative flex mr-3 items-start cursor-pointer 
+                                hover:text-[#F25E0D]"
                                 onClick={() => {
                                     startEditing();
                                     handleShowEdit();
                                 }}
                             >
                                 <PencilSimpleLineIcon
-                                    size={14}
-                                    weight="fill"
+                                    size={16}
                                     strokeWidth={1.5}
                                 />
+                                <Tooltip text="Edit" />
                             </p>
 
-                            <p className="flex mr-2 items-start  cursor-pointer border border-[#B0B6CC] rounded-2xl px-1 py-1 hover:border-[#F25E0D] hover:text-[#F25E0D]">
+                            <p className="group relative flex mr-3 items-start  cursor-pointer hover:text-[#F25E0D]">
                                 <TrashSimpleIcon
-                                    size={14}
-                                    weight="fill"
+                                    size={16}
                                     strokeWidth={1.5}
                                     onClick={() => setOpen(true)}
                                 />
+                                <Tooltip text="Delete" />
                             </p>
 
-                            <p className="flex  cursor-pointer border  border-[#B0B6CC] rounded-2xl px-1 py-1 hover:border-[#F25E0D] hover:text-[#F25E0D]">
+                            <p className="group relative flex cursor-pointer  hover:text-[#F25E0D]">
                                 <ShareFatIcon
-                                    size={14}
-                                    weight="fill"
-                                    strokeWidth={1.5}
+                                    size={17}
                                     onClick={() => setShare(true)}
                                 />
+                                <Tooltip text="Share" />
                             </p>
 
                             <div>
@@ -245,7 +263,7 @@ export default function PollCard({
                                         setShare(false);
                                     }}
                                     className="cursor-pointer"
-                                      size={20}
+                                    size={20}
                                     weight="bold"
                                 />
                             </div>
@@ -278,16 +296,6 @@ export default function PollCard({
                 </div>
             </div>
 
-            {/* poll-text */}
-            <div className="flex justify-between items-start m-0">
-                {/* poll-title-container */}
-                <div className="min-h-6 flex-1">
-                    <h3 className="text-left m-0 font-bold text-3xl text-black ">
-                        {poll.title}
-                    </h3>
-                </div>
-            </div>
-
             {/* budget */}
             <div className="min-h-6 flex">
                 <p className="flex justify-between items-start mt-1 text-sm text-black">
@@ -312,19 +320,20 @@ export default function PollCard({
                         <DotIcon className="text-[#F25E0D]" size={22} weight="bold" />
                     </span>
                     {poll.deadline ? (
-                        <>
-                            <CalendarBlankIcon size={14} weight="fill" strokeWidth={1.5} />
-                            <span>
-                                {Math.max(
-                                    0,
-                                    Math.ceil(
-                                        (new Date(poll.deadline).getTime() - Date.now()) /
-                                        (1000 * 60 * 60 * 24),
-                                    ),
-                                )}{" "}
-                                days left
-                            </span>
-                        </>
+                        daysLeft(poll) > 0 ? (
+                            <>
+                                <CalendarIcon size={14} strokeWidth={1.5} weight="fill" />
+                                <span>
+                                    {daysLeft(poll)}{" "}
+                                    {daysLeft(poll) === 1 ? "day left" : "days left"}
+                                </span>
+                            </>
+                        ) : (
+                            <>
+                                <CalendarCheckIcon size={14} strokeWidth={1.5} weight="fill" />
+                                <span>Finished</span>
+                            </>
+                        )
                     ) : (
                         <>
                             <CalendarBlankIcon size={14} strokeWidth={1.5} />
@@ -374,11 +383,15 @@ export default function PollCard({
                                 <span>Get AI gift ideas</span>
                             </>
                         ) : (
-                            <CaretUpIcon size={30} weight="fill" strokeWidth={1.5} />
+                            <>
+                                <CaretUpIcon size={16} weight="fill" strokeWidth={1.5} />
+                                <span>Get AI gift ideas</span>
+                            </>
+
                         )}
                     </button>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }

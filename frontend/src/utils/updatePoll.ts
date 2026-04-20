@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { API_URL } from "../config";
 import { authFetch } from "./auth";
 import type { Poll } from "./types";
@@ -15,6 +16,9 @@ export const updatePoll = async (
   if (deadline !== undefined) body.deadline = deadline;
   if (manuallyClosed !== undefined) body.manually_closed = manuallyClosed;
 
+      console.log("updatePoll called with uuid:", JSON.stringify(uuid));
+    console.log("full URL:", `${API_URL}/polls/${uuid}`);
+
   console.log("Sending body:", JSON.stringify(body));
   console.log("Deadline value:", deadline);
 
@@ -26,17 +30,12 @@ export const updatePoll = async (
     body: JSON.stringify(body),
   });
 
-  const data = await response.json();
+  const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    const message =
-      data?.detail ||
-      data?.message ||
-      data?.error ||
-      (typeof data === "string" ? data : null) ||
-      "Request failed";
-
-    throw new Error(message);
+    toast.error(data?.detail || "Failed to update poll");
+    console.error("Failed to update poll:", data);
   }
+
   return data as Poll;
 };

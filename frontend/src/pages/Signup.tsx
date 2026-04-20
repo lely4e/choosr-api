@@ -3,34 +3,63 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { API_URL } from "../config";
-import { User, Lock, Mail } from "lucide-react";
+import { signupSchema, type SignupFormErrors } from "../schemas/signUpSchema";
+import { EnvelopeIcon, LockIcon, UserIcon } from "@phosphor-icons/react";
 
 export default function Signup() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [signupData, setSignupData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState<SignupFormErrors>({});
   const navigate = useNavigate();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    const result = signupSchema.safeParse({
+      username: signupData.username,
+      email: signupData.email,
+      password: signupData.password,
+    })
+
+    if (!result.success) {
+      const fieldErrors: SignupFormErrors = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as keyof SignupFormErrors;
+        if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+      }
+
+      setErrors(fieldErrors);
+      return false;
+    }
+
+    setErrors({});
+
     try {
       const response = await fetch(`${API_URL}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+
         body: JSON.stringify({
-          username: username,
-          email: email,
-          password: password,
+          username: result.data.username,
+          email: result.data.email,
+          password: result.data.password
         }),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
+      console.log(data)
 
       if (!response.ok) {
         // "email already exists" message
-        toast.error(data.detail || data.error || "Signup failed");
-        console.error("Signup error:", data);
+        if (data.detail?.toLowerCase().includes("email")) {
+          setErrors({ email: data.detail });
+        } else {
+          toast.error(data.detail || "Signup failed");
+        }
         return;
       }
 
@@ -43,13 +72,9 @@ export default function Signup() {
         navigate("/my-polls");
       }, 2000);
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(`Error to sign up: ${error.message}`);
-        console.error(`Error to sign up: ${error.message}`);
-      } else {
-        toast.error("Error to sign up!");
-        console.error("Error to sign up!", error);
-      }
+      const message = error instanceof Error ? error.message : "Something went wrong";
+      toast.error(message);
+      console.error("Signup failed:", error);
     }
   }
 
@@ -75,62 +100,66 @@ export default function Signup() {
               Get started in seconds
             </p>
 
-            {/* <label htmlFor="username" className="text-[#737791] pt-5">
-              Username
-            </label> */}
             <div className="relative w-75 mb-3">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
+              <UserIcon className="absolute left-4 top-3 text-white w-4 h-4" />
 
               <input
                 id="username"
                 type="text"
                 name="username"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
-    text-center
-    placeholder-[#fff1ea] placeholder:italic placeholder:font-normal"
+                placeholder="username"
+                value={signupData.username}
+                onChange={(e) =>
+                  setSignupData({ ...signupData, username: e.target.value })
+                }
                 required
+                className={`w-full h-10 bg-[#737791] text-white text-[12px] rounded-full text-center
+              placeholder-[#fff1ea] placeholder:italic placeholder:font-normal
+                     ${errors.username ? "border-red-400" : "border-[#737791]"}`}
               />
+              {errors.username && (
+                <span className="text-red-500 text-xs mt-1">{errors.username}</span>
+              )}
+
             </div>
-            {/* 
-            <label htmlFor="email" className="text-[#737791] pt-3">
-              Email
-            </label> */}
+
             <div className="relative w-75 mb-3">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
-            <input
-              id="email"
-              type="email"
-              name="email"
-              placeholder="email@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)} // e - event (React.ChangeEvent), e.target - input element itself(type="email"), e.taget.value = current text inside the input
-              className="w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
-    text-center
-    placeholder-[#fff1ea] placeholder:italic placeholder:font-normal"
-              required
-            />
-</div>
-            {/* <label htmlFor="password" className="text-[#737791] pt-3">
-              Password
-            </label> */}
-             <div className="relative w-75 mb-3">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
-            <input
-              id="password"
-              type="password"
-              name="password"
-              placeholder="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
-    text-center
-    placeholder-[#fff1ea] placeholder:italic placeholder:font-normal"
-              required
-            />
-</div>
+              <EnvelopeIcon className="absolute left-4 top-5 -translate-y-1/2 text-white w-4 h-4" />
+              <input
+                id="email"
+                type="email"
+                name="email"
+                placeholder="email@example.com"
+                value={signupData.email}
+                onChange={(e) => setSignupData({ ...signupData, email: e.target.value })}
+                required
+                className={`w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
+              text-center placeholder-[#fff1ea] placeholder:italic placeholder:font-normal
+              ${errors.email ? "border-red-400" : "border-[#737791]"}`}
+              />
+              {errors.email && (
+                <span className="text-red-500 text-xs mt-1">{errors.email}</span>
+              )}
+            </div>
+
+            <div className="relative w-75 mb-3">
+              <LockIcon className="absolute left-4 top-5 -translate-y-1/2 text-white w-4 h-4" />
+              <input
+                id="password"
+                type="password"
+                name="password"
+                placeholder="password"
+                value={signupData.password}
+                onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
+                required
+                className={`w-full h-10 bg-[#737791] text-white text-[12px] rounded-full
+                text-center placeholder-[#fff1ea] placeholder:italic placeholder:font-normal
+               ${errors.password ? "border-red-400" : "border-[#737791]"}`}
+              />
+              {errors.password && (
+                <span className="text-red-500 text-xs mt-1">{errors.password}</span>
+              )}
+            </div>
             <div className="p-7.5 pt-3">
               <button
                 id="submitButton"

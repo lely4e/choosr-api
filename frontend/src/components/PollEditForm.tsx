@@ -1,6 +1,7 @@
-import { Clock } from "lucide-react";
 import Toggle from "./Toggle";
 import toast from "react-hot-toast";
+import type { PollFormErrors } from "../schemas/pollSchema";
+import { ClockIcon } from "@phosphor-icons/react";
 
 interface PollEditFormProps {
     editedTitle: string;
@@ -14,7 +15,8 @@ interface PollEditFormProps {
     setEditedDescription: (desc: string) => void;
     setEditedDeadline: (deadline: string) => void;
     cancelEditing: () => void;
-    handleApply: () => void;
+    handleApply: () => Promise<void>;
+    errors?: PollFormErrors;
 }
 
 export default function PollEditForm({
@@ -30,6 +32,7 @@ export default function PollEditForm({
     setEditedDeadline,
     cancelEditing,
     handleApply,
+    errors = {},
 }: PollEditFormProps) {
     return (
         <div
@@ -38,12 +41,20 @@ export default function PollEditForm({
             transition-all duration-250 h-4/5"
         >
             <div className="flex justify-between gap-2.5">
-                <input
-                    type="text"
-                    value={editedTitle}
-                    onChange={(e) => setEditedTitle(e.target.value)}
-                    className=" w-full border-b border-[#737791] bg-transparent outline-none text-left font-bold text-3xl text-black"
-                />
+
+                <div className="flex flex-col w-full">
+                    <input
+                        type="text"
+                        value={editedTitle}
+                        onChange={(e) => setEditedTitle(e.target.value)}
+                        className={`w-full border-b bg-transparent outline-none text-left font-bold text-3xl text-black
+                            ${errors.title ? "border-red-400" : "border-[#737791]"}`}
+                    />
+                    {errors.title && (
+                        <span className="text-red-500 text-xs mt-1">{errors.title}</span>
+                    )}
+                </div>
+
                 <div className="text-xs font-bold text-gray-700">
                     <Toggle
                         initial={!editedManuallyClosed}
@@ -58,24 +69,38 @@ export default function PollEditForm({
                     />
                 </div>
             </div>
-            <p className="flex items-start mt-2.5 text-sm text-black">
+            <div className="flex items-start mt-2.5 text-sm text-black">
                 Budget: $
                 <input
                     type="number"
                     value={editedBudget}
                     onChange={(e) => setEditedBudget(Number(e.target.value))}
-                    className="border-b border-[#737791] bg-transparent outline-none focus:outline-none flex justify-between items-start text-sm text-black"
+                    className={`border-b bg-transparent outline-none focus:outline-none flex justify-between items-start text-sm text-black
+                    ${errors.budget ? "border-red-400" : "border-[#737791]"}`}
                 />
-            </p>
-            <input
-                type="text"
-                value={editedDescription}
-                onChange={(e) => setEditedDescription(e.target.value)}
-                className="border-b border-[#737791] bg-transparent outline-none flex text-left mt-2.5 text-sm text-[#737791] font-serif italic"
-            />
+
+            </div>
+            <div className="flex">
+                {errors.budget && (
+                    <span className="text-red-500 text-xs mt-1">{errors.budget}</span>
+                )}
+            </div>
+            <div className="flex flex-col mt-2.5">
+                <input
+                    type="text"
+                    value={editedDescription}
+                    onChange={(e) => setEditedDescription(e.target.value)}
+                    className={`border-b bg-transparent outline-none flex text-left mt-2.5 text-sm text-[#737791] font-serif italic
+                ${errors.description ? "border-red-400" : "border-[#737791]"}`}
+                />
+                {errors.description && (
+                    <span className="text-red-500 text-xs mt-1">{errors.description}</span>
+                )}
+            </div>
+
             <div className="flex items-bottom mb-2 text-[14px] text-[#EA7317] justify-between">
                 <div className="flex w-full items-center mt-10 mb-10 gap-2 text-[14px] text-[#EA7317]">
-                    <Clock size={14} strokeWidth={2} />
+                    <ClockIcon size={14} strokeWidth={2} />
                     <input
                         type="date"
                         placeholder="Date"

@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { API_URL } from "../config";
 import { authFetch } from "./auth";
 import type { TitleItem } from "./types";
@@ -18,10 +19,12 @@ export const updateIdea = async (
     body: JSON.stringify(body),
   });
 
-  const data = await response.json();
-  console.log("Update data:", data)
+  const data = await response.json().catch(() => null);
+
   if (!response.ok) {
-    throw new Error(data.detail || "Unauthorized");
+    toast.error(data?.detail || "Failed to update idea");
+    console.error("Failed to update idea:", data);
   }
+  
   return data as TitleItem;
 };

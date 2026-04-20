@@ -41,7 +41,7 @@ async def test_create_poll_failed_mising_field(client, registered_user):
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
     assert response.json() == {
-        "error": "Validation failed",
+        "detail": "Validation failed",
         "details": [
             {
                 "type": "missing",
@@ -120,7 +120,7 @@ async def test_update_poll_uuid_failed_not_correct_fields(client, create_poll_an
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
     assert response.json() == {
-        "error": "Validation failed",
+        "detail": "Validation failed",
         "details": [
             {
                 "type": "missing",

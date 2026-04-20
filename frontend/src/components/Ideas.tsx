@@ -5,21 +5,18 @@ import type { IdeasProps } from "../utils/types";
 import toast from "react-hot-toast";
 import AgeSlider from "./AgeSlider";
 import SearchIdea from "./SearchIdea";
-import { X } from "lucide-react";
 import { API_URL } from "../config";
 import { useParams } from "react-router-dom";
+import { XIcon } from "@phosphor-icons/react";
 
 export default function Ideas({ getProducts, title, budget }: IdeasProps) {
-    // const [eventTitle, setEventTitle] = useState("");
     const [recipientRelation, setRecipientRelation] = useState("");
     const [recipientAge, setRecipientAge] = useState<number>(25);
     const [recipientHobbies, setRecipientHobbies] = useState("");
     const [giftType, setGiftType] = useState("");
-    // const [budgetRange, setBudgetRange] = useState("");
     const [ideas, setIdeas] = useState<GiftIdea[]>([]);
     const [loading, setLoading] = useState(false);
     const GiftSuggest = useRef<HTMLHeadingElement | null>(null);
-
     const [openIdeas, setOpenIdeas] = useState(false)
     const { uuid } = useParams<{ uuid: string }>();
 
@@ -45,38 +42,37 @@ export default function Ideas({ getProducts, title, budget }: IdeasProps) {
                     }),
                 },
             );
-            const data = await response.json();
+            const data = await response.json().catch(() => null); 
+
             if (!response.ok) {
-                toast.error(data.detail || data.error || "Failed to get gift ideas");
+                toast.error(data?.detail || "Failed to get gift ideas");
                 console.error("Failed to get gift ideas:", data);
                 return;
             }
             setIdeas(data);
             console.log("Gift suggestions:", data);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to get gift ideas: ${error.message}`);
-                console.error(`Failed to get gift ideas: ${error.message}`);
-            } else {
-                toast.error("Failed to get gift ideas!");
-                console.error("Failed to get gift ideas!", error);
-            }
+
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to get gift ideas:", error);
+
         } finally {
             setLoading(false);
         }
     }
 
     useEffect(() => {
-        if (ideas.length > 0 && GiftSuggest.current) {
-            GiftSuggest.current.scrollIntoView({ behavior: "smooth" });
-        }
-    }, [ideas]);
-
-    useEffect(() => {
         if (ideas.length > 0) {
             setOpenIdeas(true);
         }
     }, [ideas]);
+
+    useEffect(() => {
+        if (openIdeas && GiftSuggest.current) {
+            GiftSuggest.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [openIdeas]);
 
     return (
         <>
@@ -172,12 +168,6 @@ export default function Ideas({ getProducts, title, budget }: IdeasProps) {
                                     ))}
 
                                 </div>
-                                {/* <p>{title}</p>
-                            <p>{recipientRelation}</p>
-                            <p>{recipientAge}</p>
-                            <p>{recipientHobbies}</p>
-                            <p>{giftType}</p>
-                            <p>{budget}</p> */}
 
                                 <p className="text-[#737791] font-semibold text-center mt-8">
                                     Select gift type
@@ -207,7 +197,6 @@ export default function Ideas({ getProducts, title, budget }: IdeasProps) {
                                     ))}
                                 </div>
 
-
                                 <button
                                     type="submit"
                                     disabled={loading}
@@ -231,35 +220,28 @@ export default function Ideas({ getProducts, title, budget }: IdeasProps) {
                         {openIdeas &&
                             <div className="max-w-300 mx-auto px-4 bg-[#fefefe] rounded-[30px] ">
                                 <div className="flex mr-6 pt-5 justify-end">
-                                    <X size={30} strokeWidth={2} onClick={(e) => {
+                                    <XIcon size={30} strokeWidth={2} weight="bold" onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
                                         setOpenIdeas(false);
                                     }}
                                         className="cursor-pointer" />
                                 </div>
-                                {ideas.map((idea, index) => (<div key={index}
-
-                                // className="box-content mb-4"
-                                >
-                                    {/* card-product-ideas px] */}
-                                    <div
-                                        className="flex flex-col gap-3 w-full min-w-75 pl-6 pr-6 "
-                                    >
-
-                                        {/* gift-idea-search-wrapper */}
-                                        <div className="w-full block font-bold mb-4">
-                                            <SearchIdea userSearch={idea.name} getProducts={getProducts} />
-                                            {/* <p className="flex text-left"> {idea.description} </p> */}
-                                            {/* product-description */}
-                                            {/* <div className="flex text-left font-normal">
-                                            {idea.description}
-                                        </div> */}
+                                {ideas.map((idea, index) => (
+                                    <div key={index}>
+                                        {/* card-product-ideas px] */}
+                                        <div
+                                            className="flex flex-col gap-3 w-full min-w-75 pl-6 pr-6 "
+                                        >
+                                            {/* gift-idea-search-wrapper */}
+                                            <div className="w-full block font-bold mb-4">
+                                                <SearchIdea userSearch={idea.name} getProducts={getProducts} />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                                 ))}
-                            </div>}
+                            </div>
+                        }
                     </section>
                 </div>
             </div>

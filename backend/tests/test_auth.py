@@ -50,7 +50,7 @@ async def test_signup_user_already_exists(client):
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.json() == {"error": "User with this email already exists"}
+    assert response.json() == {"detail": "User with this email already exists"}
 
 
 @pytest.mark.asyncio
@@ -108,4 +108,4 @@ async def test_login_failed_password_or_username(client):
     response = await client.post("/auth", data=payload)
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
-    assert response.json() == {"error": "Incorrect username or password"}
+    assert response.json() == {"detail": "Incorrect username or password"}

@@ -4,13 +4,18 @@ import { authFetch } from "../utils/auth";
 import toast from "react-hot-toast";
 import { API_URL } from "../config";
 import { colors } from "../utils/colors";
-import { ChevronDown } from "lucide-react";
+import { ideaSchema, type IdeaFormErrors } from "../schemas/IdeaSchema";
+import { CaretDownIcon } from "@phosphor-icons/react";
 
-export default function addIdea() {
-    const [title, setTitle] = useState("");
-    const [categoryRelation, setCategoryRelation] = useState("");
-    const [categoryHobbies, setCategoryHobbies] = useState("");
-    const [categoryGift, setCategoryGift] = useState("");
+export default function AddIdea() {
+    const [ideaData, setIdeaData] = useState({
+        name: "",
+        categoryRelation: "",
+        categoryHobbies: "",
+        categoryGift: "",
+    });
+
+    const [errors, setErrors] = useState<IdeaFormErrors>({});
 
     const navigate = useNavigate();
 
@@ -24,23 +29,43 @@ export default function addIdea() {
     };
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault(); // prevent refreshing page
+        event.preventDefault(); 
+
+        const result = ideaSchema.safeParse({
+            name: ideaData.name,
+            categoryRelation: ideaData.categoryRelation,
+            categoryHobbies: ideaData.categoryHobbies,
+            categoryGift: ideaData.categoryGift,
+        })
+
+        if (!result.success) {
+            const fieldErrors: IdeaFormErrors = {};
+            for (const issue of result.error.issues) {
+                const field = issue.path[0] as keyof IdeaFormErrors;
+                if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+            }
+
+            setErrors(fieldErrors);
+            return false;
+        }
+
+        setErrors({});
 
         try {
             const response = await authFetch(`${API_URL}/ideas`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    name: title,
-                    category: [categoryRelation, categoryHobbies, categoryGift],
+                    name: ideaData.name,
+                    category: [ideaData.categoryRelation, ideaData.categoryHobbies, ideaData.categoryGift],
                 }),
             });
 
             const data = await response.json();
 
             if (!response.ok) {
+                toast.error(data?.detail || "Error to add idea");
                 console.error("Error to add idea:", data);
-                toast.error("Error to add idea");
                 return;
             }
 
@@ -52,14 +77,10 @@ export default function addIdea() {
             setTimeout(() => {
                 navigate("/my-ideas");
             }, 1000);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Error to add idea: ${error.message}`);
-                console.error(`Error to add idea: ${error.message}`);
-            } else {
-                toast.error("Error to add idea!");
-                console.error("Error to add idea!", error);
-            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Error to add idea:", error);
         }
     }
 
@@ -78,19 +99,20 @@ export default function addIdea() {
                         <form onSubmit={handleSubmit}>
                             <div
                                 className="box-content bg-white/50 backdrop-blur-md rounded-[30px] p-6
-              flex flex-col shadow-[0_-1px_25px_rgba(0,0,0,0.1)] transition-all duration-250 ease-in-out h-full 
-              hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
-                            >
+                                flex flex-col shadow-[0_-1px_25px_rgba(0,0,0,0.1)] transition-all duration-250 ease-in-out h-full 
+                                hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]"
+                                                >
 
                                 {/* Relation */}
                                 <div className="relative w-full">
                                     <select
-                                        value={categoryRelation}
-                                        onChange={(e) => setCategoryRelation(e.target.value)}
+                                        value={ideaData.categoryRelation}
+                                        onChange={(e) => setIdeaData({ ...ideaData, categoryRelation: e.target.value })}
                                         required
                                         className={`w-full h-10 rounded-full px-3 pr-10 text-left mt-2.5 text-[14px] font-medium text-gray-700 
                                             appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-400
-                                            ${getCategoryColor(categoryRelation)} `}
+                                            ${getCategoryColor(ideaData.categoryRelation)} 
+                                            ${errors.categoryRelation ? "border-red-400" : "border-[#737791]"}`}
                                     >
                                         <option value="">Select Relation</option>
                                         <option value="family">Family</option>
@@ -101,20 +123,24 @@ export default function addIdea() {
                                         <option value="other">Other</option>
                                     </select>
 
-                                    <ChevronDown
+                                    <CaretDownIcon
                                         className="absolute right-3 top-2/3 -translate-y-2/3 pointer-events-none text-gray-500"
                                         size={16}
                                     />
+                                    {errors.categoryRelation && (
+                                        <span className="text-red-500 text-xs mt-1">{errors.categoryRelation}</span>
+                                    )}
                                 </div>
 
                                 {/* Hobbies */}
                                 <div className="relative w-full">
                                     <select
-                                        value={categoryHobbies}
-                                        onChange={(e) => setCategoryHobbies(e.target.value)}
+                                        value={ideaData.categoryHobbies}
+                                        onChange={(e) => setIdeaData({ ...ideaData, categoryHobbies: e.target.value })}
                                         className={`w-full h-10 rounded-full px-3 pr-10 text-left mt-2.5 text-[14px] font-medium text-gray-700 
                                             appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-400
-                                            ${getCategoryColor(categoryHobbies)}`}
+                                            ${getCategoryColor(ideaData.categoryHobbies)}
+                                            ${errors.categoryHobbies ? "border-red-400" : "border-[#737791]"}`}
                                         required
                                     >
                                         <option value="">Select Hobbies</option>
@@ -133,20 +159,24 @@ export default function addIdea() {
                                         <option value="cooking">Cooking</option>
                                     </select>
 
-                                    <ChevronDown
+                                    <CaretDownIcon
                                         className="absolute right-3 top-2/3 -translate-y-2/3 pointer-events-none text-gray-500"
                                         size={16}
                                     />
+                                    {errors.categoryHobbies && (
+                                        <span className="text-red-500 text-xs mt-1">{errors.categoryHobbies}</span>
+                                    )}
                                 </div>
 
                                 {/* Gift */}
                                 <div className="relative w-full">
                                     <select
-                                        value={categoryGift}
-                                        onChange={(e) => setCategoryGift(e.target.value)}
+                                        value={ideaData.categoryGift}
+                                        onChange={(e) => setIdeaData({ ...ideaData, categoryGift: e.target.value })}
                                         className={`w-full h-10 rounded-full px-3 pr-10 text-left mt-2.5 text-[14px] font-medium text-gray-700 
                                             appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-400
-                                             ${getCategoryColor(categoryGift)}`}
+                                             ${getCategoryColor(ideaData.categoryGift)}
+                                             ${errors.categoryGift ? "border-red-400" : "border-[#737791]"}`}
                                         required
                                     >
                                         <option value="">Select Gift Type</option>
@@ -159,10 +189,13 @@ export default function addIdea() {
                                         <option value="experience">Experience</option>
                                     </select>
 
-                                    <ChevronDown
+                                    <CaretDownIcon
                                         className="absolute right-3 top-2/3 -translate-y-2/3 pointer-events-none text-gray-500"
                                         size={16}
                                     />
+                                    {errors.categoryGift && (
+                                        <span className="text-red-500 text-xs mt-1">{errors.categoryGift}</span>
+                                    )}
                                 </div>
 
                                 <input
@@ -170,15 +203,19 @@ export default function addIdea() {
                                     type="text"
                                     name="description"
                                     placeholder="Your Super Idea Title Here"
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                    className="flex text-left  mt-2.5 text-xl text-[#737791] pt-1 pb-1 font-medium"
+                                    value={ideaData.name}
+                                    onChange={(e) => setIdeaData({ ...ideaData, name: e.target.value })}
                                     style={{
-                                        width: `${Math.max(5, title.length)}ch`,
+                                        width: `${Math.max(5, ideaData.name.length)}ch`,
                                         minWidth: "25ch",
                                     }}
                                     required
+                                    className={`flex text-left  mt-2.5 text-xl text-[#737791] pt-1 pb-1 font-medium
+                                              ${errors.name ? "border-b border-red-400" : "border-[#737791]"}`}
                                 />
+                                {errors.name && (
+                                    <span className="text-red-500 text-xs mt-1">{errors.name}</span>
+                                )}
 
                                 <div className=" flex pt-3">
                                     <button

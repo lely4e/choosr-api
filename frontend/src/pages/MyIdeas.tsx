@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import type { MyIdeas } from "../utils/types";
 import { authFetch } from "../utils/auth";
-import { Check, Copy, EditIcon, Trash2, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { API_URL } from "../config";
 import CreateCard from "../components/CreateCard";
@@ -10,6 +9,9 @@ import { useNavigate } from "react-router-dom";
 import Modal from "../components/Modal";
 import { updateIdea } from "../utils/updateIdea";
 import { colors } from "../utils/colors";
+import { CheckIcon, CopyIcon, PencilSimpleLineIcon, TrashSimpleIcon, XIcon } from "@phosphor-icons/react";
+import { Tooltip } from "../components/Tooltip";
+import { motion } from "framer-motion";
 
 const MyIdeasPage: React.FC = () => {
     const [ideas, setIdeas] = useState<MyIdeas[]>([]);
@@ -27,15 +29,17 @@ const MyIdeasPage: React.FC = () => {
                 if (search) params.append("q", search);
 
                 const response = await authFetch(`${API_URL}/ideas?${params.toString()}`);
-                const data = await response.json();
+                const data = await response.json().catch(() => null);
                 if (!response.ok) {
-                    toast.error(data.detail || "Unauthorized");
+                    toast.error(data?.detail || "Failed to fetch ideas");
                     return;
                 }
                 setIdeas(data);
                 console.log("Ideas:", data)
-            } catch (error: unknown) {
-                toast.error(error instanceof Error ? `Failed to fetch ideas: ${error.message}` : "Failed to fetch ideas!");
+            } catch (error) {
+                const message = error instanceof Error ? error.message : "Something went wrong";
+                toast.error(message);
+                console.error("Failed to fetch ideas:", error)
             }
         };
         getIdeas();
@@ -49,8 +53,10 @@ const MyIdeasPage: React.FC = () => {
             setDeleteId(null);
             setIdeas((prev) => prev.filter((idea) => idea.id !== ideaId));
             setTimeout(() => navigate("/my-ideas"), 2000);
-        } catch (error: unknown) {
-            toast.error(error instanceof Error ? `Failed to delete idea: ${error.message}` : "Failed to delete idea!");
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to delete idea:", error)
         }
     };
 
@@ -63,8 +69,10 @@ const MyIdeasPage: React.FC = () => {
             );
             setEditingId(null);
             toast.success("Idea updated successfully!", { duration: 2000 });
-        } catch (error: unknown) {
-            toast.error(error instanceof Error ? `Failed to update idea: ${error.message}` : "Failed to update idea!");
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to update idea:", error)
         }
     };
 
@@ -80,21 +88,24 @@ const MyIdeasPage: React.FC = () => {
             setTimeout(() => setCopiedId(null), 2000);
             toast.success("Text copied to clipboard!", { duration: 2000 });
 
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to copy: ${error.message}`);
-                console.error(`Failed to copy: ${error.message}`);
-            } else {
-                toast.error("Failed to copy!");
-                console.error("Failed to copy!", error);
-            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to copy:", error)
         }
     };
 
     return (
         <>
             <div className="flex justify-between items-center mr-5 text-center">
-                <div className="flex flex-col items-center mx-auto">
+                <motion.div className="flex flex-col items-center mx-auto"
+                      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{
+                duration: 0.8,
+                delay: 0.1,
+                ease: [0.16, 1, 0.3, 1],
+              }}>
                     <h1 className="px-5 text-[1.5em] leading-[1.1] font-black mb-2 mt-16">
                         Ideas
                     </h1>
@@ -113,17 +124,20 @@ const MyIdeasPage: React.FC = () => {
                                 >
                                     {search}
                                     <span className="flex ml-2">
-                                        <X size={14} onClick={() => setSearch("")} />
+                                        <XIcon size={14} onClick={() => setSearch("")} />
                                     </span>
                                 </span>
 
                             </span>
                         </div>}
 
-                </div>
+                </motion.div>
             </div>
 
-            <div className="flex px-4 justify-start">
+            <motion.div className="flex px-4 justify-start"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.6 }}>
                 <div className="grid gap-6 w-full my-10 grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
                     {ideas.map((idea) => {
                         const isEditing = editingId === idea.id;
@@ -157,7 +171,6 @@ const MyIdeasPage: React.FC = () => {
                                     </span>
 
                                 </div>
-
 
                                 <Modal isOpen={deleteId === idea.id} onClose={() => setDeleteId(null)}>
                                     <h3 className="font-bold text-lg">
@@ -210,51 +223,58 @@ const MyIdeasPage: React.FC = () => {
                                     )
                                 )}
                                 <div className="flex gap-4 pb-3 cursor-pointer mt-auto">
-                                    <EditIcon
-                                        size={17}
-                                        strokeWidth={1.5}
-                                        className="hover:text-[#F25E0D]"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setEditingId(idea.id);
-                                            setEditedTitle(idea.title.name);
-                                        }}
-                                    />
-                                    {copiedId === idea.id
-                                        ? <Check
-                                            size={16}
-                                            strokeWidth={1.5}
-                                        />
-                                        : <Copy
+                                    <div className="group relative ">
+                                        <PencilSimpleLineIcon
                                             size={16}
                                             strokeWidth={1.5}
                                             className="hover:text-[#F25E0D]"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                handleCopyIdea(idea.id, idea.title.name);
+                                                setEditingId(idea.id);
+                                                setEditedTitle(idea.title.name);
                                             }}
-                                        />}
+                                        />
+                                        <Tooltip text="Edit" />
+                                    </div>
 
-                                    <Trash2
-                                        size={16}
-                                        strokeWidth={1.5}
-                                        className="hover:text-[#F25E0D]"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setDeleteId(idea.id);
-                                        }}
-                                    />
-
+                                    {copiedId === idea.id
+                                        ? <CheckIcon
+                                            size={16}
+                                            strokeWidth={1.5}
+                                        />
+                                        :
+                                        <div className="group relative ">
+                                            <CopyIcon
+                                                size={16}
+                                                strokeWidth={1.5}
+                                                className="hover:text-[#F25E0D]"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleCopyIdea(idea.id, idea.title.name);
+                                                }}
+                                            />
+                                            <Tooltip text="Copy Text" />
+                                        </div>}
+                                    <div className="group relative ">
+                                        <TrashSimpleIcon
+                                            size={16}
+                                            strokeWidth={1.5}
+                                            className="hover:text-[#F25E0D]"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setDeleteId(idea.id);
+                                            }}
+                                        />
+                                        <Tooltip text="Delete" />
+                                    </div>
                                 </div>
                             </div>
 
                         );
                     })}
-
-
                     <CreateCard address={"/add-idea"} text={"Create Idea"} />
                 </div>
-            </div>
+            </motion.div>
         </>
     );
 };

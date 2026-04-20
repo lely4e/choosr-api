@@ -18,7 +18,7 @@ export function useProducts(uuid: string | undefined) {
             const response = await authFetch(
                 `${API_URL}/polls/${uuid}/products?page=${pageNum}&size=10`,
             );
-            const data = await response.json();
+            const data = await response.json().catch(() => null);
 
             if (append) {
                 setProducts((prev) => [...prev, ...data.items]);
@@ -31,14 +31,10 @@ export function useProducts(uuid: string | undefined) {
 
             console.log("Products fetched:", data);
             console.log("Amount of products:", data.length);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to fetch products: ${error.message}`);
-                console.error(`Failed to fetch products: ${error.message}`);
-            } else {
-                toast.error("Failed to fetch products!");
-                console.error("Failed to fetch products!", error);
-            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to fetch products:", error);
         }
     };
 
@@ -76,10 +72,12 @@ export function useProducts(uuid: string | undefined) {
             const response = await authFetch(
                 `${API_URL}/polls/${uuid}/products?page=1&size=${page * 10}`,
             );
-            const data = await response.json();
+            const data = await response.json().catch(() => null);
             setProducts(data.items);
         } catch (error) {
-            toast.error("Failed to refresh products!");
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to refresh products!", error);
         }
     };
 

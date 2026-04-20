@@ -7,7 +7,7 @@ type NoteCardProps = {
 
 const NoteCard: React.FC<NoteCardProps> = ({ children, className = "" }) => {
   return (
-    <div className="flex justify-left items-center w-full -rotate-1">
+    <div className="flex justify-left items-center w-full mt-2">
       
       <div
         className="w-fit max-w-[90%]"
@@ -37,11 +37,8 @@ const NoteCard: React.FC<NoteCardProps> = ({ children, className = "" }) => {
             <div className="h-full w-full bg-[repeating-linear-gradient(to_bottom,transparent,transparent_32px,#cfd8dc_33px)] opacity-60"></div>
           </div>
 
-          {/* Margin */}
-          <div className="absolute top-0 bottom-0 left-8 w-0.5 bg-red-300 opacity-70"></div>
-
           {/* Content */}
-          <div className="relative z-10 pl-6 wrap-break-word">{children}</div>
+          <div className="relative z- wrap-break-word">{children}</div>
         </div>
       </div>
     </div>

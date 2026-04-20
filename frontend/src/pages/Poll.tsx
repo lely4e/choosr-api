@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import Search from "../components/Search";
 import Ideas from "../components/Ideas";
 import Products from "../components/Products";
-import { MoveLeft } from "lucide-react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useUser } from "../context/UserContext";
@@ -16,6 +15,8 @@ import { useProducts } from "../hooks/useProducts";
 import { usePoll } from "../hooks/usePoll";
 import PollCard from "../components/PollCard";
 import PollEditForm from "../components/PollEditForm";
+import { ArrowLeftIcon } from "@phosphor-icons/react";
+import { motion } from "framer-motion";
 
 export default function PollPage() {
     const { user } = useUser();
@@ -84,6 +85,7 @@ export default function PollPage() {
         setShowPollCard,
         openCard,
         setOpenCard,
+        pollFormErrors,
     } = usePoll(uuid);
 
     if (!poll) {
@@ -99,6 +101,7 @@ export default function PollPage() {
     };
     const handleShowEdit = () => {
         setShowPollCard(false);
+        startEditing();
     };
 
     return (
@@ -106,12 +109,15 @@ export default function PollPage() {
             {/* Poll card section */}
             <div className="mx-auto flex justify-center px-4">
                 {/* product-container */}
-                <div className="grid gap-6 w-full max-w-200 mt-10">
+                <motion.div className="grid gap-6 w-full max-w-200 mt-10"
+                        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0, duration: 0.6 }}>
                     <Link
                         to="/my-polls"
-                        className="flex gap-3 text-[#6366f1] hover:text-[#4F46E5] text-left"
+                        className="flex items-center gap-3 text-[#6366f1] hover:text-[#4F46E5] text-left text-[14px]"
                     >
-                        <MoveLeft /> Back to polls
+                        <ArrowLeftIcon size={16} weight="bold" /> Back to polls
                     </Link>
 
                     {/* card-poll */}
@@ -165,13 +171,14 @@ export default function PollPage() {
                                 cancelEditing();
                                 setShowPollCard(true);
                             }}
-                            handleApply={() => {
-                                handleApplyUpdate();
-                                setShowPollCard(true);
+                            handleApply={async () => {
+                                const success = await handleApplyUpdate();
+                                if (success) setShowPollCard(true);
                             }}
+                            errors={pollFormErrors}
                         />
                     )}
-                </div>
+                </motion.div>
             </div>
 
             {history.length > 0 && openHistory && (
@@ -187,7 +194,10 @@ export default function PollPage() {
                 />
             )}
 
-            <div className="flex flex-col items-center ">
+            <motion.div className="flex flex-col items-center "
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7, duration: 0.6 }}>
                 {showGiftIdeas && (
                     <Ideas
                         getProducts={getProducts}
@@ -203,23 +213,27 @@ export default function PollPage() {
                     openCard={openCard}
                     setOpenCard={setOpenCard}
                 />
-            </div>
+            </motion.div>
 
-            {openCard && <AddProductCard getProducts={getProducts} />}
+            {openCard && <AddProductCard getProducts={getProducts} setOpenCard={setOpenCard} />}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7, duration: 0.6 }}>
+                {showProducts ? (
+                    <Products
+                        uuid={uuid}
+                        products={products}
+                        setProducts={setProducts}
+                        getProducts={refreshProducts}
+                        sentinelRef={sentinelRef}
+                        loadingMore={loadingMore}
+                        hasMore={hasMore}
+                    />
 
-            {showProducts ? (
-                <Products
-                    uuid={uuid}
-                    products={products}
-                    setProducts={setProducts}
-                    getProducts={refreshProducts}
-                    sentinelRef={sentinelRef}
-                    loadingMore={loadingMore}
-                    hasMore={hasMore}
-                />
-            ) : (
-                ""
-            )}
+                ) : (
+                    ""
+                )}</motion.div>
         </>
     );
 }

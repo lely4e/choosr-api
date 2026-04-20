@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { authFetch } from "../utils/auth";
 import type { SearchProps, ProductSearch } from "../utils/types";
 import { useParams } from "react-router-dom";
-import { LucideArrowLeft, LucideArrowRight, Plus, Check } from "lucide-react";
-import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import toast from "react-hot-toast";
 import StarRating from "./Stars";
 import { API_URL } from "../config";
+import { useCarousel } from "../hooks/useCarousel";
+import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, PlusIcon } from "@phosphor-icons/react";
 
 type Layout = "poll" | "gift";
 
@@ -16,54 +16,6 @@ interface ExtendedSearchProps extends SearchProps {
     layout?: Layout;
     getProducts?: () => Promise<void>;
 }
-
-const CustomPrevArrow = (props: any) => {
-    const { className, style, onClick } = props;
-    return (
-        <div
-            className={className}
-            style={{
-                ...style,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#6366f1",
-                borderRadius: "50%",
-                width: 36,
-                height: 36,
-                zIndex: 2,
-                cursor: "pointer",
-            }}
-            onClick={onClick}
-        >
-            <LucideArrowLeft color="white" size={20} />
-        </div>
-    );
-};
-
-const CustomNextArrow = (props: any) => {
-    const { className, style, onClick } = props;
-    return (
-        <div
-            className={className}
-            style={{
-                ...style,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#6366f1",
-                borderRadius: "50%",
-                width: 36,
-                height: 36,
-                zIndex: 2,
-                cursor: "pointer",
-            }}
-            onClick={onClick}
-        >
-            <LucideArrowRight color="white" size={20} />
-        </div>
-    );
-};
 
 const truncate = (text: string, maxLength = 100) => {
     if (text.length <= maxLength) return text;
@@ -86,6 +38,22 @@ export default function SearchIdea({
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
+
+    const {
+        emblaApi,
+        canScrollPrev,
+        canScrollNext,
+        emblaRef,
+        slidesToShow,
+        sentinelRef,
+    } = useCarousel({
+        showProducts,
+        hasMore,
+        loadingMore,
+        loadMore: () => loadMore(),
+        searchResults,
+        layout
+    })
 
     const handleSearch = async () => {
         const value = ideaTitle.trim();
@@ -112,22 +80,19 @@ export default function SearchIdea({
             const data = await response.json();
 
             if (!response.ok) {
-                toast.error(data.detail || data.error || "Failed to search");
+                toast.error(data.detail || "Failed to search");
                 return;
             }
 
             setSearchResults(data.items);
             setShowProducts(true);
-
             setHasMore(data.page < data.pages);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to search: ${error.message}`);
-                console.error(`Failed to search: ${error.message}`);
-            } else {
-                toast.error("Failed to search!");
-                console.error("Failed to search!", error);
-            }
+
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to search:", error);
+
         } finally {
             setLoading(false);
         }
@@ -165,16 +130,6 @@ export default function SearchIdea({
             setLoadingMore(false);
         }
     };
-
-    const handleAfterChange = (currentIndex: number) => {
-        const totalSlides = searchResults.length;
-        const visibleSlides = 4;
-
-        if (currentIndex >= totalSlides - visibleSlides - 1) {
-            loadMore();
-        }
-    };
-
 
     const handleAddProduct = async (product: ProductSearch) => {
         try {
@@ -217,38 +172,9 @@ export default function SearchIdea({
         }
     };
 
-    // Slick Settings
-    const settings = {
-        dots: false,
-        infinite: false,
-        speed: 500,
-        slidesToShow: layout === "poll" ? 4 : 2,
-        slidesToScroll: 1,
-        arrows: true,
-        nextArrow: <CustomNextArrow />,
-        prevArrow: <CustomPrevArrow />,
-        swipe: true,
-        draggable: true,
-        swipeToSlide: true,
-        touchMove: true,
-        touchThreshold: 10,
-        adaptiveHeight: true,
-        afterChange: handleAfterChange,
-        responsive: [
-            {
-                breakpoint: 1024,
-                settings: { slidesToShow: layout === "poll" ? 3 : 1 },
-            },
-            {
-                breakpoint: 768,
-                settings: { slidesToShow: layout === "poll" ? 2 : 1 },
-            },
-            { breakpoint: 480, settings: { slidesToShow: 1 } },
-        ],
-    };
 
     return (
-        <div className="">
+        <>
             <div className="flex justify-between pt-3 pb-6">
                 <h2 className="text-2xl flex items-center">{ideaTitle}</h2>
             </div>
@@ -265,101 +191,126 @@ export default function SearchIdea({
 
             {/* Products carousel */}
             {showProducts && searchResults.length > 0 && (
-                <div className="w-full bg-[#6B5CFF33] rounded-[30px] p-10">
-                    <Slider {...settings}>
-                        {searchResults.map((product) => (
-                            <div key={product.link} className="flex justify-center px-2">
-                                <div
-                                    className="flex flex-col gap-4
-                              bg-white rounded-[30px] p-6
-                              shadow-md transition
-                              hover:-translate-y-1 hover:shadow-xl
-                              max-w-62.5 w-full"
-                                >
-                                    {/* img */}
-                                    <div
-                                        className="h-32.5 flex items-center justify-center hover:text-[#0096FF] hover:cursor-pointer"
-                                        onClick={() => window.open(product.link, "_blank")}
-                                    >
-                                        <img
-                                            src={product.image}
-                                            alt={product.title}
-                                            className="max-h-full object-contain"
-                                        />
-                                    </div>
+                <div className="relative w-full bg-[#6B5CFF33] rounded-[30px] px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
+                    {/* Prev button */}
+                    <button
+                        onClick={() => emblaApi?.scrollPrev()}
+                        disabled={!canScrollPrev}
+                        aria-label="Previous"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 z-10
+                                flex items-center justify-center
+                                w-9 h-9 rounded-full bg-[#6366f1] text-white
+                                transition hover:bg-[#4F46E5]
+                                disabled:opacity-30 disabled:pointer-events-none"
+                    >
+                        <ArrowLeftIcon size={20} weight="bold" />
+                    </button>
 
-                                    {/* Content */}
-                                    <div className="flex flex-col gap-3 group relative">
-                                        {/* Rating Price */}
-                                        <div className="flex justify-between items-center">
-                                            <div className="flex items-center">
-                                                <StarRating rating={product.rating} color="#F25E0D" />
-                                                <span className="text-sm ml-0 text-[#737791] font-semibold">
-                                                    {product.rating}
+                    {/* Next button */}
+                    <button
+                        onClick={() => emblaApi?.scrollNext()}
+                        disabled={!canScrollNext}
+                        aria-label="Next"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 z-10
+                                flex items-center justify-center
+                                w-9 h-9 rounded-full bg-[#6366f1] text-white
+                                transition hover:bg-[#4F46E5]
+                                disabled:opacity-30 disabled:pointer-events-none"
+                    >
+                        <ArrowRightIcon size={20} weight="bold" />
+                    </button>
+
+                    <div className="overflow-hidden" ref={emblaRef}>
+                        <div className="flex">
+                            {searchResults.map((product) => (
+                                <div
+                                    key={product.link}
+                                    className="flex-[0_0_calc(100%/var(--slides))] px-2"
+                                    style={{ "--slides": slidesToShow } as React.CSSProperties}
+                                >
+
+                                    <div
+                                        className="flex flex-col gap-4
+                                        bg-white rounded-[30px] p-6
+                                        shadow-md transition
+                                        hover:-translate-y-1 hover:shadow-xl
+                                        max-w-62.5 w-full"
+                                    >
+                                        {/* img */}
+                                        <div
+                                            className="h-32.5 flex items-center justify-center hover:text-[#0096FF] hover:cursor-pointer"
+                                            onClick={() => window.open(product.link, "_blank")}
+                                        >
+                                            <img
+                                                src={product.image}
+                                                alt={product.title}
+                                                className="max-h-full object-contain"
+                                            />
+                                        </div>
+
+                                        {/* Content */}
+                                        <div className="flex flex-col gap-3 group relative">
+                                            {/* Rating Price */}
+                                            <div className="flex justify-between items-center">
+                                                <div className="flex items-center">
+                                                    <StarRating rating={product.rating} color="#F25E0D" />
+                                                    <span className="text-sm ml-0 text-[#737791] font-semibold">
+                                                        {product.rating}
+                                                    </span>
+                                                </div>
+
+                                                <span className="text-lg font-extrabold text-[#737791]">
+                                                    ${product.price}
                                                 </span>
                                             </div>
 
-                                            <span className="text-lg font-extrabold text-[#737791]">
-                                                ${product.price}
-                                            </span>
-                                        </div>
-
-                                        {/* Title */}
-                                        <div
-                                            className="text-sm font-semibold leading-snug line-clamp-2 text-left hover:text-[#0096FF] hover:cursor-pointer"
-                                            onClick={() => {
-                                                window.open(product.link, "_blank");
-                                            }}
-                                        >
-                                            {truncate(product.title, 100)}
-                                            {/* <Tooltip text={product.title} /> */}
-                                        </div>
-
-                                        {/* Action Buttons */}
-                                        <div className="flex justify-between gap-2 mt-2">
-                                            <button
-                                                type="button"
-                                                onClick={() => handleAddProduct(product)}
-                                                disabled={addedProduct.includes(product.link)}
-                                                className={`flex-3 h-10 rounded-full flex items-center justify-center text-white 
-                               transition
-                               ${addedProduct.includes(product.link)
-                                                        ? "bg-[#B0B6CC] cursor-not-allowed"
-                                                        : "bg-linear-to-br from-indigo-500 to-pink-300 hover:opacity-90 cursor-pointer "
-                                                    }`}
+                                            {/* Title */}
+                                            <div
+                                                className="text-sm font-semibold leading-snug line-clamp-2 text-left hover:text-[#0096FF] hover:cursor-pointer"
+                                                onClick={() => {
+                                                    window.open(product.link, "_blank");
+                                                }}
                                             >
-                                                {addedProduct.includes(product.link) ? (
-                                                    <Check size={20} />
-                                                ) : (
-                                                    <Plus size={20} />
-                                                )}
-                                            </button>
+                                                {truncate(product.title, 100)}
+                                                {/* <Tooltip text={product.title} /> */}
+                                            </div>
 
-                                            {/* <button
-                                                className="flex-1 rounded-full border border-[#0d78f2] cursor-pointer
-                                 text-[#0d78f2] py-2 text-sm
-                                 flex items-center justify-center
-                                 hover:bg-[#0d78f210] transition"
-                                            >
-                                                <Bookmark size={16} />
-                                            </button> */}
+                                            {/* Action Buttons */}
+                                            <div className="flex justify-between gap-2 mt-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleAddProduct(product)}
+                                                    disabled={addedProduct.includes(product.link)}
+                                                    className={`flex-3 h-10 rounded-full flex items-center justify-center text-white transition
+                                                    ${addedProduct.includes(product.link)
+                                                            ? "bg-[#B0B6CC] cursor-not-allowed"
+                                                            : "bg-linear-to-br from-indigo-500 to-pink-300 hover:opacity-90 cursor-pointer "
+                                                        }`}
+                                                >
+                                                    {addedProduct.includes(product.link) ? (
+                                                        <CheckIcon size={20} weight="bold" />
+                                                    ) : (
+                                                        <PlusIcon size={20} weight="bold" />
+                                                    )}
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
 
-                        {/* Loading indicator slide */}
-                        {hasMore && (
-                            <div className="flex items-center justify-center h-full px-2">
-                                <div className="text-[#737791] text-sm animate-pulse">
-                                    {loadingMore ? "Loading..." : "Scroll for more"}
+                            {/* Loading indicator slide */}
+                            {hasMore && (
+                                <div ref={sentinelRef} className="flex-[0_0_80px] flex items-center justify-center h-full px-2">
+                                    <div className="text-[#737791] text-sm animate-pulse">
+                                        {loadingMore ? "Loading..." : "Scroll for more"}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-                    </Slider>
+                            )}
+                        </div>
+                    </div>
                 </div>
             )}
-        </div>
+        </>
     );
 }

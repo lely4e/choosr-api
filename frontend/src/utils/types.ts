@@ -8,6 +8,7 @@ export interface UserContext {
 }
 
 export interface Poll {
+  created_at: string;
   id: number;
   uuid: string;
   title: string;

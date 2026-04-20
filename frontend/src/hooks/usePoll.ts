@@ -6,6 +6,7 @@ import { type Poll } from "../utils/types";
 import { deletePoll } from "../utils/deletePoll";
 import { updatePoll } from "../utils/updatePoll";
 import { useNavigate } from "react-router-dom";
+import { pollSchema, type PollFormErrors } from "../schemas/pollSchema";
 
 export function usePoll(uuid: string | undefined) {
     const [poll, setPoll] = useState<Poll | null>(null);
@@ -24,6 +25,8 @@ export function usePoll(uuid: string | undefined) {
     const [showPollCard, setShowPollCard] = useState(true);
     const [openCard, setOpenCard] = useState(false);
 
+    const [pollFormErrors, setPollFormErrors] = useState<PollFormErrors>({});
+
     const navigate = useNavigate();
 
     // fetch poll
@@ -32,22 +35,18 @@ export function usePoll(uuid: string | undefined) {
             if (!uuid) return;
             try {
                 const response = await authFetch(`${API_URL}/polls/${uuid}`);
-                const data = await response.json();
+                const data = await response.json().catch(() => null);
                 if (!response.ok) {
-                    alert(data.detail || "Unauthorized");
-                    console.error("Unauthorized:", data);
+                    toast.error(data?.detail || "Failed to fetch products");
+                    console.error("Failed to fetch products:", data);
                     return;
                 }
                 setPoll(data);
                 console.log("Polls fetched:", data);
-            } catch (error: unknown) {
-                if (error instanceof Error) {
-                    toast.error(`Failed to fetch products: ${error.message}`);
-                    console.error(`Failed to fetch products: ${error.message}`);
-                } else {
-                    toast.error("Failed to fetch products!");
-                    console.error("Failed to fetch products!", error);
-                }
+            } catch (error) {
+                const message = error instanceof Error ? error.message : "Something went wrong";
+                toast.error(message);
+                console.error("Failed to fetch products:", error);
             }
         };
         getPoll();
@@ -67,14 +66,10 @@ export function usePoll(uuid: string | undefined) {
                 navigate("/my-polls");
             }, 2000);
             console.log("Poll deleted");
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to delete poll: ${error.message}`);
-                console.error(`Failed to delete poll: ${error.message}`);
-            } else {
-                toast.error("Failed to delete poll!");
-                console.error("Failed to delete poll!", error);
-            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to delete poll:", error);
         }
     };
 
@@ -89,27 +84,43 @@ export function usePoll(uuid: string | undefined) {
         setEditedManuallyClosed(poll.manually_closed);
     };
 
-    const cancelEditing = () => setIsEditing(false);
-
-    const handleApplyUpdate = async () => {
-        if (!uuid) return;
-
-        if (editedTitle.trim().length > 100) {
-            toast("Title is too long", {
-                icon: "⚠️",
-            });
-            return;
-        }
+    const cancelEditing = () => {
         setIsEditing(false);
+        setPollFormErrors({}); // clear errors on cancel
+    };
+
+    const handleApplyUpdate = async (): Promise<boolean> => {
+        if (!uuid) return false;
+
+        const result = pollSchema.safeParse({
+            title: editedTitle,
+            budget: editedBudget,
+            description: editedDescription || undefined,
+            deadline: editedDeadline || undefined,
+            manually_closed: editedManuallyClosed,
+        })
+
+        if (!result.success) {
+            const fieldErrors: PollFormErrors = {};
+            for (const issue of result.error.issues) {
+                const field = issue.path[0] as keyof PollFormErrors;
+                if (!fieldErrors[field]) fieldErrors[field] = issue.message;
+            }
+
+            setPollFormErrors(fieldErrors);
+            return false;
+        }
+
+        setPollFormErrors({});
 
         try {
             const updatedPoll = await updatePoll(
                 uuid!,
-                editedTitle,
-                editedBudget,
-                editedDescription || undefined,
-                editedDeadline || undefined,
-                editedManuallyClosed,
+                result.data.title,
+                result.data.budget,
+                result.data.description,
+                result.data.deadline,
+                result.data.manually_closed,
             );
 
             console.log("Server response:", updatedPoll);
@@ -121,16 +132,17 @@ export function usePoll(uuid: string | undefined) {
                 duration: 2000,
             });
             console.log("Poll updated", poll);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to update poll: ${error.message}`);
-                console.error(`Failed to update poll: ${error.message}`);
-            } else {
-                toast.error("Failed to update poll!");
-                console.error("Failed to update poll!", error);
-            }
+            return true;
+
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to update poll:", error);
+            return false;
         }
     };
+
+
     const handleCopy = async () => {
         if (!uuid) return;
         const linkToCopy = `${window.location.origin}/polls/${uuid}`;
@@ -140,14 +152,10 @@ export function usePoll(uuid: string | undefined) {
             setCopied(true);
             toast.success("Link copied to clipboard!", { duration: 2000 });
             setTimeout(() => setCopied(false), 2000);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to copy: ${error.message}`);
-                console.error(`Failed to copy: ${error.message}`);
-            } else {
-                toast.error("Failed to copy!");
-                console.error("Failed to copy!", error);
-            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to copy:", error);
         }
     };
 
@@ -178,5 +186,6 @@ export function usePoll(uuid: string | undefined) {
         setShowPollCard,
         openCard,
         setOpenCard,
+        pollFormErrors,
     };
 }

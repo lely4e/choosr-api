@@ -1,8 +1,14 @@
-import { Trash2, Copy, Bookmark, Dot, Check } from "lucide-react";
 import { motion } from "framer-motion";
 import Modal from "./Modal";
 import { colors } from "../utils/colors";
 import type { History } from "../utils/types";
+import {
+    BookmarksIcon,
+    CheckIcon,
+    DotIcon,
+    LinkIcon,
+    TrashSimpleIcon,
+} from "@phosphor-icons/react";
 
 interface HistoryPanelProps {
     history: History[];
@@ -11,8 +17,8 @@ interface HistoryPanelProps {
     setOpenHistoryDelete: (id: number | null) => void;
     onDelete: (e: React.MouseEvent, historyId: number) => void;
     onAddToIdeas: (historyId: number) => void;
-    onCopy: (id:number, name: string) => void; // function
-    copiedId: number | null; // bumber
+    onCopy: (id: number, name: string) => void; 
+    copiedId: number | null; 
 }
 
 export default function HistoryPanel({
@@ -27,7 +33,6 @@ export default function HistoryPanel({
     return (
         <div className="flex flex-col items-center">
             <div className="relative w-200 flex-col bg-white/40 backdrop-blur-md rounded-[30px] p-6 shadow-md space-y-2">
-
                 {/* AI badge */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.8, rotate: -12 }}
@@ -43,13 +48,16 @@ export default function HistoryPanel({
                     <span className="text-sm font-bold text-[#ba4cea]">AI GENERATED</span>
                 </motion.div>
 
-                <h2 className="text-center text-xl font-black mb-6">Your AI Idea History</h2>
+                <h2 className="text-center text-xl font-black mb-6">
+                    Your AI Idea History
+                </h2>
 
                 <div className="flex justify-center items-center text-center text-sm text-[#737791] font-serif italic mb-6">
                     <p>AI-generated suggestions, saved over time</p>
-                    <Dot />
+                    <DotIcon size={22} weight="bold" />
                     <span>
-                        <span className="text-[#ba4cea] font-black">{history.length}</span> ideas collected
+                        <span className="text-[#ba4cea] font-black">{history.length}</span>{" "}
+                        ideas collected
                     </span>
                 </div>
 
@@ -62,8 +70,8 @@ export default function HistoryPanel({
                             <div className="flex gap-2 mb-2 text-[10px] text-gray-700 tracking-widest">
                                 {idea.titles.category.map((cat) => {
                                     const categoryColor =
-                                        colors.find((c) => c.name === cat.toLowerCase())?.backgroundColor
-                                        ?? "bg-gray-200 border-gray-400";
+                                        colors.find((c) => c.name === cat.toLowerCase())
+                                            ?.backgroundColor ?? "bg-gray-200 border-gray-400";
                                     return (
                                         <span
                                             key={cat}
@@ -83,7 +91,7 @@ export default function HistoryPanel({
                                 className="py-2 px-2 rounded-full hover:text-[#f20d0d] hover:bg-white cursor-pointer"
                                 onClick={() => setOpenHistoryDelete(idea.id)}
                             >
-                                <Trash2 size={16} strokeWidth={1.5} />
+                                <TrashSimpleIcon size={16} strokeWidth={1.5} />
                             </div>
 
                             <Modal
@@ -110,22 +118,23 @@ export default function HistoryPanel({
                             </Modal>
 
                             {/* Copy */}
-                           
-                            <div 
+                            <div
                                 onClick={() => onCopy(idea.id, idea.titles.name)}
-                            className="py-2 px-2 rounded-full hover:text-[#08b9ff] hover:bg-white cursor-pointer">
-                                 {copiedId === idea.id
-                                ? <Check size={16} strokeWidth={1.5} />
-                                : <Copy size={16} strokeWidth={1.5} />}
+                                className="py-2 px-2 rounded-full hover:text-[#08b9ff] hover:bg-white cursor-pointer"
+                            >
+                                {copiedId === idea.id ? (
+                                    <CheckIcon size={16} strokeWidth={2} weight="bold" />
+                                ) : (
+                                    <LinkIcon size={16} strokeWidth={2} />
+                                )}
                             </div>
-
 
                             {/* Save to ideas */}
                             <div
                                 className="py-2 px-2 rounded-full hover:text-[#a900dc] hover:bg-white cursor-pointer"
                                 onClick={() => onAddToIdeas(idea.id)}
                             >
-                                <Bookmark size={16} strokeWidth={1.5} />
+                                <BookmarksIcon size={16} strokeWidth={1.5} />
                             </div>
                         </div>
                     </div>

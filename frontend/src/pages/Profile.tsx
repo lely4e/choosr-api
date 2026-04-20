@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { updateUsername } from "../utils/updateUser";
-import { Edit, LogOut } from "lucide-react";
 import { useUser } from "../context/UserContext";
 import toast from "react-hot-toast";
+import { PencilSimpleLineIcon, SignOutIcon } from "@phosphor-icons/react";
+import { Tooltip } from "../components/Tooltip";
+import { motion } from "framer-motion";
 
 export default function Profile() {
   // user from Context
@@ -39,20 +41,19 @@ export default function Profile() {
       toast.success("User updated successfully!", {
         duration: 2000,
       });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(`Failed to update username: ${error.message}`);
-        console.error(`Failed to update username: ${error.message}`);
-      } else {
-        toast.error("Failed to update username!");
-        console.error("Failed to update username!", error);
-      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Something went wrong";
+      toast.error(message);
+      console.error("Failed to update username:", error);
     }
   };
 
   return (
     <>
-      <div className="grid justify-center mx-auto">
+      <motion.div className="grid justify-center mx-auto"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0, duration: 0.6 }}>
         <div className="grid gap-6 w-full max-w-200 my-10 mx-auto grid-cols-1">
           <div
             className="
@@ -88,9 +89,10 @@ export default function Profile() {
                     </div>
                     <a
                       onClick={startEditing}
-                      className="cursor-pointer color-[#737791] hover:text-[#F25E0D]"
+                      className="group relative cursor-pointer color-[#737791] hover:text-[#F25E0D]"
                     >
-                      <Edit size={20} strokeWidth={1.5} />
+                      <PencilSimpleLineIcon size={20} strokeWidth={1.5} />
+                      <Tooltip text="Edit" />
                     </a>
                   </div>
                   <div className="flex items-center text-left gap-2.5">
@@ -101,7 +103,7 @@ export default function Profile() {
                     onClick={logout}
                     className="cursor-pointer pt-4 hover:text-[#0072c4]"
                   >
-                    <LogOut size={20} strokeWidth={1.5} />
+                    <SignOutIcon size={20} strokeWidth={1.5} />
                   </button>
                 </>
               ) : (
@@ -141,7 +143,7 @@ export default function Profile() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 }

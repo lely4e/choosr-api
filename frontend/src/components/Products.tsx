@@ -1,31 +1,15 @@
 import { useState } from "react";
 import type { ProductsProps, Product, Comment } from "../utils/types";
 import { authFetch } from "../utils/auth";
-import {
-    ThumbsUp,
-    CheckCircle,
-    MessageCircle,
-    Trash2,
-    Dot,
-    X,
-} from "lucide-react";
 import { useUser } from "../context/UserContext";
 import toast from "react-hot-toast";
 import ReactDOM from "react-dom";
 import confetti from "canvas-confetti";
 import StarRating from "./Stars";
 import { API_URL } from "../config";
+import { ChatCircleTextIcon, CheckIcon, DotIcon, ThumbsUpIcon, TrashSimpleIcon, XIcon } from "@phosphor-icons/react";
+import { Tooltip } from "./Tooltip";
 
-const Tooltip = ({ text }: { text: string }) => (
-    <span
-        className="absolute bottom-[80%] left-1/2 -translate-x-1/2 bg-[#737791]
-     text-white px-2.5 py-1.5 rounded text-xs opacity-0 invisible group-hover:opacity-100 
-     group-hover:visible transition-opacity duration-200 pointer-events-none z-10 max-w-75
-     text-center whitespace-normal"
-    >
-        {text}
-    </span>
-);
 
 export default function Products({
     uuid,
@@ -45,13 +29,12 @@ export default function Products({
     const [open, setOpen] = useState(0);
     const [openComment, setOpenComment] = useState(false);
 
-    const truncate = (text: string, maxLength = 65) => {
+    const truncate = (text: string, maxLength = 100) => {
         if (text.length <= maxLength) return text;
         return text.slice(0, maxLength) + "...";
     };
 
     const handleDeleteProduct = async (productId: number) => {
-        // if (!window.confirm("Are you sure you want to delete this product?")) return;
         try {
             const response = await authFetch(
                 `${API_URL}/polls/${uuid}/products/${productId}`,
@@ -59,9 +42,11 @@ export default function Products({
                     method: "DELETE",
                 },
             );
-            const data = await response.json();
+
+            const data = await response.json().catch(() => null);
+
             if (!response.ok) {
-                toast.error(data.detail || data.error || "Failed to delete product.");
+                toast.error(data?.detail || "Failed to delete product");
                 console.error("Failed to delete product:", data);
                 return;
             }
@@ -74,14 +59,10 @@ export default function Products({
             setOpen(0);
 
             console.log("Product deleted:", data);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to delete product: ${error.message}`);
-                console.error(`Failed to delete product: ${error.message}`);
-            } else {
-                toast.error("Failed to delete product!");
-                console.error("Failed to delete product!", error);
-            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to delete product:", error);
         }
     };
 
@@ -96,7 +77,7 @@ export default function Products({
             );
             if (!response.ok) {
                 const data = await response.json().catch(() => ({}));
-                toast.error(data.detail || data.error || "Failed to load comments.");
+                toast.error(data?.detail || "Failed to load comments");
                 return;
             }
 
@@ -107,14 +88,10 @@ export default function Products({
             }));
             setOpenCommentsProductId(productId);
             console.log("Amount of comments:", data.length);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to load comments: ${error.message}`);
-                console.error(`Failed to load comments: ${error.message}`);
-            } else {
-                toast.error("Failed to load comments!");
-                console.error("Failed to load comments!", error);
-            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to load comments:", error);
         }
     };
 
@@ -157,14 +134,10 @@ export default function Products({
                 console.log("hasVoted ->", hasVoted, "adding vote");
             }
             await getProducts();
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Vote failed: ${error.message}`);
-                console.error(`Vote failed: ${error.message}`);
-            } else {
-                toast.error("Vote failed!");
-                console.error("Vote failed!", error);
-            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to vote:", error);
         }
     };
 
@@ -184,9 +157,9 @@ export default function Products({
                     body: JSON.stringify({ text: textComment[productId] }),
                 },
             );
-            const data = await response.json();
+            const data = await response.json().catch(() => null);
             if (!response.ok) {
-                toast.error(data.detail || data.error || "Adding comment failed");
+                toast.error(data?.detail || "Adding comment failed");
                 console.error("Error to add comment:", data);
                 return;
             }
@@ -200,27 +173,23 @@ export default function Products({
                 [productId]: [...(prev[productId] || []), data],
             }));
             setTextComment((prev) => ({ ...prev, [productId]: "" }));
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to add comment: ${error.message}`);
-                console.error(`Failed to add comment: ${error.message}`);
-            } else {
-                toast.error("Failed to add comment!");
-                console.error("Failed to add comment!", error);
-            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to add comment:", error);
         }
     };
 
     const handleDeleteComment = async (productId: number, commentId: number) => {
         if (!uuid) return;
-        // if (!window.confirm("Are you sure you want to delete this comment?")) return;
+
         try {
             const response = await authFetch(
                 `${API_URL}/polls/${uuid}/products/${productId}/comments/${commentId}`,
                 { method: "DELETE" },
             );
 
-            const data = await response.json();
+            const data = await response.json().catch(() => null);
 
             if (!response.ok) {
                 toast.error(data.detail || data.error || "Failed to delete comment");
@@ -241,14 +210,10 @@ export default function Products({
                     (comment) => comment.id !== commentId,
                 ),
             }));
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to delete comment: ${error.message}`);
-                console.error(`Failed to delete comment: ${error.message}`);
-            } else {
-                toast.error("Failed to delete comment!");
-                console.error("Failed to delete comment!", error);
-            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to delete comment:", error);
         }
     };
 
@@ -265,9 +230,7 @@ export default function Products({
     };
 
     const totalVotes = products.reduce((sum, p) => sum + p.votes, 0);
-    const votePercent = (votes: number) =>
-        totalVotes > 0 ? (votes / totalVotes) * 100 : 0;
-    console.log("max", totalVotes);
+
 
     return (
         <>
@@ -330,47 +293,81 @@ export default function Products({
                                     </div>
 
                                     {/* action buttons row */}
-                                    <div className="flex justify-start items-center gap-5 py-2.5">
-                                        <div className="flex gap-2.5 mt-1 justify-between">
-                                            {/* "group" on each button activates its own Tooltip independently */}
-                                            {/* <button
-                                                onClick={() => window.open(product.link, "_blank")}
-                                                className="group relative flex-1 px-3 py-1.5 border border-[#737791] 
-                                                cursor-pointer whitespace-nowrap text-[#737791] bg-transparent text-[0.85rem] 
-                                                rounded-[20px] flex gap-1.5 justify-center items-center hover:text-[#F25E0D] hover:border-[#F25E0D]"
-                                            >
-                                                <FileText size={14} strokeWidth={2} />
-                                                <Tooltip text="Details" />
-                                            </button> */}
-
-                                            <button
-                                                className={`group relative flex-1 px-3 py-1.5 border rounded-[20px] flex gap-1.5 justify-center items-center whitespace-nowrap text-[0.85rem] cursor-pointer
-                                                ${openCommentsProductId === product.id
-                                                        ? "bg-[#F25E0D] text-[#fefefe] border-[#F25E0D]" // active color
-                                                        : "bg-transparent text-[#737791] border-[#737791] hover:text-[#fefefe] hover:bg-[#F25E0D] hover:border-[#F25E0D]"
-                                                    }`}
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    e.stopPropagation();
-                                                    showComments(product.id);
-                                                }}
-                                            >
-                                                <MessageCircle size={14} strokeWidth={2} />{" "}
-                                                {product.comments}
-                                                <Tooltip text="Comments" />
-                                            </button>
+                                    <div className="flex justify-between items-end gap-5 py-2.5">
+                                        <div className="flex">
 
                                             {user && user.id === product.user_id && (
                                                 <button
                                                     onClick={() => setOpen(product.id)}
-                                                    className="group relative flex-1 px-3 py-1.5 border border-[#737791] 
+                                                    className="group relative 
+                                                
                                                 cursor-pointer whitespace-nowrap text-[#737791] bg-transparent text-[0.85rem] 
-                                                rounded-[20px] flex gap-1.5 justify-center items-center hover:text-[#F25E0D] hover:border-[#F25E0D]"
+                                                rounded-[20px] flex gap-1.5 justify-center items-center hover:text-[#F25E0D] "
                                                 >
-                                                    <Trash2 size={14} strokeWidth={2} />
+                                                    <TrashSimpleIcon size={17} strokeWidth={2} />
                                                     <Tooltip text="Delete Product" />
                                                 </button>
                                             )}
+                                        </div>
+
+                                        <div className="flex text-sm gap-1 items-center">
+                                            <div className="flex text-sm gap-3 items-center">
+                                                <button
+                                                    className={`group relative 
+                                                    flex gap-1 justify-center items-center whitespace-nowrap text-[0.85rem] cursor-pointer
+                                                ${openCommentsProductId === product.id
+                                                            ? "text-[#F25E0D] " 
+                                                            : "bg-transparent text-[#737791]  hover:text-[#F25E0D] "
+                                                        }`}
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        showComments(product.id);
+                                                    }}
+                                                >
+                                                    {product.comments > 0 ?
+                                                    <>
+                                                    <ChatCircleTextIcon size={17} strokeWidth={2} weight="fill" />
+                                                    {product.comments}
+                                                    <Tooltip text="Comments" />
+                                                    </>
+                                                    :
+                                                    <>
+                                                    <ChatCircleTextIcon size={17} strokeWidth={2}  />
+                                                    {product.comments}
+                                                    <Tooltip text="Comments" />
+                                                    </>}
+                                                </button>
+
+                                                <div className="flex items-center gap-1 justify-center ">
+                                                  
+                                                    {product.has_voted ?
+                                                    <>
+                                                      <ThumbsUpIcon
+                                                        size={17}
+                                                        weight="fill"
+                                                        strokeWidth={2}
+                                                        className="text-[#F25E0D]"
+                                                    />
+                                                    <div className="text-[#F25E0D] ">
+                                                        {product.votes}
+                                                    </div>
+                                                    </>
+                                                    : 
+                                                    <>
+                                                    <ThumbsUpIcon
+                                                        size={17}
+                                                        // weight="fill"
+                                                        strokeWidth={2}
+                                                        className="text-[#737791]"
+                                                    />
+                                                     <div className="text-[#737791] ">
+                                                        {product.votes}
+                                                    </div>
+                                                    </>
+                                                    }
+                                                </div>
+                                            </div>
                                             <div>
                                                 {open === product.id &&
                                                     ReactDOM.createPortal(
@@ -400,31 +397,6 @@ export default function Products({
                                                         </div>,
                                                         document.body,
                                                     )}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* votes + percentage */}
-                                    <div className="flex text-sm text-[#555] gap-2.5 justify-between">
-                                        <div className="flex text-sm gap-2.5 items-center">
-                                            <ThumbsUp
-                                                size={14}
-                                                strokeWidth={2}
-                                                className="text-[#F25E0D]"
-                                            />
-                                            <div className="text-[#F25E0D]">
-                                                {product.votes === 1 ? (
-                                                    <strong>{product.votes} vote</strong>
-                                                ) : (
-                                                    <strong>{product.votes} votes</strong>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="flex text-sm gap-2.5 items-center">
-                                            <div className="text-[#F25E0D] text-xl">
-                                                <strong>
-                                                    {Math.floor(votePercent(product.votes))}%
-                                                </strong>
                                             </div>
                                         </div>
                                     </div>
@@ -459,9 +431,9 @@ export default function Products({
                                                 }`}
                                         >
                                             {!product.has_voted ? (
-                                                <ThumbsUp size={24} strokeWidth={2} />
+                                                <ThumbsUpIcon size={26} strokeWidth={2} />
                                             ) : (
-                                                <CheckCircle size={24} strokeWidth={2} />
+                                                <CheckIcon size={24} strokeWidth={2} />
                                             )}
                                             <Tooltip
                                                 text={
@@ -478,14 +450,15 @@ export default function Products({
                                         <>
                                             <div className="flex justify-between items-center mt-6 mb-1">
                                                 <h3 className="font-medium text-xl">Comments</h3>
-                                                <X
+                                                <XIcon
                                                     onClick={(e) => {
                                                         e.preventDefault();
                                                         e.stopPropagation();
                                                         showComments(product.id);
                                                     }}
                                                     className="cursor-pointer"
-                                                ></X>
+                                                    size={20}
+                                                ></XIcon>
                                             </div>
                                             {comments[product.id]?.map((comment) => (
                                                 <div
@@ -500,7 +473,7 @@ export default function Products({
                                                         />
                                                         <div className="">
                                                             <p className="mr-2 text-xs flex items-center">
-                                                                {comment.created_by} <Dot></Dot>{" "}
+                                                                {comment.created_by} <DotIcon size={20} weight="bold"></DotIcon>{" "}
                                                                 {formatDate(String(comment.created_at))}
                                                             </p>
 
@@ -509,8 +482,9 @@ export default function Products({
                                                     </p>
 
                                                     {user && user.id === comment.user_id && (
-                                                        <Trash2
+                                                        <TrashSimpleIcon
                                                             size={14}
+                                                        
                                                             strokeWidth={1.5}
                                                             onClick={() => setOpenComment(true)}
                                                             className="cursor-pointer text-[#737791] hover:text-[#F25E0D] items-center"
@@ -584,27 +558,23 @@ export default function Products({
                                         </>
                                     )}
                                 </div>
-                                
                             </div>
-                            
                         </div>
-
-                        
                     ))}
                     <div ref={sentinelRef} className="h-4 w-full" />
 
-    {loadingMore && (
-        <div className="flex justify-center py-4">
-            <div className="w-6 h-6 border-2 border-[#6366f1] 
+                    {loadingMore && (
+                        <div className="flex justify-center py-4">
+                            <div className="w-6 h-6 border-2 border-[#6366f1] 
                             border-t-transparent rounded-full animate-spin" />
-        </div>
-    )}
+                        </div>
+                    )}
 
-    {!hasMore && products.length > 0 && (
-        <p className="text-center text-sm text-[#737791] py-4">
-            No more products
-        </p>
-    )}
+                    {!hasMore && products.length > 0 && (
+                        <p className="text-center text-sm text-[#737791] py-4">
+                            No more products
+                        </p>
+                    )}
                 </div>
             </div>
         </>

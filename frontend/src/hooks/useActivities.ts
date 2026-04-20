@@ -15,9 +15,11 @@ export function useActivities() {
         const getActivities = async () => {
             try {
                 const response = await authFetch(`${API_URL}/activities`);
-                const data = await response.json();
+                const data = await response.json().catch(() => null);
                 setActivities(data);
             } catch (error) {
+                const message = error instanceof Error ? error.message : "Something went wrong";
+                toast.error(message);
                 console.error("Failed to fetch activities", error);
             }
         };
@@ -35,11 +37,12 @@ export function useActivities() {
                 }),
             });
 
-            const data = await response.json();
+            const data = await response.json().catch(() => null);
 
             if (!response.ok) {
+                toast.error(data?.detail || "Error to add poll");
                 console.error("Error to add shared poll:", data);
-                throw new Error(data.error || "Unknown error");
+                return;
             }
 
             const updated = await authFetch(`${API_URL}/activities`);
@@ -53,14 +56,10 @@ export function useActivities() {
             setTimeout(() => {
                 navigate("/my-polls");
             }, 1000);
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Error to add poll: ${error.message}`);
-                console.error(`Error to add poll: ${error.message}`);
-            } else {
-                toast.error("Error to add poll!");
-                console.error("Error to add poll!", error);
-            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Error to add poll:", error);
         }
     };
 
@@ -71,11 +70,12 @@ export function useActivities() {
                 method: "DELETE",
             });
 
-            const data = await response.json();
+            const data = await response.json().catch(() => null);
 
             if (!response.ok) {
+                toast.error(data.error || "Failed to delete shared poll");
                 console.error("Error to delete shared poll:", data);
-                throw new Error(data.error || "Unknown error");
+                return;
             }
 
             toast.success("Shared Poll deleted successfully!", {
@@ -87,14 +87,10 @@ export function useActivities() {
                 navigate("/my-polls");
             }, 2000);
             console.log("Shared Poll deleted");
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                toast.error(`Failed to delete shared poll: ${error.message}`);
-                console.error(`Failed to delete shared poll: ${error.message}`);
-            } else {
-                toast.error("Failed to delete shared poll!");
-                console.error("Failed to delete shared poll!", error);
-            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Something went wrong";
+            toast.error(message);
+            console.error("Failed to delete shared poll:", error);
         }
     };
 

@@ -17,7 +17,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     return JSONResponse(
         status_code=HTTP_422_UNPROCESSABLE_CONTENT,
         content={
-            "error": "Validation failed",
+            "detail": "Validation failed",
             "details": exc.errors(),
         },
     )
@@ -27,18 +27,20 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 async def http_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(
         status_code=exc.status_code,
-        content={"error": exc.detail or "An HTTP error occurred"},
+        content={"detail": exc.detail or "An HTTP error occurred"},
     )
 
 
 # Global exception handler
 async def exception_handler(request: Request, exc: Exception):
-    return JSONResponse(status_code=500, content={"error": str(exc)})
+    return JSONResponse(status_code=500, content={"detail": str(exc)})
 
 
 # Data Error Handler
 async def data_error_handler(request, exc: DataError):
-    return JSONResponse(status_code=400, content={"error": "Invalid poll token format"})
+    return JSONResponse(
+        status_code=400, content={"detail": "Invalid poll token format"}
+    )
 
 
 async def integrity_error_handler(request: Request, exc: IntegrityError):
@@ -62,7 +64,7 @@ class UserNotFoundError(Exception):
 
 
 async def user_not_found_handler(request: Request, exc: UserNotFoundError):
-    return JSONResponse(status_code=404, content={"error": exc.message})
+    return JSONResponse(status_code=404, content={"detail": exc.message})
 
 
 class PollNotFoundError(Exception):
@@ -74,7 +76,7 @@ class PollNotFoundError(Exception):
 
 
 async def poll_not_found_handler(request: Request, exc: PollNotFoundError):
-    return JSONResponse(status_code=404, content={"error": exc.message})
+    return JSONResponse(status_code=404, content={"detail": exc.message})
 
 
 class PollAlreadyExist(Exception):
@@ -86,7 +88,7 @@ class PollAlreadyExist(Exception):
 
 
 async def poll_already_exist_handler(request: Request, exc: PollAlreadyExist):
-    return JSONResponse(status_code=400, content={"error": exc.message})
+    return JSONResponse(status_code=400, content={"detail": exc.message})
 
 
 class UserAlreadyExistsError(Exception):
@@ -98,7 +100,7 @@ class UserAlreadyExistsError(Exception):
 
 
 async def user_exists_handler(request: Request, exc: UserAlreadyExistsError):
-    return JSONResponse(status_code=400, content={"error": exc.message})
+    return JSONResponse(status_code=400, content={"detail": exc.message})
 
 
 class ProductNotFoundError(Exception):
@@ -110,7 +112,7 @@ class ProductNotFoundError(Exception):
 
 
 async def product_not_found_handler(request: Request, exc: ProductNotFoundError):
-    return JSONResponse(status_code=404, content={"error": exc.message})
+    return JSONResponse(status_code=404, content={"detail": exc.message})
 
 
 class VoteNotFoundError(Exception):
@@ -122,7 +124,7 @@ class VoteNotFoundError(Exception):
 
 
 async def vote_not_found_handler(request: Request, exc: VoteNotFoundError):
-    return JSONResponse(status_code=404, content={"error": exc.message})
+    return JSONResponse(status_code=404, content={"detail": exc.message})
 
 
 class CommentsNotFoundError(Exception):
@@ -134,7 +136,7 @@ class CommentsNotFoundError(Exception):
 
 
 async def comments_not_found_handler(request: Request, exc: CommentsNotFoundError):
-    return JSONResponse(status_code=404, content={"error": exc.message})
+    return JSONResponse(status_code=404, content={"detail": exc.message})
 
 
 class HistoryNotFoundError(Exception):
@@ -146,7 +148,7 @@ class HistoryNotFoundError(Exception):
 
 
 async def history_not_found_handler(request: Request, exc: HistoryNotFoundError):
-    return JSONResponse(status_code=404, content={"error": exc.message})
+    return JSONResponse(status_code=404, content={"detail": exc.message})
 
 
 class IdeaNotFoundError(Exception):
@@ -158,4 +160,4 @@ class IdeaNotFoundError(Exception):
 
 
 async def idea_not_found_handler(request: Request, exc: IdeaNotFoundError):
-    return JSONResponse(status_code=404, content={"error": exc.message})
+    return JSONResponse(status_code=404, content={"detail": exc.message})

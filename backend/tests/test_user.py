@@ -62,7 +62,7 @@ async def test_update_current_user_username_failed(client, registered_user):
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
     assert data == {
-        "error": "Validation failed",
+        "detail": "Validation failed",
         "details": [
             {
                 "type": "missing",

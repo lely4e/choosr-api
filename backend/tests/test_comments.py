@@ -48,7 +48,7 @@ async def test_add_comment_failed_empty_text(client, add_user_poll_and_product):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
     data = response.json()
     assert data == {
-        "error": "Validation failed",
+        "detail": "Validation failed",
         "details": [
             {
                 "type": "string_too_short",
@@ -77,7 +77,7 @@ async def test_add_comment_failed_no_product(client, add_user_poll_and_product):
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     data = response.json()
-    assert data == {"error": "Product not found"}
+    assert data == {"detail": "Product not found"}
 
 
 @pytest.mark.asyncio
@@ -145,7 +145,7 @@ async def test_delete_comment_by_id_failed(client, add_user_poll_product_and_com
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     data = response.json()
-    assert data == {"error": "Comment not found"}
+    assert data == {"detail": "Comment not found"}
 
 
 @pytest.mark.asyncio
@@ -161,4 +161,4 @@ async def test_delete_comment_by_id_failed_no_product(
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     data = response.json()
-    assert data == {"error": "Product not found"}
+    assert data == {"detail": "Product not found"}

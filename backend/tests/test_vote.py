@@ -104,4 +104,4 @@ async def test_delete_vote_failed(client, add_user_poll_and_product):
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     data = response.json()
-    assert data == {"error": "Product not found"}
+    assert data == {"detail": "Product not found"}

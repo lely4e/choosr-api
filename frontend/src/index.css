@@ -7,6 +7,13 @@
 
 @import "tailwindcss";
 
+@layer utilities {
+  .date-icon::-webkit-calendar-picker-indicator {
+    filter: invert(55%) sepia(8%) saturate(300%) hue-rotate(180deg);
+    cursor: pointer;
+  }
+}
+
 #root {
     max-width: 1280px;
     margin: 0 auto;
@@ -50,31 +57,5 @@ body {
     }
 }
 
-.slick-track {
-  display: flex;
-}
 
-.slick-slide {
-  display: flex;
-  height: auto;
-}
-
-.slick-slide>div {
-  display: flex;
-  height: 100%;
-}
-
-.slick-list {
-  overflow: visible;   
-}
-
-.slick-prev::before,
-.slick-next::before {
-  display: none !important;
-}
-
-.slick-slide > div {
-  display: flex;
-  justify-content: center;
-}
 

@@ -11,7 +11,7 @@ const UserContext = createContext<UserContext | undefined>(undefined);
 export function UserProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-
+    const avatarUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=${user?.id}`;
     // update user
     const updateUser = (updateUser: User) => {
         setUser(updateUser);
@@ -82,7 +82,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         updateUser,
-        loading
+        loading,
+        avatarUrl
     };
 
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>

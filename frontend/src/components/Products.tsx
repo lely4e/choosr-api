@@ -467,8 +467,8 @@ export default function Products({
                                                 >
                                                     <p className="text-[#737791] text-sm p-4  bg-[#E6E9F2]  mt-3 rounded-3xl rounded-bl-none flex-1 flex items-center pl-4">
                                                         <img
-                                                            src="../src/assets/profile.svg"
-                                                            alt="profile-foto"
+                                                            src={`https://api.dicebear.com/7.x/bottts/svg?seed=${comment.user_id}`}
+                                                            alt="avatar"
                                                             className="w-8 mr-3"
                                                         />
                                                         <div className="">

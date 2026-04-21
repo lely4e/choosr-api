@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 
 export default function Profile() {
   // user from Context
-  const { user, updateUser, logout } = useUser();
+  const { user, updateUser, logout, avatarUrl } = useUser();
 
   const [newUsername, setNewUsername] = useState<string>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -70,13 +70,12 @@ export default function Profile() {
     hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)]
   "
           >
-            <div className="grid items-center content-center">
+            <div className="grid items-center content-center rounded-full">
               <img
-                src="../src/assets/profile.svg"
-                alt="profile-foto"
+                src={avatarUrl}
+                alt="avatar"
                 width={140}
               />
-              {/* <p className="change-photo">✏️ Change photo</p> */}
             </div>
             <div></div>
             <div className="flex flex-col justify-center pl-10 gap-2.5">

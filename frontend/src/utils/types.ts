@@ -5,6 +5,7 @@ export interface UserContext {
   logout: () => void;
   updateUser: (updateUser: User) => void;
   loading: boolean;
+  avatarUrl: string;
 }
 
 export interface Poll {

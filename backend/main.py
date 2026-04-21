@@ -1,5 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, Request, HTTPException, status
+from redis.asyncio import Redis
+import httpx
 
 from fastapi.responses import JSONResponse, Response
 from fastapi_pagination import add_pagination
@@ -32,7 +34,6 @@ from app.core.errors import IntegrityError, integrity_error_handler
 
 from app.core.errors import RateLimitExceeded, rate_limit_handler
 from fastapi.middleware.cors import CORSMiddleware
-from app.db.database import Base, engine
 from contextlib import asynccontextmanager
 from scheduler import start_scheduler, shutdown_scheduler
 from app.core.logging import setup_logger
@@ -48,6 +49,15 @@ async def lifespan(app: FastAPI):
     yield
     shutdown_scheduler()
     logger.info("Shutting down application")
+
+
+@asynccontextmanager
+async def lifespan(app):
+    app.state.redis = Redis.from_url(settings.REDIS_URL)
+    app.state.http_client = httpx.AsyncClient()
+    yield
+    await app.state.redis.close()
+    await app.state.http_client.aclose()
 
 
 app = FastAPI(title=settings.PROJECT_NAME, version="0.1.0", lifespan=lifespan)
@@ -132,7 +142,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Base.metadata.create_all(bind=engine)
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", reload=True)

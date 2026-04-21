@@ -7,7 +7,7 @@ class Settings(BaseSettings):
         env_file=find_dotenv(),
         env_file_encoding="utf-8",
     )
-    PROJECT_NAME: str = "Choosr API"
+    PROJECT_NAME: str = "choosr API"
     DB_HOST: str
     DB_PORT: str
     DB_USER: str
@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     API_KEY: str
     GEMINI_API_KEY: str
+    REDIS_URL: str
 
     @property
     def SYNC_DATABASE_URL(self):

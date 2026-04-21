@@ -42,6 +42,7 @@ jobs:
       ACCESS_TOKEN_EXPIRE_MINUTES: "30"
       API_KEY: "testapikey"
       GEMINI_API_KEY: "testapikey"
+      REDIS_URL: redis://localhost:6379
 
     steps:
       - name: Checkout code

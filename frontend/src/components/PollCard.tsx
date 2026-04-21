@@ -21,7 +21,6 @@ import {
     ShareFatIcon,
     ShoppingCartSimpleIcon,
     TrashSimpleIcon,
-    UserCircleIcon,
     XIcon,
 } from "@phosphor-icons/react";
 import NoteCard from "./NoteCard";
@@ -345,7 +344,12 @@ export default function PollCard({
                             <span>
                                 <DotIcon className="text-[#F25E0D]" size={22} weight="bold" />
                             </span>
-                            <UserCircleIcon size={14} weight="fill" strokeWidth={1.5} />
+                            {/* <UserCircleIcon size={14} weight="fill" strokeWidth={1.5} /> */}
+                            <img
+                                src={`https://api.dicebear.com/7.x/bottts/svg?seed=${poll.user_id}`}
+                                alt="avatar"
+                                className="w-5"
+                            />
                             created by {poll.created_by}
                         </>
                     )}

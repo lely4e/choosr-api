@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { API_URL } from "../config";
 import Modal from "../components/Modal";
 import CreateCard from "../components/CreateCard";
-import { CalendarBlankIcon, CalendarCheckIcon, CalendarIcon, CaretDownIcon, CaretUpIcon, CheckIcon, DotIcon, LinkIcon, ShareFatIcon, ShoppingCartSimpleIcon, UserCircleIcon, XIcon } from "@phosphor-icons/react";
+import { CalendarBlankIcon, CalendarCheckIcon, CalendarIcon, CaretDownIcon, CaretUpIcon, CheckIcon, DotIcon, LinkIcon, ShareFatIcon, ShoppingCartSimpleIcon, XIcon } from "@phosphor-icons/react";
 import { daysLeft, getTimeLeftPercentage } from "../utils/date";
 import { motion } from "framer-motion";
 
@@ -323,7 +323,13 @@ const Polls: React.FC = () => {
                    border-none mb-3 justify-center "
                 >
                   <div className="flex items-center gap-2">
-                    <UserCircleIcon size={14} strokeWidth={2.0} weight="fill" /> created by {poll.created_by}
+                    {/* <UserCircleIcon size={14} strokeWidth={2.0} weight="fill" />  */}
+                       <img
+                                src={`https://api.dicebear.com/7.x/bottts/svg?seed=${poll.user_id}`}
+                                alt="avatar"
+                                className="w-5"
+                            />
+                    created by {poll.created_by}
                   </div>
                 </button>
               </div>

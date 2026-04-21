@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
-import profileImg from "../assets/profile.svg"
 import logoImg from "../assets/logo_orange.svg"
 import { PlusIcon, SignInIcon } from "@phosphor-icons/react";
 
 export default function Navbar() {
-  const { user } = useUser();
+  const { user, avatarUrl } = useUser();
 
   // NOT LOGGED IN
   if (!user) {
@@ -94,21 +93,12 @@ export default function Navbar() {
           <div className="flex items-center gap-2 cursor-pointer group">
             <Link to="/profile">
               <img
-                src={profileImg}
-                alt="Profile"
-                className="w-8 h-8 rounded-full
-                           border border-gray-300
-                           group-hover:border-[#F25E0D]
-                           transition"
+                src={avatarUrl}
+                alt="avatar"
+                className="w-8 h-8 rounded-full"
               />
             </Link>
-            {/* <ChevronDown
-              size={16}
-              strokeWidth={2}
-              className="text-[#737791] group-hover:text-[#F25E0D] transition"
-            /> */}
           </div>
-
         </div>
       </div>
     </header>

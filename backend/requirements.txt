@@ -47,3 +47,4 @@ alembic==1.17.2
 apscheduler==3.11.2
 fastapi-pagination>=0.12.20
 slowapi>=0.1.9,<0.2.0
+redis>=4.5.0

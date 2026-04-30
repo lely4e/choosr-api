@@ -87,6 +87,7 @@ export default function Products({
                 [productId]: data,
             }));
             setOpenCommentsProductId(productId);
+            await getProducts();
             console.log("Amount of comments:", data.length);
         } catch (error) {
             const message = error instanceof Error ? error.message : "Something went wrong";
@@ -238,10 +239,11 @@ export default function Products({
             <div className="mx-auto flex justify-center">
                 {/* product-container */}
                 <div className="grid gap-6 w-full max-w-200 my-10 mx-auto grid-cols-1">
-                    {products.map((product) => (
+                    {products?.map((product) => (
                         <div key={product.id} className="mb-4">
                             {/* card-product */}
                             <div
+                                data-testid={`product-${product.id}`}
                                 className="relative 
                                 bg-white/[0.841]
                                 max-w-200 backdrop-blur-[10px] rounded-[30px] p-6 
@@ -304,7 +306,7 @@ export default function Products({
                                                 cursor-pointer whitespace-nowrap text-[#737791] bg-transparent text-[0.85rem] 
                                                 rounded-[20px] flex gap-1.5 justify-center items-center hover:text-[#F25E0D] "
                                                 >
-                                                    <TrashSimpleIcon size={17} strokeWidth={2} />
+                                                    <TrashSimpleIcon size={17} strokeWidth={2} data-testid="delete-icon"/>
                                                     <Tooltip text="Delete Product" />
                                                 </button>
                                             )}
@@ -327,13 +329,13 @@ export default function Products({
                                                 >
                                                     {product.comments > 0 ?
                                                     <>
-                                                    <ChatCircleTextIcon size={17} strokeWidth={2} weight="fill" />
+                                                    <ChatCircleTextIcon size={17} strokeWidth={2} weight="fill" data-testid="chat-icon"/>
                                                     {product.comments}
                                                     <Tooltip text="Comments" />
                                                     </>
                                                     :
                                                     <>
-                                                    <ChatCircleTextIcon size={17} strokeWidth={2}  />
+                                                    <ChatCircleTextIcon size={17} strokeWidth={2} data-testid="chat-icon" />
                                                     {product.comments}
                                                     <Tooltip text="Comments" />
                                                     </>}
@@ -348,6 +350,7 @@ export default function Products({
                                                         weight="fill"
                                                         strokeWidth={2}
                                                         className="text-[#F25E0D]"
+                                                        data-testid="vote-icon"
                                                     />
                                                     <div className="text-[#F25E0D] ">
                                                         {product.votes}
@@ -360,6 +363,7 @@ export default function Products({
                                                         // weight="fill"
                                                         strokeWidth={2}
                                                         className="text-[#737791]"
+                                                        data-testid="vote-icon"
                                                     />
                                                      <div className="text-[#737791] ">
                                                         {product.votes}
@@ -431,9 +435,9 @@ export default function Products({
                                                 }`}
                                         >
                                             {!product.has_voted ? (
-                                                <ThumbsUpIcon size={26} strokeWidth={2} />
+                                                <ThumbsUpIcon size={26} strokeWidth={2} data-testid="vote-button-icon"/>
                                             ) : (
-                                                <CheckIcon size={24} strokeWidth={2} />
+                                                <CheckIcon size={24} strokeWidth={2} data-testid="voted-button-icon"/>
                                             )}
                                             <Tooltip
                                                 text={
@@ -449,7 +453,7 @@ export default function Products({
                                     {openCommentsProductId === product.id && (
                                         <>
                                             <div className="flex justify-between items-center mt-6 mb-1">
-                                                <h3 className="font-medium text-xl">Comments</h3>
+                                                <h3 className="font-medium text-xl" data-testid="comments-title">Comments</h3>
                                                 <XIcon
                                                     onClick={(e) => {
                                                         e.preventDefault();
@@ -460,7 +464,7 @@ export default function Products({
                                                     size={20}
                                                 ></XIcon>
                                             </div>
-                                            {comments[product.id]?.map((comment) => (
+                                            {comments[product.id].map((comment) => (
                                                 <div
                                                     key={comment.id}
                                                     className="flex gap-2.5 justify-between items-center "
@@ -472,12 +476,12 @@ export default function Products({
                                                             className="w-8 mr-3"
                                                         />
                                                         <div className="">
-                                                            <p className="mr-2 text-xs flex items-center">
+                                                            <p className="mr-2 text-xs flex items-center" data-testid={`comment-${comment.user_id}`}>
                                                                 {comment.created_by} <DotIcon size={20} weight="bold"></DotIcon>{" "}
                                                                 {formatDate(String(comment.created_at))}
                                                             </p>
 
-                                                            <p className="font-bold"> {comment.text} </p>
+                                                            <p className="font-bold" data-testid={`comment-text-${comment.user_id}`}> {comment.text} </p>
                                                         </div>
                                                     </p>
 
@@ -536,6 +540,7 @@ export default function Products({
                                                 }}
                                             >
                                                 <textarea
+                                                    data-testid={`text-area-${product.id}`}
                                                     value={textComment[product.id] || ""}
                                                     onChange={(e) =>
                                                         setTextComment((prev) => ({
@@ -548,6 +553,7 @@ export default function Products({
                                                     font-[inherit] transition-all duration-200"
                                                 />
                                                 <button
+                                                data-testid="add-comment"
                                                     type="submit"
                                                     className="self-end px-4 py-2 rounded-full border-none bg-[#F25E0D]
                                                      text-white cursor-pointer hover:bg-black transition-colors duration-200"

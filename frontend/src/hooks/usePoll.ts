@@ -29,9 +29,7 @@ export function usePoll(uuid: string | undefined) {
 
     const navigate = useNavigate();
 
-    // fetch poll
-    useEffect(() => {
-        const getPoll = async () => {
+    const getPoll = async () => {
             if (!uuid) return;
             try {
                 const response = await authFetch(`${API_URL}/polls/${uuid}`);
@@ -49,6 +47,9 @@ export function usePoll(uuid: string | undefined) {
                 console.error("Failed to fetch products:", error);
             }
         };
+    // fetch poll
+    useEffect(() => {
+        
         getPoll();
     }, [uuid]);
 
@@ -187,5 +188,6 @@ export function usePoll(uuid: string | undefined) {
         openCard,
         setOpenCard,
         pollFormErrors,
+        getPoll
     };
 }

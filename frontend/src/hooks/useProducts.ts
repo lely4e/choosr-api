@@ -30,7 +30,7 @@ export function useProducts(uuid: string | undefined) {
             setPage(pageNum);
 
             console.log("Products fetched:", data);
-            console.log("Amount of products:", data.length);
+            // console.log("Amount of products:", data.length);
         } catch (error) {
             const message = error instanceof Error ? error.message : "Something went wrong";
             toast.error(message);
@@ -74,11 +74,17 @@ export function useProducts(uuid: string | undefined) {
             );
             const data = await response.json().catch(() => null);
             setProducts(data.items);
+            setPage(1);
+            setHasMore(data.page < data.pages);
         } catch (error) {
             const message = error instanceof Error ? error.message : "Something went wrong";
             toast.error(message);
             console.error("Failed to refresh products!", error);
         }
+    };
+
+    const addProduct = (product: Product) => {
+        setProducts((prev) => [product, ...prev]);
     };
 
     return {
@@ -88,6 +94,7 @@ export function useProducts(uuid: string | undefined) {
         refreshProducts,
         sentinelRef,
         loadingMore,
-        hasMore
+        hasMore,
+        addProduct
     };
 }

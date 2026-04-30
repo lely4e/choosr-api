@@ -86,6 +86,7 @@ export default function PollPage() {
         openCard,
         setOpenCard,
         pollFormErrors,
+        getPoll
     } = usePoll(uuid);
 
     if (!poll) {
@@ -110,9 +111,9 @@ export default function PollPage() {
             <div className="mx-auto flex justify-center px-4">
                 {/* product-container */}
                 <motion.div className="grid gap-6 w-full max-w-200 mt-10"
-                        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0, duration: 0.6 }}>
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0, duration: 0.6 }}>
                     <Link
                         to="/my-polls"
                         className="flex items-center gap-3 text-[#6366f1] hover:text-[#4F46E5] text-left text-[14px]"
@@ -212,6 +213,7 @@ export default function PollPage() {
                     getProducts={getProducts}
                     openCard={openCard}
                     setOpenCard={setOpenCard}
+                    getPoll={getPoll}
                 />
             </motion.div>
 

@@ -141,6 +141,7 @@ const Polls: React.FC = () => {
               // card
               <div
                 key={poll.uuid}
+                id={poll.uuid}
                 className="box-content bg-white/50 backdrop-blur-md rounded-[30px] p-6 cursor-pointer 
               flex flex-col shadow-[0_-1px_25px_rgba(0,0,0,0.1)] transition-all duration-250 ease-in-out h-full 
               hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)] hover:bg-white/80"
@@ -372,6 +373,7 @@ const Polls: React.FC = () => {
               // card
               <div
                 key={poll.uuid}
+                id={poll.uuid}
                 className="box-content bg-white/50 backdrop-blur-md rounded-[30px] p-6 cursor-pointer 
               flex flex-col shadow-[0_-1px_25px_rgba(0,0,0,0.1)] transition-all duration-250 ease-in-out h-full 
               hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08),0_8px_16px_rgba(0,0,0,0.06)] hover:bg-white/80"

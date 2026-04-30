@@ -15,8 +15,7 @@ def start_scheduler():
     scheduler.add_job(
         cleanup_expired_data,
         trigger="cron",
-        hour=3,
-        # minute="*/1",
+        minute=0,
         id="cleanup_job",
         replace_existing=True,
     )
@@ -34,8 +33,6 @@ def start_scheduler():
     scheduler.add_job(
         check_deadline,
         trigger="cron",
-        # minute="*/1",
-        hour=0,  # midnight
         minute=0,
         id="deadline_job",
         replace_existing=True,

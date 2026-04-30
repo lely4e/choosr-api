@@ -69,7 +69,7 @@ export default function Signup() {
       console.log("User created successfully:", data);
 
       setTimeout(() => {
-        navigate("/my-polls");
+        navigate("/login");
       }, 2000);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Something went wrong";

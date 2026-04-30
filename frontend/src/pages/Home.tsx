@@ -192,7 +192,7 @@ const Home: FC = () => {
 
                 <br />
                 <span className="bg-linear-to-r from-[#ff6a00] to-[#ec4899] bg-clip-text text-transparent">
-                  Start celebrating.
+                  Go celebrating.
                 </span>
 
                 <div className="flex gap-12.5">

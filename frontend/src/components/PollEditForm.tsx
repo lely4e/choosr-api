@@ -45,8 +45,10 @@ export default function PollEditForm({
                 <div className="flex flex-col w-full">
                     <input
                         type="text"
+                        name="title"
                         value={editedTitle}
                         onChange={(e) => setEditedTitle(e.target.value)}
+                        required
                         className={`w-full border-b bg-transparent outline-none text-left font-bold text-3xl text-black
                             ${errors.title ? "border-red-400" : "border-[#737791]"}`}
                     />
@@ -73,6 +75,7 @@ export default function PollEditForm({
                 Budget: $
                 <input
                     type="number"
+                    name="budget"
                     value={editedBudget}
                     onChange={(e) => setEditedBudget(Number(e.target.value))}
                     className={`border-b bg-transparent outline-none focus:outline-none flex justify-between items-start text-sm text-black
@@ -88,6 +91,7 @@ export default function PollEditForm({
             <div className="flex flex-col mt-2.5">
                 <input
                     type="text"
+                    name="description"
                     value={editedDescription}
                     onChange={(e) => setEditedDescription(e.target.value)}
                     className={`border-b bg-transparent outline-none flex text-left mt-2.5 text-sm text-[#737791] font-serif italic

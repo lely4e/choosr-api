@@ -3,8 +3,8 @@ import {
     type Poll,
     type History,
     type Activities,
-    type Product,
     type User,
+    type Product,
 } from "../utils/types";
 import {
     ArrowCounterClockwiseIcon,
@@ -65,7 +65,6 @@ export default function PollCard({
     uuid,
     user,
     activities,
-    products,
     history,
     open,
     openPoll,
@@ -87,12 +86,14 @@ export default function PollCard({
     return (
         <motion.div
             key={poll.uuid}
+            id={poll.uuid}
             className="bg-white/50 backdrop-blur-md rounded-[30px] p-6 
             flex flex-col shadow-[0_10px_25px_rgba(0,0,0,0.06),0_4px_10px_rgba(0,0,0,0.04)] 
             transition-all duration-250 h-4/5"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0, duration: 0.6 }}>
+            transition={{ delay: 0, duration: 0.6 }}
+            data-testid="poll-card">
             {/* active + icons */}
             <div className="flex justify-between items-center mb-2 gap-2 flex-wrap">
 
@@ -143,7 +144,7 @@ export default function PollCard({
                                 {!activities.some((activity) => activity.uuid === poll.uuid) ? (
                                     <PlusIcon
                                         size={16}
-
+                                        data-testid="add-poll-icon"
                                         className="hover:text-[#F25E0D]"
                                         onClick={() => handleAddSharedPoll(poll.uuid)}
                                     />
@@ -202,6 +203,7 @@ export default function PollCard({
                                 <PencilSimpleLineIcon
                                     size={16}
                                     strokeWidth={1.5}
+                                    data-testid="edit-icon"
                                 />
                                 <Tooltip text="Edit" />
                             </p>
@@ -314,7 +316,7 @@ export default function PollCard({
             <div className="flex items-bottom mb-6 gap-2 ml-0 text-[14px] text-[#EA7317] justify-between">
                 <div className="flex items-center mt-10 mb-10 gap-2 ml-0 text-[12px] text-[#EA7317]">
                     <ShoppingCartSimpleIcon size={14} weight="fill" strokeWidth={2} />
-                    {products.length} {products.length === 1 ? "item" : "items"}
+                    {poll.total_products} {poll.total_products === 1 ? "item" : "items"}
                     <span>
                         <DotIcon className="text-[#F25E0D]" size={22} weight="bold" />
                     </span>

@@ -15,6 +15,7 @@ export type Layout = "poll" | "gift";
 interface ExtendedSearchProps extends SearchProps {
   layout?: Layout;
   getProducts?: () => Promise<void>;
+  getPoll: () => Promise<void>;
   openCard?: boolean;
   setOpenCard?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -30,6 +31,7 @@ export default function Search({
   getProducts,
   openCard,
   setOpenCard,
+  getPoll,
 }: ExtendedSearchProps) {
   const { uuid } = useParams<{ uuid: string }>();
 
@@ -162,6 +164,7 @@ export default function Search({
       toast.success("Product added successfully!", { duration: 2000 });
       setAddedProduct((prev) => [...prev, product.link]);
       if (getProducts) await getProducts();
+      await getPoll();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Unknown error";
       toast.error(`Failed to add product: ${message}`);
@@ -175,6 +178,7 @@ export default function Search({
         <div className="flex gap-2 w-full max-w-200 my-2">
           <input
             id="search"
+            name="search"
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
@@ -197,7 +201,7 @@ export default function Search({
             {loading ? (
               "..."
             ) : !showProducts ? (
-              <MagnifyingGlassIcon size={20} weight="bold" />
+              <MagnifyingGlassIcon size={20} weight="bold" data-testid="search-icon" />
             ) : (
               <CaretUpIcon size={20} weight="bold" />
             )}
@@ -312,8 +316,9 @@ export default function Search({
 
                       {/* Title */}
                       <div
+                        data-testid="productTitle"
                         className="text-sm font-semibold leading-snug line-clamp-2 text-left
-                                    hover:text-[#0096FF] hover:cursor-pointer"
+                                    hover:text-[#0096FF] hover:cursor-pointer "
                         onClick={() => window.open(product.link, "_blank")}
                       >
                         {truncate(product.title, 100)}
@@ -335,7 +340,7 @@ export default function Search({
                           {addedProduct.includes(product.link) ? (
                             <CheckIcon size={20} weight="bold" />
                           ) : (
-                            <PlusIcon size={20} weight="bold" />
+                            <PlusIcon size={20} weight="bold" data-testid="plus-icon" />
                           )}
                         </button>
                       </div>

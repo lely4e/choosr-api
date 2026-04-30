@@ -1,0 +1,12 @@
+{
+    "uuid": "123e4567-e89b-12d3-a456-426614174001",
+    "title": "Kiki's Warm Party",
+    "budget": 250,
+    "description": "Here is the description of shared poll",
+    "user_id": 2,
+    "total_products": 0,
+    "created_by": "testuser2",
+    "active": true,
+    "manually_closed": false,
+    "created_at": "2026-04-29T13:02:14.635129+02:00"
+}

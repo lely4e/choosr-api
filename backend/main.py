@@ -45,19 +45,21 @@ logger = setup_logger()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting application")
-    start_scheduler()
-    yield
-    shutdown_scheduler()
-    logger.info("Shutting down application")
 
-
-@asynccontextmanager
-async def lifespan(app):
+    # startup tasks
     app.state.redis = Redis.from_url(settings.REDIS_URL)
     app.state.http_client = httpx.AsyncClient()
+
+    start_scheduler()
+
     yield
+
+    # shutdown tasks
+    shutdown_scheduler()
     await app.state.redis.close()
     await app.state.http_client.aclose()
+
+    logger.info("Shutting down application")
 
 
 app = FastAPI(title=settings.PROJECT_NAME, version="0.1.0", lifespan=lifespan)

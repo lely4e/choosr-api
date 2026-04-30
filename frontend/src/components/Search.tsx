@@ -15,7 +15,7 @@ export type Layout = "poll" | "gift";
 interface ExtendedSearchProps extends SearchProps {
   layout?: Layout;
   getProducts?: () => Promise<void>;
-  getPoll: () => Promise<void>;
+  getPoll?: () => Promise<void>;
   openCard?: boolean;
   setOpenCard?: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -164,7 +164,7 @@ export default function Search({
       toast.success("Product added successfully!", { duration: 2000 });
       setAddedProduct((prev) => [...prev, product.link]);
       if (getProducts) await getProducts();
-      await getPoll();
+      await getPoll?.();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Unknown error";
       toast.error(`Failed to add product: ${message}`);
